@@ -65,6 +65,18 @@ function updateHome(){
    document.getElementById("oilNext").textContent="";
  }
 
+ const yearFuel=fuelRecords.filter(r=>String(r.date||"").startsWith(String(y)+"-"));
+ const yearMaint=maintenanceRecords.filter(r=>String(r.date||"").startsWith(String(y)+"-"));
+ const yearExp=expenseRecords.filter(r=>String(r.date||"").startsWith(String(y)+"-"));
+ const yearTotal=[...yearFuel,...yearMaint,...yearExp].reduce((s,r)=>s+(Number(r.amount)||0),0);
+ const elapsedMonths=Math.max(1,m+1);
+ document.getElementById("yearlyTotalCost").textContent=fmt(yearTotal)+" 円";
+ document.getElementById("yearlyMonthlyAvg").textContent=fmt(Math.round(yearTotal/elapsedMonths))+" 円";
+ const yOdos=[...yearFuel,...yearMaint].map(r=>({date:r.date,odo:Number(r.odometer)})).filter(r=>Number.isFinite(r.odo)).sort((a,b)=>a.date.localeCompare(b.date));
+ let yDist=0;
+ if(yOdos.length>=2)yDist=Math.max(0,yOdos[yOdos.length-1].odo-yOdos[0].odo);
+ document.getElementById("yearlyDistance").textContent=fmt(yDist)+" km";
+ document.getElementById("costPerKm").textContent=yDist>0?(yearTotal/yDist).toFixed(1)+" 円/km":"---";
  const recent=[];
  fuelRecords.forEach(r=>recent.push({date:r.date,type:"給油",amount:Number(r.amount)||0,detail:(r.liters?Number(r.liters).toFixed(1)+" L":"")}));
  maintenanceRecords.forEach(r=>recent.push({date:r.date,type:r.type||"整備・修理",amount:Number(r.amount)||0,detail:r.memo||""}));
@@ -171,4 +183,16 @@ function quickGo(kind){
     expense:openExpenseScreen
   };
   if(actions[kind]) actions[kind]();
+}
+
+function csvCell(v){return '"'+String(v??"").replaceAll('"','""')+'"';}
+function exportCSV(){
+ const rows=[["種別","日付","走行距離(km)","内容","金額(円)","燃費(km/L)","メモ"]];
+ fuelRecords.forEach(r=>rows.push(["給油",r.date,r.odometer,(r.liters||"")+" L",r.amount,r.fuelEconomy||"",r.fullTank?"満タン":""]));
+ maintenanceRecords.forEach(r=>rows.push(["整備・修理",r.date,r.odometer,r.type||"",r.amount,"",r.memo||""]));
+ expenseRecords.forEach(r=>rows.push(["その他支出",r.date,"",r.category||"",r.amount,"",r.memo||""]));
+ const head=rows.shift(); rows.sort((a,b)=>String(b[1]).localeCompare(String(a[1]))); rows.unshift(head);
+ const csv="\uFEFF"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n");
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="CarLog_"+today()+".csv";document.body.appendChild(a);a.click();a.remove();
 }
