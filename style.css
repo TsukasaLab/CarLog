@@ -10,7 +10,8 @@
 /* Ver.0.34 */
 .car-thumb svg,.vehicle-photo-preview svg{width:100%;height:100%;padding:5px}.store-input{margin-top:7px!important}.photo-source{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.memo-section>.memo-add{margin:12px 0 18px}.memo-number{font-weight:800;font-size:13px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e3e7ed}.empty-memo{padding:20px 10px;text-align:center;color:#7b8494;background:#f7f8fa;border-radius:12px}.memo-home-row{width:100%;text-align:left;padding:13px 0;border-top:1px solid #edf0f4;border-radius:0}.memo-home-row b,.memo-home-row span{display:block}.memo-home-row span{font-size:11px;color:#7b8494;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.note-view .note-content{line-height:1.65;max-height:240px;overflow:auto}.note-photo{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px;cursor:pointer}#vehicleNotes .screen-head button:last-child{font-size:12px;padding:9px}
 
-/* Ver.0.36 responsive AdMax - one ad script per device */
+
+/* Ver.0.37 AdMax: issued tags are embedded unchanged */
 .ad-area{
   position:fixed;
   left:50%;
@@ -24,14 +25,29 @@
 }
 .ad-area.hidden-ad{display:none!important}
 .ad-label{height:14px;font-size:9px;color:#98a2b3;line-height:14px}
-.ad-slot-responsive{display:flex;align-items:center;justify-content:center;overflow:hidden}
-.ad-area.mobile-ad{width:320px;height:64px}
-.mobile-ad .ad-slot-responsive{width:320px;height:50px}
-.ad-area.desktop-ad{width:728px;height:104px}
-.desktop-ad .ad-slot-responsive{width:728px;height:90px}
+.ad-mobile-slot{
+  display:block;
+  width:320px;
+  height:50px;
+  overflow:hidden;
+}
+.ad-desktop-slot{display:none}
+.ad-area{width:320px;height:64px}
 .app{padding-bottom:190px!important}
+
 @media (min-width:760px){
-  .ad-area{bottom:calc(92px + env(safe-area-inset-bottom))}
+  .ad-area{
+    width:728px;
+    height:104px;
+    bottom:calc(92px + env(safe-area-inset-bottom));
+  }
+  .ad-mobile-slot{display:none}
+  .ad-desktop-slot{
+    display:block;
+    width:728px;
+    height:90px;
+    overflow:hidden;
+  }
   .app{padding-bottom:235px!important}
   .bottom{width:min(620px,calc(100% - 24px))}
 }
