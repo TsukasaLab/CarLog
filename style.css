@@ -23,7 +23,7 @@
   box-shadow:0 2px 10px #0001;
   overflow:hidden;
 }
-.ad-area.hidden-ad{display:none!important}
+.ad-area.hidden-ad{display:block!important}
 .ad-label{height:14px;font-size:9px;color:#98a2b3;line-height:14px}
 .ad-mobile-slot{
   display:block;
@@ -51,3 +51,6 @@
   .app{padding-bottom:235px!important}
   .bottom{width:min(620px,calc(100% - 24px))}
 }
+
+/* Ver.0.38: always show the AdMax banner */
+#adDock,#adDock.hidden-ad{display:block!important;visibility:visible!important;opacity:1!important}
