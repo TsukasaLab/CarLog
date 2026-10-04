@@ -79,3 +79,131 @@ td,th{padding:12px 8px!important}.helpdoc p{line-height:1.85!important}textarea{
 #adDock,#adDock.hidden-ad{visibility:visible!important;opacity:1!important}
 @media(max-width:420px){body{font-size:16px}.card{border-radius:18px!important}button,.btn{min-height:50px}}
 button,a,[onclick],select{touch-action:manipulation}
+
+/* =========================================================
+   Ver.0.40 Full visual redesign
+   Warm, polished, accessible. No data/behavior changes.
+   ========================================================= */
+:root{
+ --cl-navy:#183b5b; --cl-navy2:#234f73; --cl-blue:#3e8bd7; --cl-sky:#eaf5ff;
+ --cl-cream:#fff9f2; --cl-peach:#fff0e5; --cl-orange:#f29a54; --cl-green:#4fa77a;
+ --cl-text:#20364a; --cl-sub:#708194; --cl-border:#dfe8f0; --cl-card:#fff;
+ --cl-shadow:0 10px 30px rgba(38,72,103,.10); --cl-shadow2:0 4px 14px rgba(38,72,103,.08)
+}
+html,body{min-height:100%;background:#f6f8fb!important;color:var(--cl-text)!important}
+body{background:linear-gradient(180deg,#fff9f4 0,#f6f8fb 260px,#f6f8fb 100%)!important}
+.app{max-width:1180px!important;padding:28px 22px 250px!important}
+.screen{animation:clFade .18s ease-out}@keyframes clFade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+.screen>header{max-width:100%;padding:12px 4px 18px!important;margin:0!important;background:transparent!important;border:0!important}
+.screen>header h1{font-size:32px!important;letter-spacing:-.6px}.screen>header p{font-size:14px!important;color:var(--cl-sub)!important}
+.icon{background:#fff!important;border:1px solid var(--cl-border)!important;color:var(--cl-navy)!important;box-shadow:var(--cl-shadow2)!important}
+.version{background:rgba(24,59,91,.92)!important;padding:7px 11px!important;box-shadow:0 4px 14px #17324d22}
+.card{border:1px solid #e5ecf2!important;border-radius:22px!important;box-shadow:var(--cl-shadow2)!important;padding:20px!important;margin:14px 0!important}
+h3{font-size:18px;margin-top:4px}.card h3{letter-spacing:-.2px}
+
+/* Home hero */
+#home .vehicle-switch{position:relative;overflow:hidden;border:0!important;border-radius:26px 26px 0 0!important;padding:25px 28px!important;background:linear-gradient(125deg,#173c5d 0%,#285f85 57%,#ee9a62 145%)!important;box-shadow:0 14px 32px rgba(24,59,91,.18)!important}
+#home .vehicle-switch:after{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-60px;top:-95px;background:rgba(255,190,135,.18);pointer-events:none}
+#home .vehicle-switch .car-thumb{width:112px;height:78px;border-radius:18px;background:linear-gradient(180deg,#fff8,#fff2)!important;border:1px solid #ffffff44;box-shadow:inset 0 1px #fff7;font-size:42px}
+#home .vehicle-switch .car-main small{font-size:11px!important;letter-spacing:1.5px;color:#d9e9f5!important}
+#home .vehicle-switch .car-main strong{font-size:30px!important;color:#fff!important;margin:5px 0!important}
+#home .vehicle-switch .car-main span,#home .vehicle-switch>span,#home .vehicle-switch .car-main small:last-child{color:#eef7ff!important}
+#home .hero-km{background:#fff!important;color:var(--cl-text)!important;padding:19px 28px!important;border:1px solid #e5ecf2!important;border-top:0!important;border-radius:0 0 26px 26px!important;box-shadow:0 12px 28px rgba(38,72,103,.10)!important;margin-bottom:27px!important}
+#home .hero-km span{font-size:14px;color:var(--cl-sub)}#home .hero-km strong{font-size:26px;color:var(--cl-navy)!important}
+#home>h3{font-size:20px;margin:0 0 8px 4px}
+#home>.grid{gap:13px!important}
+#home>.grid .metric{min-height:112px;padding:19px!important;border-left:5px solid #82b9e9!important;transition:.15s}
+#home>.grid .metric:nth-child(2){border-left-color:#79b79a!important}#home>.grid .metric:nth-child(3){border-left-color:#f1aa6e!important}#home>.grid .metric:nth-child(4){border-left-color:#958bd9!important}
+#home>.grid .metric:active{transform:scale(.985)}
+#home .metric span{font-size:14px!important;color:var(--cl-sub)!important}#home .metric b{font-size:24px!important;color:var(--cl-navy)!important}
+#home .annual{gap:0!important;background:#f8fbfd;border-radius:16px;padding:4px}
+#home .annual>div{padding:14px!important;border-right:1px solid #e6edf3}#home .annual>div:nth-child(2n){border-right:0}
+#home .annual b{font-size:18px;color:var(--cl-navy)}
+#home .row{padding:16px 3px!important}.privacy{text-align:center;font-size:12px!important;padding:10px;color:#7b8b99!important}
+
+/* Inputs and secondary screens */
+.screen-head{position:sticky;top:0;z-index:20;margin:-8px -6px 18px!important;padding:12px 6px!important;background:rgba(246,248,251,.91);backdrop-filter:blur(12px);border-bottom:1px solid #e6edf3}
+.screen-head h2{font-size:23px!important;color:var(--cl-navy)!important}.screen-head button{background:#fff!important;border:1px solid #e2e9ef!important;color:var(--cl-navy)!important;box-shadow:0 3px 10px #294f7010}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px!important;padding:24px!important}
+.form label{font-size:14px!important;color:#49647b!important;margin:0 0 14px!important}.form textarea,.form label:has(textarea),.form .check,.photo-editor{grid-column:1/-1}
+.form input,.form select,.form textarea,.memo-edit textarea{border:1.5px solid #dbe5ed!important;border-radius:13px!important;background:#fbfdff!important;min-height:51px!important}
+.form input:focus,.form select:focus,.form textarea:focus{background:#fff!important;border-color:#5e9ed7!important;box-shadow:0 0 0 4px #5e9ed71b!important;outline:0!important}
+.primary{max-width:520px;display:block;margin:12px auto!important;background:linear-gradient(135deg,#1d5f91,#347fb8)!important;min-height:54px!important;font-size:17px!important;border-radius:15px!important;box-shadow:0 7px 18px #276c9f30!important}
+.danger{max-width:520px;display:block;margin:10px auto!important}.screen>button:not(.primary):not(.danger){max-width:520px;width:100%;display:block;margin:8px auto}
+.tabs{background:#eaf0f5;border-radius:15px;padding:5px;gap:3px!important}.tabs button{background:transparent!important;min-height:42px!important}.tabs button:focus{background:#fff!important;color:var(--cl-navy)!important}
+.history-item,.recent-row,.vehicle-item,.same-item{padding:16px 2px!important}.recent-row:first-child,.history-item:first-child{border-top:0}
+.menu{min-height:66px!important;text-align:left;font-size:16px!important;color:var(--cl-navy)!important}.storage{background:#eef6fc!important;border:1px solid #dceaf5}
+
+/* Analytics */
+#costs>.grid,#driving>.grid{gap:13px!important}.cost-switch{min-height:104px!important}.cost-switch.active{border-color:#6ea8d7!important;background:#f5fbff!important;box-shadow:0 7px 18px #2d77ac18!important}.total{background:linear-gradient(135deg,#183d5e,#285f85)!important;color:#fff!important}.total span,.total b{color:#fff!important}.bars{height:230px!important;padding-top:18px;border-bottom:1px solid #dfe8ef}.bar{background:linear-gradient(180deg,#75b4e5,#397eb5)!important}
+.yearpick{max-width:420px;margin:14px auto!important;background:#fff!important}.yearpick button{color:var(--cl-navy)!important}
+
+/* Vehicle and memo */
+.vehicle-row{background:#fff;border:1px solid #e5ecf2;border-radius:19px;padding:12px 14px;margin:10px 0;box-shadow:var(--cl-shadow2)}.vehicle-edit-btn{background:#eef5fa!important;color:#315e7d!important}.vehicle-photo-preview{background:linear-gradient(160deg,#eef7fd,#fff5ec)!important;border:1px dashed #bed2e1!important}.memo-edit{background:#f8fafc!important;border:1px solid #e3eaf0!important}.file-btn{background:#e9f3fa!important;color:#245a7d!important;border:1px solid #d4e5f0}.photo-tile{border-radius:13px!important}
+
+/* Bottom navigation and quick sheet */
+.bottom{width:min(720px,calc(100% - 24px))!important;height:78px!important;border-radius:24px!important;border:1px solid #e0e8ef!important;background:rgba(255,255,255,.96)!important;backdrop-filter:blur(14px);box-shadow:0 10px 34px rgba(25,57,85,.17)!important}.bottom button{color:#61788c!important}.bottom .plus{width:62px!important;height:62px!important;min-height:62px!important;background:linear-gradient(145deg,#1f6598,#3d8bc3)!important;box-shadow:0 8px 18px #286e9e45!important}.sheet{max-width:540px;margin:auto;background:#fff!important;padding:25px!important}.quick{gap:10px}.quick button{background:#f3f8fc!important;color:#315e7d!important;border:1px solid #dce9f2!important}
+
+/* Ad stays fixed and unchanged */
+#adDock{border-radius:10px 10px 0 0;box-shadow:0 4px 18px #183b5b16!important}
+
+/* Desktop layout */
+@media(min-width:900px){
+ body{background:linear-gradient(180deg,#fff8f2 0,#f5f8fb 330px)!important}
+ .app{padding-top:34px!important}
+ #home{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);column-gap:24px;align-items:start}
+ #home>header{grid-column:1/-1}#home>.vehicle-switch,#home>.hero-km,#home>h3,#home>.grid,#home>.privacy{grid-column:1}
+ #home>.card{grid-column:2;margin-top:0!important;margin-bottom:18px!important}
+ #home>.card:nth-of-type(1){grid-row:2/span 2} /* graceful if browser ignores */
+ #home>.grid{grid-template-columns:repeat(2,1fr)}
+ #home .vehicle-switch{min-height:154px}#home .vehicle-switch .car-thumb{width:150px;height:102px}
+ #home .hero-km{min-height:72px}
+ .screen:not(#home):not(#setup){max-width:900px;margin:auto}
+ .form{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #costs>.grid,#driving>.grid{grid-template-columns:repeat(3,1fr)!important}
+ .bottom{width:720px!important}
+}
+@media(min-width:1200px){#home{grid-template-columns:minmax(0,1.35fr) minmax(380px,.65fr)}}
+
+/* Mobile accessibility */
+@media(max-width:899px){.app{max-width:600px!important;padding:18px 14px 205px!important}.screen>header h1{font-size:27px!important}.form{grid-template-columns:1fr!important;padding:18px!important}.form>*{grid-column:1!important}#home .vehicle-switch{padding:20px!important}#home .vehicle-switch .car-thumb{width:82px;height:64px}#home .vehicle-switch .car-main strong{font-size:25px!important}#home .hero-km{padding:17px 20px!important}#home>.grid .metric{min-height:105px}.bottom{height:74px!important}}
+@media(max-width:390px){#home>.grid{grid-template-columns:1fr 1fr!important;gap:9px!important}#home>.grid .metric{padding:15px!important}#home .metric b{font-size:20px!important}.vehicle-switch>span{font-size:12px}.app{padding-left:10px!important;padding-right:10px!important}}
+
+/* =========================================================
+   CarLog Ver.0.41 - responsive desktop + mobile refinement
+   ========================================================= */
+@media (min-width: 900px){
+  body{padding:24px 24px 150px!important}
+  .app{max-width:1280px!important;margin:0 auto!important;padding-left:224px!important;position:relative}
+  header,.topbar{border-radius:20px!important;margin-bottom:16px!important;min-height:68px}
+  main,.screen{width:100%}
+  .bottom{
+    position:fixed!important;left:max(24px,calc(50% - 640px));top:24px!important;bottom:auto!important;
+    width:200px!important;height:calc(100vh - 48px)!important;display:flex!important;flex-direction:column!important;
+    align-items:stretch!important;justify-content:flex-start!important;padding:88px 12px 16px!important;
+    border-radius:24px!important;background:linear-gradient(180deg,#102f4a,#08233a)!important;
+    border:0!important;box-shadow:0 16px 40px rgba(15,42,66,.20)!important;z-index:30
+  }
+  .bottom button{width:100%!important;min-height:52px!important;margin:4px 0!important;color:#dbe8f4!important;
+    justify-content:flex-start!important;padding:0 14px!important;border-radius:12px!important;background:transparent!important}
+  .bottom button:hover{background:rgba(255,255,255,.09)!important}
+  .bottom .plus{width:56px!important;height:56px!important;min-height:56px!important;margin:18px auto!important;
+    align-self:center!important;justify-content:center!important}
+  .card{padding:20px!important}
+  .quick{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+  .quick button{min-height:82px!important}
+  .grid,.stats,.summary-grid{gap:16px!important}
+  .stats,.summary-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .form-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important}
+  .form-grid .full{grid-column:1/-1!important}
+  canvas{max-height:430px}
+  #adDock{left:50%!important;transform:translateX(-50%)!important;max-width:728px!important}
+}
+@media (min-width:1200px){
+  .content-grid,.dashboard-grid{display:grid!important;grid-template-columns:1.05fr 1fr!important;gap:18px!important}
+}
+@media (max-width:899px){
+  .app{max-width:560px!important;margin:auto!important}
+}
+/* Accessibility: keep controls generous on both layouts */
+button,input,select,textarea{min-height:48px}
