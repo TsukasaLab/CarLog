@@ -311,3 +311,159 @@ button,input,select,textarea{min-height:48px}
   .sheet{max-width:520px!important;left:50%!important;transform:translateX(-50%)!important}
   #adDock{left:calc(50% + 120px)!important;transform:translateX(-50%)!important}
 }
+
+/* =========================================================
+   Ver.0.43 - mobile + menu repair / richer visual background
+   ========================================================= */
+body{
+  background:
+    radial-gradient(circle at 8% 4%,rgba(255,196,151,.32) 0,rgba(255,196,151,0) 26rem),
+    radial-gradient(circle at 94% 10%,rgba(100,184,224,.25) 0,rgba(100,184,224,0) 28rem),
+    linear-gradient(155deg,#f9f4ee 0%,#eef6fa 42%,#f4f7fb 72%,#edf3f7 100%)!important;
+  background-attachment:fixed!important;
+}
+.card{
+  background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(250,253,255,.93))!important;
+  border:1px solid rgba(255,255,255,.92)!important;
+  box-shadow:0 10px 30px rgba(31,72,101,.09),0 1px 0 rgba(255,255,255,.9) inset!important;
+}
+.vehicle-switch{
+  background:
+    radial-gradient(circle at 80% 20%,rgba(255,190,132,.34),transparent 30%),
+    linear-gradient(135deg,#173d5b,#2d668c 58%,#db8c70)!important;
+}
+.primary,.btn-primary{
+  background:linear-gradient(135deg,#286f9f,#1e587e)!important;
+  box-shadow:0 8px 18px rgba(33,94,135,.22)!important;
+}
+
+/* Quick-add sheet: missing positioning in the old stylesheet caused + to appear unresponsive */
+#quickBackdrop.backdrop{
+  position:fixed!important;inset:0!important;z-index:1200!important;
+  display:flex!important;align-items:flex-end!important;justify-content:center!important;
+  padding:16px!important;background:rgba(9,28,43,.48)!important;
+  backdrop-filter:blur(5px)!important;
+}
+#quickBackdrop.backdrop.hidden{display:none!important}
+#quickBackdrop .sheet{
+  position:relative!important;left:auto!important;bottom:auto!important;transform:none!important;
+  width:min(100%,540px)!important;margin:0!important;padding:24px!important;
+  border-radius:28px!important;background:rgba(255,255,255,.98)!important;
+  box-shadow:0 24px 60px rgba(8,34,52,.28)!important;
+}
+#quickBackdrop .sheet h2{margin:0 0 4px!important;font-size:23px!important}
+#quickBackdrop .sheet p{margin:0 0 18px!important;color:#6b7f8f!important}
+#quickBackdrop .quick{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:10px!important}
+#quickBackdrop .quick button{min-height:88px!important;border-radius:18px!important}
+
+/* Mobile receives its own polished background/card treatment */
+@media(max-width:899px){
+  body{background:
+    radial-gradient(circle at 15% 0,rgba(255,194,145,.30),transparent 20rem),
+    radial-gradient(circle at 90% 15%,rgba(92,176,220,.22),transparent 22rem),
+    linear-gradient(160deg,#faf4ed,#eff7fa 48%,#f3f6f9)!important}
+  .app{padding-top:18px!important}
+  .screen>header{padding:12px 14px!important;border-radius:20px!important;background:rgba(255,255,255,.70)!important;
+    box-shadow:0 8px 26px rgba(36,70,95,.07)!important;backdrop-filter:blur(12px)}
+  .vehicle-switch{box-shadow:0 12px 30px rgba(29,70,100,.18)!important}
+  .metric{min-height:105px!important}
+  .bottom{background:rgba(255,255,255,.92)!important;backdrop-filter:blur(18px)!important}
+  .bottom .plus{position:relative!important;z-index:2!important}
+}
+
+/* ============================================================
+   CarLog Ver.0.44 - Full visual rebuild
+   Functional DOM IDs / handlers / storage remain compatible.
+   ============================================================ */
+:root{
+ --cl-navy:#12334d;--cl-navy2:#0b2539;--cl-blue:#2587ee;--cl-sky:#62b8e9;
+ --cl-coral:#ff6d68;--cl-green:#2fba87;--cl-violet:#8063df;--cl-amber:#ffab42;
+ --cl-paper:rgba(255,255,255,.91);--cl-line:rgba(216,229,238,.9);
+ --cl-text:#18354e;--cl-muted:#6b8192;--cl-shadow:0 14px 38px rgba(29,62,86,.12);
+}
+*{box-sizing:border-box}
+html{background:#edf4f7}
+body{
+ color:var(--cl-text)!important;
+ background:linear-gradient(180deg,#d8e9f4 0,#f8e8dc 34%,#edf4f6 68%,#e8f0f4 100%)!important;
+ min-height:100vh;position:relative;overflow-x:hidden;
+}
+.ambient-scene{position:fixed;inset:0 0 auto 0;height:360px;z-index:-2;overflow:hidden;
+ background:linear-gradient(180deg,#b8d9ed 0%,#f8c5a4 58%,#f8dfca 100%)}
+.ambient-sun{position:absolute;width:94px;height:94px;border-radius:50%;right:15%;top:74px;
+ background:radial-gradient(circle,#fff8c8 0,#ffd176 38%,rgba(255,180,92,.15) 70%);box-shadow:0 0 70px rgba(255,188,91,.65)}
+.ambient-mountain{position:absolute;bottom:-60px;width:70%;height:210px;background:#59758a;opacity:.62;clip-path:polygon(0 100%,18% 54%,31% 70%,47% 22%,63% 64%,76% 39%,100% 100%)}
+.ambient-mountain.m1{left:-8%}.ambient-mountain.m2{right:-15%;transform:scaleX(-1);opacity:.36;bottom:-80px}
+.app{position:relative}
+.card{background:var(--cl-paper)!important;border:1px solid rgba(255,255,255,.88)!important;
+ box-shadow:var(--cl-shadow)!important;backdrop-filter:blur(15px);border-radius:22px!important}
+header,.topbar,.screen-head{background:rgba(255,255,255,.82)!important;backdrop-filter:blur(18px);
+ border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 9px 28px rgba(28,61,85,.08)!important}
+.vehicle-switch{background:linear-gradient(115deg,rgba(17,54,82,.96),rgba(44,104,142,.92) 54%,rgba(235,142,107,.93))!important;
+ border:1px solid rgba(255,255,255,.3)!important;box-shadow:0 16px 38px rgba(20,54,80,.22)!important}
+.vehicle-switch strong,.vehicle-switch span,.vehicle-switch small{color:#fff!important}
+.metric{background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(246,251,253,.91))!important;
+ border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 8px 24px rgba(31,70,97,.09)!important;border-radius:20px!important}
+.metric b{color:#123a58!important}
+.primary,.btn-primary{background:linear-gradient(135deg,#288be9,#1769c8)!important;border:0!important;color:#fff!important;
+ box-shadow:0 9px 22px rgba(29,113,201,.24)!important}
+input,select,textarea{background:rgba(255,255,255,.94)!important;border:1.5px solid #d9e5ed!important;border-radius:14px!important}
+input:focus,select:focus,textarea:focus{border-color:#3b8dd1!important;box-shadow:0 0 0 4px rgba(59,141,209,.12)!important}
+.chips button,.tabs button{border-radius:999px!important}
+.bar{background:linear-gradient(180deg,#58b6ed,#267ed7)!important}
+.ad-area{background:rgba(255,255,255,.86)!important;backdrop-filter:blur(10px)}
+#quickBackdrop .sheet{background:rgba(252,254,255,.98)!important}
+#quickBackdrop .quick button:nth-child(1){background:linear-gradient(135deg,#ff7b72,#ff5d60)!important;color:white!important}
+#quickBackdrop .quick button:nth-child(2){background:linear-gradient(135deg,#42c493,#26aa7a)!important;color:white!important}
+#quickBackdrop .quick button:nth-child(3){background:linear-gradient(135deg,#9276ea,#7456d7)!important;color:white!important}
+
+/* Smartphone: compact scenic dashboard */
+@media(max-width:899px){
+ body{padding-bottom:138px!important}
+ .ambient-scene{height:310px}
+ .app{max-width:570px!important;padding:14px!important}
+ #home header{background:transparent!important;border:0!important;box-shadow:none!important;padding:6px 4px 12px!important}
+ #home header h1{font-size:29px!important;color:#12324b!important;letter-spacing:-.5px}
+ #home header p{color:#35566e!important}
+ .vehicle-switch{min-height:166px!important;border-radius:25px!important;padding:20px!important;position:relative;overflow:hidden}
+ .vehicle-switch:after{content:"";position:absolute;inset:auto -15% -55% 22%;height:145px;background:rgba(255,255,255,.08);transform:rotate(-8deg);border-radius:50%}
+ .vehicle-switch .car-thumb{width:112px!important;height:92px!important;border-radius:18px!important;background:rgba(255,255,255,.93)!important;z-index:1}
+ .vehicle-switch strong{font-size:23px!important}
+ #home>.grid{grid-template-columns:repeat(2,1fr)!important;gap:11px!important}
+ #home>.grid .metric{min-height:112px!important;padding:16px!important;text-align:left!important}
+ #home>.grid .metric span{font-size:13px!important}#home>.grid .metric b{font-size:21px!important;margin-top:7px!important}
+ .quick{gap:10px!important}.quick button{border-radius:18px!important}
+ .bottom{background:rgba(250,253,255,.91)!important;border-top:1px solid rgba(255,255,255,.95)!important;
+  backdrop-filter:blur(20px)!important;box-shadow:0 -10px 30px rgba(27,58,80,.13)!important}
+ .bottom .plus{background:linear-gradient(145deg,#328ff0,#176bd0)!important;box-shadow:0 8px 22px rgba(27,107,202,.34)!important}
+ .screen-head{border-radius:20px!important}
+}
+
+/* Desktop: dedicated scenic workspace */
+@media(min-width:900px){
+ body{padding:26px 28px 150px 270px!important}
+ .ambient-scene{height:100vh;background:
+   linear-gradient(90deg,rgba(232,241,246,.28),rgba(246,224,207,.2)),
+   linear-gradient(180deg,#b7d7e9 0,#efc2a5 36%,#dce9ed 74%,#d4e1e7 100%)}
+ .pc-sidebar{left:26px!important;top:26px!important;bottom:26px!important;width:218px!important;
+   background:linear-gradient(180deg,rgba(15,50,76,.97),rgba(6,31,49,.98))!important;
+   border:1px solid rgba(255,255,255,.16)!important;box-shadow:0 22px 52px rgba(12,39,58,.25)!important}
+ .pc-brand img{box-shadow:0 5px 16px rgba(0,0,0,.18)}
+ .app{max-width:1320px!important}
+ #home header{background:rgba(255,255,255,.83)!important}
+ #home .vehicle-switch{min-height:190px!important;padding:30px!important;border-radius:25px!important}
+ #home .vehicle-switch .car-thumb{width:150px!important;height:116px!important}
+ #home .vehicle-switch strong{font-size:34px!important}
+ #home>.grid{grid-template-columns:repeat(4,1fr)!important}
+ #home>.grid .metric{min-height:120px!important;padding:20px!important}
+ .pc-home-actions{gap:16px!important}
+ .pc-home-actions button{min-height:62px!important;border-radius:16px!important;font-size:16px!important}
+ .pc-fuel{background:linear-gradient(135deg,#ff766f,#f9535c)!important}
+ .pc-maint{background:linear-gradient(135deg,#3cc18f,#22a777)!important}
+ .pc-expense{background:linear-gradient(135deg,#9174e7,#7353d3)!important}
+ #historyList,#vehicleList,#vehicleNotesList{gap:16px!important}
+ .screen-head{padding:0 24px!important}
+ #costs>.card:last-child,#driving>.card:last-child{min-height:410px}
+ .bottom{display:none!important}
+ #adDock{left:calc(50% + 120px)!important}
+}
