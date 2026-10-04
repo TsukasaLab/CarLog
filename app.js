@@ -85,7 +85,7 @@ let d=new Date(),y=d.getFullYear(),m=d.getMonth()+1,mc=costs(y,m);monthFuel.text
 let yc=costs(y),elapsed=m;yearTotal.textContent=nf(yc.total)+" 円";yearAvg.textContent=nf(Math.round(yc.total/elapsed))+" 円";let yd=Array.from({length:12},(_,i)=>monthDrive(y,i+1).distance).reduce((a,b)=>a+b,0);yearKm.textContent=nf(Math.round(yd))+" km";perKm.textContent=yd?(yc.total/yd).toFixed(1)+" 円/km":"---";
 if(c.inspectionDate){inspection.textContent=c.inspectionDate.replaceAll("-","/");let days=Math.ceil((new Date(c.inspectionDate+"T00:00:00")-new Date(today()+"T00:00:00"))/86400000);inspectionLeft.textContent=days>=0?"あと "+nf(days)+" 日":"期限切れ"}else{inspection.textContent="未設定";inspectionLeft.textContent=""}
 let oil=maints().filter(r=>["オイル交換","オイル＋フィルター交換"].includes(r.type)).sort((a,b)=>+b.odometer-+a.odometer)[0];if(c.oilInterval){let target=(oil?+oil.odometer:km)+(+c.oilInterval);oilTarget.textContent=nf(target)+" km";let left=target-km;oilLeft.textContent=left>=0?"あと "+nf(left)+" km":nf(Math.abs(left))+" km超過"}else{oilTarget.textContent="未設定";oilLeft.textContent=""}
-let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderReferenceDashboard();renderRecentStable()}
+let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderReferenceDashboard();renderRecentStable();syncHeroMileage();syncApprovedHero()}
 async function renderCarThumb(c){homeCarThumb.innerHTML=vehicleImageMarkup(c.bodyType||"compact-minivan",c.color||"white","home-photo-car");if(c.photoId){let rec=await imageGet(c.photoId);if(rec){let u=URL.createObjectURL(rec.blob);homeCarThumb.innerHTML=`<img src="${u}" onload="URL.revokeObjectURL(this.src)">`}}}
 function allRecords(){let a=[];fuels().forEach(r=>a.push({...r,_kind:"fuel",_title:"給油",_detail:[r.store,r.liters?`${r.liters} L`:""].filter(Boolean).join(" ・ ")}));maints().forEach(r=>a.push({...r,_kind:"maintenance",_title:r.type||"整備・修理",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));expenses().forEach(r=>a.push({...r,_kind:"expense",_title:r.category||"その他支出",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));return a.sort((a,b)=>stamp(b).localeCompare(stamp(a)))}
 function historyHtml(r){return`<div class="recent-row"><div><b>${esc(r._title)}</b><small>${esc(r.date||"")} ${esc(r.time||"")} ${r._detail?"・ "+esc(r._detail):""}</small></div><b>${nf(r.amount)} 円</b></div>`}
@@ -329,4 +329,16 @@ function vehicleAssetPath(bodyType,color){
 function vehicleImageMarkup(bodyType,color,cls=""){
  const p=vehicleAssetPath(bodyType,color);
  return p?`<img class="photo-car ${cls}" src="${p}" alt="">`:carSvg(color,bodyType);
+}
+
+
+function syncHeroMileage(){
+ const el=document.getElementById("heroMileageInline");
+ if(el) el.textContent=nf(currentKm())+" km";
+}
+
+function syncApprovedHero(){
+ const km=nf(currentKm())+" km";
+ const a=document.getElementById("homeKm"); if(a)a.textContent=km;
+ const b=document.getElementById("refTotalKm"); if(b)b.textContent=km;
 }
