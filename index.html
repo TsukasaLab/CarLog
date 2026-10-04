@@ -1,22 +1,20 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest?v=0.58"><link rel="stylesheet" href="style.css?v=0.58">
+<link rel="manifest" href="manifest.webmanifest?v=0.60"><link rel="stylesheet" href="style.css?v=0.60">
 </head><body>
-<div class="version">Ver.0.58 β</div>
+<div class="version">Ver.0.60 β</div>
 <aside class="pc-sidebar" aria-label="PCメニュー">
-  <div class="pc-brand"><img src="icon-192.png" alt=""><div><strong>CarLog</strong><small>Ver.0.58 β</small></div></div>
-  <button onclick="goHome()">⌂ <span>ホーム</span></button>
+  <div class="pc-brand"><span class="brand-car">🚙</span><strong>CarLog</strong></div>
+  <button class="active" onclick="goHome()">⌂ <span>ホーム</span></button>
   <button onclick="openFuel()">⛽ <span>給油記録</span></button>
-  <button onclick="openMaintenance()">🔧 <span>整備・修理</span></button>
-  <button onclick="openExpense()">¥ <span>その他支出</span></button>
-  <div class="pc-sep"></div>
-  <button onclick="openHistory()">▤ <span>記録履歴</span></button>
-  <button onclick="openCosts()">▥ <span>グラフ・統計</span></button>
-  <button onclick="openDriving()">▤ <span>走行データ</span></button>
-  <div class="pc-sep"></div>
-  <button onclick="openVehicleManager()">🚗 <span>車両管理</span></button>
+  <button onclick="openMaintenance()">🔧 <span>整備記録</span></button>
+  <button onclick="openExpense()">▣ <span>その他の支出</span></button>
+  <button onclick="openCosts()">⌁ <span>グラフ・分析</span></button>
+  <button onclick="openVehicleManager()">🚙 <span>車両情報</span></button>
+  <button onclick="openVehicleNotes()">▧ <span>メモ・写真</span></button>
   <button onclick="openSettings()">⚙ <span>設定</span></button>
+  <button onclick="openHelp()">? <span>使い方</span></button>
 </aside><div class="ambient-scene" aria-hidden="true">
   <div class="ambient-sun"></div><div class="ambient-mountain m1"></div><div class="ambient-mountain m2"></div>
 </div>
@@ -27,69 +25,79 @@
  <button class="primary" onclick="createVehicleFromSetup()">この車を登録</button>
 </section>
 
-<section id="home" class="screen hidden">
- <header class="ref-topbar">
-   <div><h1>CarLog</h1><p>愛車との時間を、もっと楽しく。</p></div>
-   <button class="icon" onclick="openSettings()" aria-label="設定">⚙</button>
+<section id="home" class="screen hidden correct-home">
+ <header class="mobile-top">
+   <div class="mobile-brand"><span>🚙</span><b>CarLog</b></div>
+   <button onclick="openSettings()" aria-label="メニュー">☰</button>
  </header>
 
- <section class="ref-hero">
-   <div class="ref-hero-copy">
-     <span class="eyebrow">MY CAR</span>
+ <section class="correct-hero">
+   <div class="correct-hero-copy">
+     <div class="mycar-label">🚙 <span>MY CAR</span></div>
      <h2 id="homeCarName">---</h2>
-     <div><b id="homeMaker"></b><span id="homeCarMeta"></span><div class="hero-mileage-inline">総走行距離 <strong id="heroMileageInline">0 km</strong></div></div>
-     <button class="ref-change" onclick="openVehicleManager()">車両を変更 ›</button>
+     <div class="car-meta"><b id="homeMaker"></b><span id="homeCarMeta"></span></div>
+     <button class="change-vehicle" onclick="openVehicleManager()">車両を変更 ›</button>
    </div>
-   <div id="homeCarThumb" class="ref-car-visual car-thumb">🚗</div>
-   <div class="hero-km"><span>総走行距離</span><strong id="homeKm">0 km</strong></div>
+   <div id="homeCarThumb" class="correct-car-visual">🚗</div>
+   <div class="correct-mileage"><span>総走行距離</span><strong id="homeKm">0 km</strong></div>
  </section>
 
- <section class="ref-stats">
-   <button class="ref-stat fuel" onclick="openDriving('economy')"><span class="stat-icon">⛽</span><div><small>最新の燃費</small><b id="latestEco">記録なし</b><em id="demoEcoSub">直近の給油から</em></div></button>
-   <button class="ref-stat road" onclick="openDriving('distance')"><span class="stat-icon">🛣</span><div><small>総走行距離</small><b id="refTotalKm">0 km</b><em id="demoKmSub">現在の走行距離</em></div></button>
-   <button class="ref-stat cost" onclick="openCosts('total')"><span class="stat-icon">¥</span><div><small>今月の維持費</small><b id="monthTotal">0 円</b><em>給油・整備・その他</em></div></button>
-   <button class="ref-stat maint" onclick="openMaintenance()"><span class="stat-icon">▣</span><div><small>次のメンテナンス</small><b id="refNextMaint">オイル交換</b><em id="oilLeft">未設定</em></div></button>
+ <section class="correct-stats">
+   <button class="correct-stat fuel" onclick="openCosts('fuel')"><span class="stat-ico">⛽</span><div><small>今月のガソリン代</small><b id="dashFuel">0 円</b><em id="dashFuelDiff"></em></div></button>
+   <button class="correct-stat maint" onclick="openCosts('maint')"><span class="stat-ico">🔧</span><div><small>今月の整備代</small><b id="dashMaint">0 円</b><em id="dashMaintDiff"></em></div></button>
+   <button class="correct-stat other" onclick="openCosts('other')"><span class="stat-ico">▣</span><div><small>今月のその他</small><b id="dashOther">0 円</b><em id="dashOtherDiff"></em></div></button>
+   <button class="correct-stat total" onclick="openCosts('total')"><span class="stat-ico">◔</span><div><small>今月の合計</small><b id="dashTotal">0 円</b><em id="dashTotalDiff"></em></div></button>
  </section>
 
- <section class="ref-actions">
-   <button class="ref-action fuel" onclick="openFuel()">⛽ <span>給油記録を追加</span></button>
-   <button class="ref-action maintenance" onclick="openMaintenance()">🔧 <span>整備記録を追加</span></button>
-   <button class="ref-action expense" onclick="openExpense()">▤ <span>その他の記録を追加</span></button>
+ <section class="correct-grid">
+   <article class="correct-card monthly-card">
+    <div class="correct-card-head"><h3>月別の支出</h3><button onclick="openCosts()">›</button></div>
+    <div class="chart-legend"><span class="fuel-dot">● ガソリン</span><span class="maint-dot">● 整備</span><span class="other-dot">● その他</span></div>
+    <div id="dashMonthBars" class="dash-month-bars"></div>
+   </article>
+
+   <article class="correct-card breakdown-card">
+    <div class="correct-card-head"><h3>支出の内訳（今月）</h3><button onclick="openCosts('total')">›</button></div>
+    <div class="breakdown-body">
+      <div id="dashDonut" class="dash-donut"><span>合計<b id="dashDonutTotal">0 円</b></span></div>
+      <div class="dash-legend">
+       <div><i class="fuel"></i><span>ガソリン</span><b id="dashFuelLegend">0 円</b></div>
+       <div><i class="maint"></i><span>整備</span><b id="dashMaintLegend">0 円</b></div>
+       <div><i class="other"></i><span>その他</span><b id="dashOtherLegend">0 円</b></div>
+      </div>
+    </div>
+   </article>
+
+   <article class="correct-card recent-card">
+    <div class="correct-card-head"><h3>最近の記録</h3><button class="see-all" onclick="openHistory()">すべて見る ›</button></div>
+    <div id="recent"></div>
+   </article>
+
+   <article class="correct-card vehicle-card">
+    <div class="correct-card-head"><h3>車両情報</h3><button class="edit-link" onclick="openVehicleManager()">✎ 編集</button></div>
+    <div class="vehicle-card-body">
+      <dl>
+       <div><dt>メーカー</dt><dd id="dashMaker">---</dd></div>
+       <div><dt>車名</dt><dd id="dashCarName">---</dd></div>
+       <div><dt>型式</dt><dd id="dashModel">---</dd></div>
+       <div><dt>カラー</dt><dd id="dashColor">---</dd></div>
+      </dl>
+      <div id="dashVehicleThumb" class="dash-vehicle-thumb"></div>
+    </div>
+   </article>
  </section>
 
- <section class="ref-dashboard">
-   <article class="card ref-panel recent-panel">
-     <div class="card-head"><h3>最近の記録</h3><button class="link" onclick="openHistory()">すべて見る ›</button></div>
-     <div id="recent"></div>
-   </article>
-   <article class="card ref-panel chart-panel">
-     <div class="card-head"><h3>燃費の推移</h3><button class="link" onclick="openDriving('economy')">すべて見る ›</button></div>
-     <div id="refEcoChart" class="ref-line-chart"></div>
-   </article>
-   <article class="card ref-panel">
-     <div class="card-head"><h3>今月の費用内訳</h3><button class="link" onclick="openCosts('total')">すべて見る ›</button></div>
-     <div class="ref-cost-body"><div id="refDonut" class="ref-donut"><span>合計<b id="refDonutTotal">0円</b></span></div>
-       <div class="ref-legend"><div><i class="lg-fuel"></i>給油 <b id="refFuelCost">0円</b></div><div><i class="lg-maint"></i>整備 <b id="refMaintCost">0円</b></div><div><i class="lg-other"></i>その他 <b id="refOtherCost">0円</b></div></div>
-     </div>
-   </article>
-   <article class="card ref-panel">
-     <div class="card-head"><h3>年間の維持費</h3><button class="link" onclick="openCosts('total')">すべて見る ›</button></div>
-     <div id="refYearBars" class="ref-year-bars"></div>
-   </article>
- </section>
-
- <!-- compatibility values retained for existing calculations -->
  <div class="compat-values" aria-hidden="true">
-  <span id="monthFuel">0 円</span><span id="monthKm">0 km</span>
+  <span id="latestEco">記録なし</span><span id="refTotalKm">0 km</span><span id="monthFuel">0 円</span><span id="monthTotal">0 円</span><span id="monthKm">0 km</span>
   <span id="yearTotal">0 円</span><span id="yearAvg">0 円</span><span id="yearKm">0 km</span><span id="perKm">---</span>
-  <span id="inspection">未設定</span><span id="inspectionLeft"></span><span id="oilTarget">未設定</span>
-  <div id="homeMemos"></div>
+  <span id="inspection">未設定</span><span id="inspectionLeft"></span><span id="oilTarget">未設定</span><span id="oilLeft"></span>
+  <span id="refNextMaint"></span><span id="refDonut"></span><span id="refDonutTotal"></span><span id="refFuelCost"></span><span id="refMaintCost"></span><span id="refOtherCost"></span>
+  <div id="refEcoChart"></div><div id="refYearBars"></div><div id="homeMemos"></div><span id="heroMileageInline"></span>
  </div>
- <p class="privacy">🔒 データはこの端末内に保存されます。</p>
 </section>
 
 <section id="fuel" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2 id="fuelTitle">給油を記録</h2><span></span></div>
- <div class="card form"><label>給油日<input id="fuelDate" type="date" onchange="showSameDay('fuel')"></label><label>時刻<input id="fuelCount" type="number" min="1" inputmode="numeric" placeholder="○回目"></label><div id="fuelSameDay"></div><label>走行距離（km）<input id="fuelKm" type="number"></label><label>給油量（L）<input id="fuelLiters" type="number" step="0.01"></label><label>店名<select id="fuelStoreSelect" onchange="chooseStore('fuel')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="fuelStore" class="store-input" placeholder="店名を入力"></label><label>支払金額（円）<input id="fuelAmount" type="number"></label><label class="check"><input id="fuelFull" type="checkbox" checked>満タン給油</label></div>
+ <div class="card form"><label>給油日<input id="fuelDate" type="date" onchange="showSameDay('fuel')"></label><label>同日給油の回数<input id="fuelCount" type="number" min="1" inputmode="numeric" placeholder="○回目"></label><div id="fuelSameDay"></div><label>走行距離（km）<input id="fuelKm" type="number"></label><label>給油量（L）<input id="fuelLiters" type="number" step="0.01"></label><label>店名<select id="fuelStoreSelect" onchange="chooseStore('fuel')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="fuelStore" class="store-input" placeholder="店名を入力"></label><label>支払金額（円）<input id="fuelAmount" type="number"></label><label class="check"><input id="fuelFull" type="checkbox" checked>満タン給油</label></div>
  <button class="primary" id="fuelSave" onclick="saveFuel()">登録</button><button id="fuelDelete" class="danger hidden" onclick="deleteCurrent('fuel')">この記録を削除</button><button onclick="goHome()">キャンセル</button>
 </section>
 
@@ -161,7 +169,7 @@
  <button class="card menu" onclick="openVehicleManager()">🚗 車両の追加・切替・編集 <span>›</span></button>
  <button class="card menu" onclick="openDriving()">📊 走行データ <span>›</span></button><button class="card menu" onclick="openHelp()">📖 使い方 <span>›</span></button>
 <div class="card"><h3>データ管理</h3><p class="help">データはこのブラウザ内に保存されます。機種変更やブラウザデータ削除に備えてバックアップしてください。</p><div class="storage"><span>CarLog使用容量</span><b id="storageTotal">計算中...</b><small id="storageDetail"></small></div><button onclick="exportBackup(false)">データのみバックアップ</button><button onclick="exportBackup(true)">写真込み完全バックアップ</button><button onclick="document.getElementById('importFile').click()">バックアップから復元</button><input class="hidden" id="importFile" type="file" accept=".json" onchange="importBackup(event)"><button onclick="exportCSV()">CSVを書き出す</button></div>
- <div class="about"><b>CarLog Ver.0.58 β</b><span>ローカル保存・公開β</span></div>
+ <div class="about"><b>CarLog Ver.0.60 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
 <section id="help" class="screen hidden"><div class="screen-head"><button onclick="openSettings()">‹</button><h2>使い方</h2><span></span></div>
@@ -187,8 +195,14 @@
     <!-- admax -->
   </div>
 </div>
-<nav id="bottomNav" class="bottom hidden"><button onclick="goHome()">⌂<span>ホーム</span></button><button onclick="openFuel()">⛽<span>給油</span></button><button class="plus" onclick="openQuick()">＋</button><button onclick="openCosts()">¥<span>維持費</span></button><button onclick="openSettings()">⚙<span>設定</span></button></nav>
+<nav id="bottomNav" class="bottom hidden">
+<button onclick="goHome()">⌂<span>ホーム</span></button>
+<button onclick="openFuel()">⛽<span>給油</span></button>
+<button onclick="openMaintenance()">🔧<span>整備</span></button>
+<button onclick="openExpense()">▣<span>その他</span></button>
+<button onclick="openCosts()">⌁<span>グラフ</span></button>
+</nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.58"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.58",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.60"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.60",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>
