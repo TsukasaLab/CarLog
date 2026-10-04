@@ -207,3 +207,107 @@ h3{font-size:18px;margin-top:4px}.card h3{letter-spacing:-.2px}
 }
 /* Accessibility: keep controls generous on both layouts */
 button,input,select,textarea{min-height:48px}
+
+/* =========================================================
+   CarLog Ver.0.42
+   Dedicated PC layout. Mobile and PC intentionally use
+   different navigation/layout while sharing the same functions.
+   ========================================================= */
+.pc-sidebar,.pc-home-actions{display:none}
+
+/* Smartphone/tablet route */
+@media (max-width:899px){
+  body{padding:0 0 138px!important}
+  .pc-sidebar{display:none!important}
+  .app{max-width:560px!important;margin:0 auto!important;padding:14px!important}
+  .bottom{display:flex!important;position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:0!important;
+    transform:translateX(-50%)!important;width:min(100%,560px)!important;height:auto!important;padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+    flex-direction:row!important;align-items:center!important;justify-content:space-around!important;border-radius:22px 22px 0 0!important}
+  .bottom.hidden{display:none!important}
+  .bottom button{width:auto!important;margin:0!important;justify-content:center!important}
+  .bottom .plus{margin:-25px 0 0!important}
+}
+
+/* True desktop route */
+@media (min-width:900px){
+  html{min-width:900px}
+  body{padding:24px 24px 150px 264px!important;background:#eef3f8!important}
+  .pc-sidebar{
+    display:flex!important;position:fixed;z-index:100;left:24px;top:24px;bottom:24px;width:216px;
+    padding:18px 12px;box-sizing:border-box;flex-direction:column;gap:5px;
+    background:linear-gradient(180deg,#123652 0%,#08263d 100%);border-radius:24px;
+    box-shadow:0 18px 45px rgba(18,52,82,.22);color:#fff
+  }
+  .pc-brand{display:flex;align-items:center;gap:11px;padding:4px 8px 20px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.16)}
+  .pc-brand img{width:48px;height:48px;border-radius:13px;object-fit:cover}
+  .pc-brand strong{display:block;color:#fff;font-size:21px}.pc-brand small{display:block;color:#bdd0df!important;margin-top:2px}
+  .pc-sidebar button{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:0 14px!important;margin:0!important;
+    color:#e7f0f7!important;background:transparent!important;border:0!important;border-radius:12px!important;font-size:15px!important;text-align:left}
+  .pc-sidebar button:hover{background:rgba(255,255,255,.11)!important;color:#fff!important}
+  .pc-sidebar button:first-of-type{background:#247ce4!important;color:#fff!important}
+  .pc-sep{height:1px;background:rgba(255,255,255,.14);margin:9px 8px}
+
+  .app{max-width:1260px!important;width:100%!important;margin:0 auto!important;padding:0!important}
+  .version{position:fixed!important;right:34px!important;top:30px!important;z-index:80}
+  .screen{width:100%!important}
+  #home header{min-height:70px!important;padding:0 22px!important;margin:0 0 16px!important;border-radius:20px!important}
+  #home header h1{font-size:26px!important;margin-bottom:1px!important}
+  #home header p{margin:0!important}
+  .screen-head{min-height:70px!important;padding:0 20px!important;margin-bottom:16px!important;background:#fff!important;border-radius:20px!important;
+    box-shadow:0 8px 24px rgba(34,68,104,.07)!important}
+  .screen-head h2{font-size:24px!important}
+
+  #home .vehicle-switch{width:100%!important;min-height:150px!important;padding:24px!important;border-radius:22px!important;
+    background:linear-gradient(115deg,#244d73 0%,#55799a 45%,#ef9f75 100%)!important;color:#fff!important;
+    box-shadow:0 12px 28px rgba(37,70,101,.16)!important}
+  #home .vehicle-switch .car-thumb{width:112px!important;height:92px!important;border-radius:18px!important;background:rgba(255,255,255,.9)!important}
+  #home .vehicle-switch .car-main{align-items:flex-start!important}
+  #home .vehicle-switch strong{font-size:30px!important;color:#fff!important}
+  #home .vehicle-switch span,#home .vehicle-switch small{color:#f4f8fb!important}
+  #home .hero-km{position:absolute!important;right:48px!important;margin-top:-110px!important;z-index:2!important;color:#fff!important;text-align:right!important;
+    background:rgba(6,35,59,.30)!important;padding:13px 18px!important;border-radius:16px!important}
+  #home .hero-km span,#home .hero-km strong{color:#fff!important}
+
+  .pc-home-actions{display:grid!important;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}
+  .pc-home-actions button{min-height:58px!important;color:#fff!important;border:0!important;font-size:16px!important;box-shadow:0 7px 18px rgba(40,70,100,.10)}
+  .pc-fuel{background:linear-gradient(135deg,#ff706d,#ff5b5f)!important}
+  .pc-maint{background:linear-gradient(135deg,#36bd8a,#24a977)!important}
+  .pc-expense{background:linear-gradient(135deg,#8b67e8,#7653d9)!important}
+
+  #home>h3{margin:18px 2px 10px!important;font-size:18px!important}
+  #home>.grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+  #home>.grid .metric{min-height:112px!important;text-align:left!important;padding:20px!important}
+  #home>.grid .metric span{font-size:14px!important}#home>.grid .metric b{font-size:23px!important;margin-top:8px!important}
+  #home>.card{padding:22px!important}
+  #home>.card:nth-of-type(n+1){margin-top:16px!important}
+  #home .annual{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+
+  /* Form pages become wide two-column workspaces */
+  #fuel .form,#maintenance .form,#expense .form,#vehicleEdit .form{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px 22px!important;padding:26px!important
+  }
+  #fuel .form>div,#maintenance .form>div,#expense .form>div,.photo-editor{grid-column:1/-1}
+  #fuel>.primary,#maintenance>.primary,#expense>.primary,#vehicleEdit>.primary{width:260px!important;margin-right:10px!important}
+  textarea{min-height:112px!important}
+
+  /* History / settings / vehicle pages use the available width */
+  #historyList,#vehicleList,#vehicleNotesList{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+  #settings>.card,#help>.card{max-width:none!important}
+  #settings{display:block!important}
+  #settings .menu{width:calc(50% - 8px)!important;display:inline-flex!important;margin-right:8px!important;vertical-align:top!important}
+  #help{column-count:2;column-gap:18px}
+  #help .screen-head{column-span:all}
+  #help .card{break-inside:avoid;margin-top:0!important;margin-bottom:18px!important}
+
+  /* Charts: broad cards, no phone-like narrow column */
+  #costs>.grid,#driving>.grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+  #driving>.grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .bars{min-height:300px!important}
+  #costs>.card:last-child,#driving>.card:last-child{padding:26px!important}
+
+  /* Mobile bottom nav is not reused as a desktop sidebar */
+  .bottom{display:none!important}
+  .bottom.hidden{display:none!important}
+  .sheet{max-width:520px!important;left:50%!important;transform:translateX(-50%)!important}
+  #adDock{left:calc(50% + 120px)!important;transform:translateX(-50%)!important}
+}

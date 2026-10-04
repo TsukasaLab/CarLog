@@ -1,10 +1,23 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css?v=0.41">
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css?v=0.42">
 </head><body>
-<div class="version">Ver.0.41 β</div>
-<main class="app">
+<div class="version">Ver.0.42 β</div>
+<aside class="pc-sidebar" aria-label="PCメニュー">
+  <div class="pc-brand"><img src="icon-192.png" alt=""><div><strong>CarLog</strong><small>Ver.0.42 β</small></div></div>
+  <button onclick="goHome()">⌂ <span>ホーム</span></button>
+  <button onclick="openFuel()">⛽ <span>給油記録</span></button>
+  <button onclick="openMaintenance()">🔧 <span>整備・修理</span></button>
+  <button onclick="openExpense()">¥ <span>その他支出</span></button>
+  <div class="pc-sep"></div>
+  <button onclick="openHistory()">▤ <span>記録履歴</span></button>
+  <button onclick="openCosts()">▥ <span>維持費</span></button>
+  <button onclick="openDriving()">▥ <span>走行データ</span></button>
+  <div class="pc-sep"></div>
+  <button onclick="openVehicleManager()">🚗 <span>車両管理</span></button>
+  <button onclick="openSettings()">⚙ <span>設定</span></button>
+</aside><main class="app">
 <section id="setup" class="screen hidden">
  <div class="brand"><b>C</b><div><h1>CarLog</h1><p>愛車のお金とメンテを、ひとつに。</p></div></div>
  <div class="card form"><label>車両名<input id="setupName" placeholder="例）フリード"></label><label>メーカー<input id="setupMaker" placeholder="例）Honda"></label><label>現在走行距離（km）<input id="setupKm" type="number"></label><label>車検満了日<input id="setupInspection" type="date"></label><label>オイル交換周期（km）<input id="setupOil" type="number" value="5000"></label></div>
@@ -15,6 +28,11 @@
  <header><div><h1>CarLog</h1><p>愛車のお金とメンテを、ひとつに。</p></div><button class="icon" onclick="openSettings()">⚙</button></header>
  <button class="vehicle-switch" onclick="openVehicleManager()"><div id="homeCarThumb" class="car-thumb">🚗</div><div class="car-main"><small>MY CAR</small><strong id="homeCarName">---</strong><span id="homeMaker"></span><small id="homeCarMeta"></small></div><span>切替 ›</span></button>
  <div class="hero-km"><span>現在走行距離</span><strong id="homeKm">0 km</strong></div>
+ <div class="pc-home-actions">
+   <button class="pc-fuel" onclick="openFuel()">⛽ 給油記録を追加</button>
+   <button class="pc-maint" onclick="openMaintenance()">🔧 整備記録を追加</button>
+   <button class="pc-expense" onclick="openExpense()">▤ その他の支出を追加</button>
+ </div>
  <h3>今月の状況</h3><div class="grid"><button class="card metric metric-btn" onclick="openCosts('fuel')"><span>ガソリン代</span><b id="monthFuel">0 円</b></button><button class="card metric metric-btn" onclick="openDriving('distance')"><span>走行距離</span><b id="monthKm">0 km</b></button><button class="card metric metric-btn" onclick="openDriving('economy')"><span>直近燃費</span><b id="latestEco">記録なし</b></button><button class="card metric metric-btn" onclick="openCosts('total')"><span>維持費</span><b id="monthTotal">0 円</b></button></div>
  <div class="card"><h3>今年のカーライフ</h3><div class="grid annual"><div><span>年間支出</span><b id="yearTotal">0 円</b></div><div><span>月平均</span><b id="yearAvg">0 円</b></div><div><span>年間走行</span><b id="yearKm">0 km</b></div><div><span>1kmあたり</span><b id="perKm">---</b></div></div></div>
  <div class="card"><h3>メンテナンス</h3><div class="row"><span>車検満了</span><div><b id="inspection">未設定</b><small id="inspectionLeft"></small></div></div><div class="row"><span>オイル交換</span><div><b id="oilTarget">未設定</b><small id="oilLeft"></small></div></div></div>
@@ -70,7 +88,7 @@
  <button class="card menu" onclick="openVehicleManager()">🚗 車両の追加・切替・編集 <span>›</span></button>
  <button class="card menu" onclick="openDriving()">📊 走行データ <span>›</span></button><button class="card menu" onclick="openHelp()">📖 使い方 <span>›</span></button>
 <div class="card"><h3>データ管理</h3><p class="help">データはこのブラウザ内に保存されます。機種変更やブラウザデータ削除に備えてバックアップしてください。</p><div class="storage"><span>CarLog使用容量</span><b id="storageTotal">計算中...</b><small id="storageDetail"></small></div><button onclick="exportBackup(false)">データのみバックアップ</button><button onclick="exportBackup(true)">写真込み完全バックアップ</button><button onclick="document.getElementById('importFile').click()">バックアップから復元</button><input class="hidden" id="importFile" type="file" accept=".json" onchange="importBackup(event)"><button onclick="exportCSV()">CSVを書き出す</button></div>
- <div class="about"><b>CarLog Ver.0.41 β</b><span>ローカル保存・公開β</span></div>
+ <div class="about"><b>CarLog Ver.0.42 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
 <section id="help" class="screen hidden"><div class="screen-head"><button onclick="openSettings()">‹</button><h2>使い方</h2><span></span></div>
@@ -98,6 +116,6 @@
 </div>
 <nav id="bottomNav" class="bottom hidden"><button onclick="goHome()">⌂<span>ホーム</span></button><button onclick="openFuel()">⛽<span>給油</span></button><button class="plus" onclick="openQuick()">＋</button><button onclick="openCosts()">¥<span>維持費</span></button><button onclick="openSettings()">⚙<span>設定</span></button></nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.41"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.41",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.42"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.42",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>
