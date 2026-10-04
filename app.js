@@ -72,7 +72,20 @@ function stamp(r){
  const n=Number(r?.count||0);
  return d+(n>0?`（${n}回目）`:"");
 }
-function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");let hide=id==="setup";bottomNav.classList.toggle("hidden",hide);adDock.classList.toggle("hidden-ad",hide)}
+function show(id){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.add("hidden"));
+ const target=document.getElementById(id);
+ if(target)target.classList.remove("hidden");
+ document.body.dataset.screen=id;
+ let hide=id==="setup";
+ bottomNav.classList.toggle("hidden",hide);
+ adDock.classList.toggle("hidden-ad",hide);
+ document.querySelectorAll(".pc-sidebar button").forEach(b=>b.classList.remove("active"));
+ const map={home:0,fuel:1,maintenance:2,expense:3,history:4,costs:5,driving:6,vehicles:7,vehicleEdit:7,vehicleNotes:7,settings:8,help:8};
+ const buttons=document.querySelectorAll(".pc-sidebar button");
+ if(map[id]!=null&&buttons[map[id]])buttons[map[id]].classList.add("active");
+ window.scrollTo(0,0);
+}
 document.addEventListener("DOMContentLoaded",()=>{migrate();refreshStoreNames();car()?goHome():show("setup")});
 
 function currentKm(){let c=car();return Math.max(Number(c?.odometer)||0,...fuels().map(r=>+r.odometer||0),...maints().map(r=>+r.odometer||0))}
@@ -134,7 +147,7 @@ function openImage(url){let w=window.open();if(w)w.document.write(`<meta name="v
 
 function renderHomeMemos(c){let ms=(c.memos||[]).slice(0,3);homeMemos.innerHTML=ms.length?ms.map(m=>`<button class="memo-home-row" onclick="openVehicleNotes()"><b>${esc(m.title||"無題")}</b><span>${esc((m.content||"").slice(0,70))}</span></button>`).join(""):'<p class="help">車両メモはまだありません。</p>'}
 async function openVehicleNotes(){show("vehicleNotes");let c=car(),ms=c?.memos||[];vehicleNotesList.innerHTML=ms.length?ms.map(m=>`<div class="card note-view"><h3>${esc(m.title||"無題")}</h3><div class="note-content">${esc(m.content||"").replace(/\n/g,"<br>")}</div><div id="viewphotos_${m.id}" class="photo-grid"></div></div>`).join(""):'<div class="card">車両メモはありません。</div>';for(let m of ms){let el=document.getElementById("viewphotos_"+m.id);for(let pid of m.photos||[]){let rec=await imageGet(pid);if(!rec)continue;let u=URL.createObjectURL(rec.blob),img=document.createElement("img");img.src=u;img.className="note-photo";img.onclick=()=>openImage(u);el.appendChild(img)}}}
-function openSettings(){show("settings");updateStorage()}function openHelp(){show("help")}
+function openSettings(){show("settings");updateStorage()}function openHelp(){show("settings");updateStorage();setTimeout(()=>document.getElementById("settingsHelp")?.scrollIntoView({behavior:"smooth",block:"start"}),50)}
 function openQuick(){quickBackdrop.classList.remove("hidden")}function closeQuick(e){if(e&&e.target!==quickBackdrop)return;quickBackdrop.classList.add("hidden")}
 
 function idb(){return new Promise((res,rej)=>{let q=indexedDB.open("CarLogDB",1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains("images"))q.result.createObjectStore("images",{keyPath:"id"})};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
@@ -367,7 +380,4 @@ function renderCorrectDashboard(c){
    return `<div class="dm"><div class="dm-stack"><i class="o" style="height:${oh}%"></i><i class="m" style="height:${mh}%"></i><i class="f" style="height:${fh}%"></i></div><small>${i+1}</small></div>`
  }).join("");
  set("dashMaker",c.maker||"---");set("dashCarName",c.name||"---");set("dashModel",c.model||"---");set("dashColor",COLOR_LABELS[c.color]||c.color||"---");
- const vt=document.getElementById("dashVehicleThumb");
- if(vt)vt.innerHTML=vehicleImageMarkup(c.bodyType||"compact-minivan",c.color||"white","dash-car-img");
- if(c.photoId&&vt){imageGet(c.photoId).then(rec=>{if(rec){const u=URL.createObjectURL(rec.blob);vt.innerHTML=`<img src="${u}" onload="URL.revokeObjectURL(this.src)">`}})}
-}
+ }
