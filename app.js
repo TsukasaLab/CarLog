@@ -1,39 +1,43 @@
-
-/* Ver.0.45 temporary demo seed: only runs on a completely empty install */
-(function seedCarLogDemo(){
-  try{
-    const hasAny =
-      localStorage.getItem("carlog_vehicle") ||
-      localStorage.getItem("carlog_vehicles") ||
-      localStorage.getItem("fuelRecords") ||
-      localStorage.getItem("carlog_maintenance") ||
-      localStorage.getItem("carlog_expenses");
-    if(hasAny) return;
-    const vid="demo-freed";
-    const vehicle={id:vid,name:"Honda FREED",maker:"Honda",model:"GP3",year:"2014",color:"ホワイト",
-      odometer:38842,inspectionDate:"2027-06-15",oilInterval:5000,plate:"",photoId:null,memos:[]};
-    localStorage.setItem("carlog_vehicle",JSON.stringify(vehicle));
-    localStorage.setItem("carlog_vehicles",JSON.stringify([vehicle]));
-    localStorage.setItem("carlog_active_vehicle",vid);
-    const fuel=[
-      {id:"df1",vehicleId:vid,date:"2026-09-20",time:"15:30",odometer:38842,liters:39.6,store:"ENEOS",amount:6280,fullTank:true,distance:626,fuelEconomy:15.8,pricePerLiter:158.6,createdAt:"2026-09-20T15:30:00"},
-      {id:"df2",vehicleId:vid,date:"2026-08-20",time:"16:10",odometer:38216,liters:40.2,store:"コスモ石油",amount:6650,fullTank:true,distance:647,fuelEconomy:16.1,pricePerLiter:165.4,createdAt:"2026-08-20T16:10:00"},
-      {id:"df3",vehicleId:vid,date:"2026-07-18",time:"11:20",odometer:37569,liters:38.8,store:"ENEOS",amount:6360,fullTank:true,distance:605,fuelEconomy:15.6,pricePerLiter:163.9,createdAt:"2026-07-18T11:20:00"}
-    ];
-    const maint=[
-      {id:"dm1",vehicleId:vid,date:"2026-09-12",time:"10:00",type:"オイル交換",odometer:38620,amount:4800,store:"カーショップ",memo:"エンジンオイル交換"},
-      {id:"dm2",vehicleId:vid,date:"2026-08-28",time:"13:00",type:"タイヤ交換",odometer:37100,amount:28400,store:"タイヤショップ",memo:"後輪2本交換"}
-    ];
-    const exp=[
-      {id:"de1",vehicleId:vid,date:"2026-09-05",time:"14:00",category:"洗車",amount:1200,store:"洗車場",memo:"手洗い洗車"},
-      {id:"de2",vehicleId:vid,date:"2026-08-10",time:"09:00",category:"その他",amount:1400,store:"",memo:"車用品"}
-    ];
-    localStorage.setItem("fuelRecords",JSON.stringify(fuel));
-    localStorage.setItem("carlog_maintenance",JSON.stringify(maint));
-    localStorage.setItem("carlog_expenses",JSON.stringify(exp));
-    localStorage.setItem("carlog_demo_seed_v045","1");
-  }catch(e){console.warn("demo seed skipped",e)}
+/* Ver.0.50 temporary showcase data.
+   It is inserted only when there are no fuel/maintenance/expense records. */
+(function seedShowcaseData(){
+ try{
+  const parse=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
+  const existing=[...parse("fuelRecords"),...parse("carlog_maintenance"),...parse("carlog_expenses")];
+  if(existing.length) return;
+  let vs=parse("carlog_vehicles");
+  let v=vs[0];
+  if(!v){
+    v={id:"demo-freed",name:"Honda FREED",maker:"Honda",model:"GP3",year:"2014",color:"white",
+       odometer:38842,inspectionDate:"2027-06-15",oilInterval:5000,plate:"",photoId:null,memos:[]};
+    vs=[v]; localStorage.setItem("carlog_vehicles",JSON.stringify(vs)); localStorage.setItem("carlog_vehicle",JSON.stringify(v));
+  }else{
+    v.odometer=Math.max(+v.odometer||0,38842);
+    if(!v.model)v.model="GP3"; if(!v.color)v.color="white"; if(!v.oilInterval)v.oilInterval=5000;
+    localStorage.setItem("carlog_vehicles",JSON.stringify(vs)); localStorage.setItem("carlog_vehicle",JSON.stringify(v));
+  }
+  localStorage.setItem("carlog_active_vehicle",v.id);
+  const vid=v.id;
+  localStorage.setItem("fuelRecords",JSON.stringify([
+   {id:"show-f1",vehicleId:vid,date:"2026-09-20",time:"15:30",odometer:38842,liters:39.6,store:"ENEOS",amount:6280,fullTank:true,distance:626,fuelEconomy:15.8,pricePerLiter:158.6,createdAt:"2026-09-20T15:30:00"},
+   {id:"show-f2",vehicleId:vid,date:"2026-08-20",time:"16:10",odometer:38216,liters:40.2,store:"コスモ石油",amount:6650,fullTank:true,distance:647,fuelEconomy:16.1,pricePerLiter:165.4,createdAt:"2026-08-20T16:10:00"},
+   {id:"show-f3",vehicleId:vid,date:"2026-07-18",time:"11:20",odometer:37569,liters:38.8,store:"ENEOS",amount:6360,fullTank:true,distance:605,fuelEconomy:15.6,pricePerLiter:163.9,createdAt:"2026-07-18T11:20:00"},
+   {id:"show-f4",vehicleId:vid,date:"2026-06-16",time:"17:05",odometer:36964,liters:39.1,store:"apollostation",amount:6250,fullTank:true,distance:594,fuelEconomy:15.2,pricePerLiter:159.8,createdAt:"2026-06-16T17:05:00"},
+   {id:"show-f5",vehicleId:vid,date:"2026-05-15",time:"12:10",odometer:36370,liters:38.2,store:"ENEOS",amount:6110,fullTank:true,distance:607,fuelEconomy:15.9,pricePerLiter:159.9,createdAt:"2026-05-15T12:10:00"}
+  ]));
+  localStorage.setItem("carlog_maintenance",JSON.stringify([
+   {id:"show-m1",vehicleId:vid,date:"2026-09-12",time:"10:00",type:"オイル交換",odometer:38620,amount:4800,store:"カーショップ",memo:"エンジンオイル交換"},
+   {id:"show-m2",vehicleId:vid,date:"2026-08-28",time:"13:00",type:"タイヤ交換",odometer:37100,amount:28400,store:"タイヤショップ",memo:"後輪2本交換"}
+  ]));
+  localStorage.setItem("carlog_expenses",JSON.stringify([
+   {id:"show-e1",vehicleId:vid,date:"2026-09-05",time:"14:00",category:"洗車",amount:1200,store:"洗車場",memo:"手洗い洗車"},
+   {id:"show-e2",vehicleId:vid,date:"2026-08-10",time:"09:00",category:"用品",amount:1400,store:"カー用品店",memo:"車用品"}
+  ]));
+  localStorage.setItem("carlog_showcase_v050","1");
+ }catch(e){console.warn("showcase seed skipped",e)}
 })();
+
+
 
 const KEY={vehicles:"carlog_vehicles",active:"carlog_active_vehicle",legacy:"carlog_vehicle",fuel:"fuelRecords",maint:"carlog_maintenance",expense:"carlog_expenses"};
 const load=(k,d)=>{try{let v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
@@ -63,7 +67,7 @@ let d=new Date(),y=d.getFullYear(),m=d.getMonth()+1,mc=costs(y,m);monthFuel.text
 let yc=costs(y),elapsed=m;yearTotal.textContent=nf(yc.total)+" 円";yearAvg.textContent=nf(Math.round(yc.total/elapsed))+" 円";let yd=Array.from({length:12},(_,i)=>monthDrive(y,i+1).distance).reduce((a,b)=>a+b,0);yearKm.textContent=nf(Math.round(yd))+" km";perKm.textContent=yd?(yc.total/yd).toFixed(1)+" 円/km":"---";
 if(c.inspectionDate){inspection.textContent=c.inspectionDate.replaceAll("-","/");let days=Math.ceil((new Date(c.inspectionDate+"T00:00:00")-new Date(today()+"T00:00:00"))/86400000);inspectionLeft.textContent=days>=0?"あと "+nf(days)+" 日":"期限切れ"}else{inspection.textContent="未設定";inspectionLeft.textContent=""}
 let oil=maints().filter(r=>["オイル交換","オイル＋フィルター交換"].includes(r.type)).sort((a,b)=>+b.odometer-+a.odometer)[0];if(c.oilInterval){let target=(oil?+oil.odometer:km)+(+c.oilInterval);oilTarget.textContent=nf(target)+" km";let left=target-km;oilLeft.textContent=left>=0?"あと "+nf(left)+" km":nf(Math.abs(left))+" km超過"}else{oilTarget.textContent="未設定";oilLeft.textContent=""}
-let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c)}
+let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderReferenceDashboard()}
 async function renderCarThumb(c){homeCarThumb.innerHTML=carSvg(c.color);if(c.photoId){let rec=await imageGet(c.photoId);if(rec){let u=URL.createObjectURL(rec.blob);homeCarThumb.innerHTML=`<img src="${u}" onload="URL.revokeObjectURL(this.src)">`}}}
 function allRecords(){let a=[];fuels().forEach(r=>a.push({...r,_kind:"fuel",_title:"給油",_detail:[r.store,r.liters?`${r.liters} L`:""].filter(Boolean).join(" ・ ")}));maints().forEach(r=>a.push({...r,_kind:"maintenance",_title:r.type||"整備・修理",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));expenses().forEach(r=>a.push({...r,_kind:"expense",_title:r.category||"その他支出",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));return a.sort((a,b)=>stamp(b).localeCompare(stamp(a)))}
 function historyHtml(r){return`<div class="recent-row"><div><b>${esc(r._title)}</b><small>${esc(r.date||"")} ${esc(r.time||"")} ${r._detail?"・ "+esc(r._detail):""}</small></div><b>${nf(r.amount)} 円</b></div>`}
@@ -129,3 +133,33 @@ async function exportBackup(withPhotos=false){let data={version:"0.33",exportedA
 function importBackup(e){let f=e.target.files?.[0];if(!f)return;let rd=new FileReader();rd.onload=async()=>{try{let d=JSON.parse(rd.result);if(!confirm("現在のCarLogデータをバックアップ内容に置き換えますか？"))return;vehicles=d.vehicles||(d.vehicle?[d.vehicle]:[]);activeId=d.activeId||vehicles[0]?.id||"";fuelRecords=d.fuelRecords||[];maintenanceRecords=d.maintenanceRecords||[];expenseRecords=d.expenseRecords||[];save(KEY.vehicles,vehicles);localStorage.setItem(KEY.active,activeId);persistRecords();if(d.images){for(let x of d.images)await imagePut(x.id,await dataURLBlob(x.data),x)}refreshStoreNames();goHome()}catch(err){console.error(err);alert("バックアップファイルを読み込めませんでした。")}};rd.readAsText(f);e.target.value=""}
 function csv(v){return'"'+String(v??"").replaceAll('"','""')+'"'}function exportCSV(){let rows=[["車両","種別","日付","時刻","走行距離","内容","店名","金額","燃費","メモ"]];vehicles.forEach(v=>{fuelRecords.filter(r=>r.vehicleId===v.id).forEach(r=>rows.push([v.name,"給油",r.date,r.time,r.odometer,r.liters+" L",r.store||"",r.amount,r.fuelEconomy||"",r.fullTank?"満タン":""]));maintenanceRecords.filter(r=>r.vehicleId===v.id).forEach(r=>rows.push([v.name,"整備・修理",r.date,r.time,r.odometer,r.type,r.store||"",r.amount,"",r.memo||""]));expenseRecords.filter(r=>r.vehicleId===v.id).forEach(r=>rows.push([v.name,"その他支出",r.date,r.time,"",r.category,r.store||"",r.amount,"",r.memo||""]))});download("\uFEFF"+rows.map(r=>r.map(csv).join(",")).join("\r\n"),"CarLog_"+today()+".csv","text/csv;charset=utf-8")}
 function download(data,name,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+
+
+function renderReferenceDashboard(){
+ try{
+  const c=car(), km=currentKm();
+  const totalKm=document.getElementById("refTotalKm"); if(totalKm) totalKm.textContent=nf(km)+" km";
+  const d=new Date(), y=d.getFullYear(), m=d.getMonth()+1, mc=costs(y,m);
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+  set("refDonutTotal",nf(mc.total)+"円"); set("refFuelCost",nf(mc.fuel)+"円"); set("refMaintCost",nf(mc.maint)+"円"); set("refOtherCost",nf(mc.other)+"円");
+  const total=Math.max(1,mc.total), pf=mc.fuel/total*100, pm=mc.maint/total*100;
+  const donut=document.getElementById("refDonut"); if(donut) donut.style.background=`conic-gradient(#ff5962 0 ${pf}%,#20b58b ${pf}% ${pf+pm}%,#8061dc ${pf+pm}% 100%)`;
+  const fs=fuels().filter(r=>+r.fuelEconomy>0).sort((a,b)=>stamp(a).localeCompare(stamp(b))).slice(-7);
+  const chart=document.getElementById("refEcoChart");
+  if(chart){
+   if(!fs.length) chart.innerHTML='<p class="help">燃費記録がありません</p>';
+   else{
+    const vals=fs.map(x=>+x.fuelEconomy), min=Math.min(...vals)-1,max=Math.max(...vals)+1, span=Math.max(1,max-min);
+    const pts=vals.map((v,i)=>`${i*(100/(Math.max(1,vals.length-1)))},${82-(v-min)/span*58}`).join(" ");
+    chart.innerHTML=`<svg viewBox="0 0 100 90" preserveAspectRatio="none"><defs><linearGradient id="ecoFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1683f3" stop-opacity=".25"/><stop offset="1" stop-color="#1683f3" stop-opacity="0"/></linearGradient></defs><polyline points="0,84 ${pts} 100,84" fill="url(#ecoFill)" stroke="none"/><polyline points="${pts}" fill="none" stroke="#1683f3" stroke-width="2"/><g>${vals.map((v,i)=>`<circle cx="${i*(100/(Math.max(1,vals.length-1)))}" cy="${82-(v-min)/span*58}" r="2.2" fill="#fff" stroke="#1683f3" stroke-width="1.4"/>`).join("")}</g></svg><div class="chart-months">${fs.map(x=>`<span>${+x.date.slice(5,7)}月</span>`).join("")}</div>`;
+   }
+  }
+  const bars=document.getElementById("refYearBars");
+  if(bars){
+   let monthly=Array.from({length:12},(_,i)=>costs(y,i+1));
+   let maxv=Math.max(1,...monthly.map(x=>x.total));
+   bars.innerHTML=monthly.map((x,i)=>{let f=x.fuel/maxv*100,ma=x.maint/maxv*100,o=x.other/maxv*100;return `<div class="yb"><div class="yb-stack"><i class="o" style="height:${o}%"></i><i class="m" style="height:${ma}%"></i><i class="f" style="height:${f}%"></i></div><small>${i+1}月</small></div>`}).join("");
+  }
+ }catch(e){console.warn("reference dashboard",e)}
+}
+
