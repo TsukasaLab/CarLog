@@ -999,3 +999,57 @@ button,input,select,textarea{font:inherit}
  .guide-grid{grid-template-columns:1fr}
  .bottom{height:70px!important}
 }
+
+/* =========================================================
+   CarLog Ver.0.63
+   White compact minivan: dedicated complete hero scene
+   ========================================================= */
+.correct-hero.full-scene-vehicle{
+  background-image:var(--vehicle-hero)!important;
+  background-repeat:no-repeat!important;
+  background-size:cover!important;
+  background-position:center 58%!important;
+}
+.correct-hero.full-scene-vehicle .correct-car-visual{
+  display:none!important;
+}
+.correct-hero.full-scene-vehicle:after{
+  background:
+    linear-gradient(90deg,
+      rgba(5,38,60,.92) 0%,
+      rgba(5,38,60,.80) 18%,
+      rgba(6,38,58,.52) 32%,
+      rgba(6,38,58,.18) 47%,
+      rgba(6,38,58,0) 62%)!important;
+}
+.correct-hero.full-scene-vehicle .correct-hero-copy{
+  width:38%!important;
+}
+@media(min-width:900px){
+  .correct-hero.full-scene-vehicle{
+    height:390px!important;
+    background-position:center 57%!important;
+  }
+  .correct-hero.full-scene-vehicle .correct-hero-copy{
+    padding:112px 0 0 44px!important;
+  }
+}
+@media(max-width:899px){
+  .correct-hero.full-scene-vehicle{
+    height:220px!important;
+    background-size:cover!important;
+    background-position:58% 54%!important;
+  }
+  .correct-hero.full-scene-vehicle:after{
+    background:
+      linear-gradient(90deg,
+        rgba(5,38,60,.90) 0%,
+        rgba(5,38,60,.70) 32%,
+        rgba(5,38,60,.25) 50%,
+        rgba(5,38,60,0) 68%)!important;
+  }
+  .correct-hero.full-scene-vehicle .correct-hero-copy{
+    width:50%!important;
+    padding:38px 0 0 16px!important;
+  }
+}

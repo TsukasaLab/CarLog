@@ -93,13 +93,13 @@ function createVehicleFromSetup(){let n=setupName.value.trim(),km=+setupKm.value
 function goHome(){edit.fuel=edit.maintenance=edit.expense=null;if(!car())return show("setup");show("home");renderHome()}
 function costs(y,m){let same=r=>{let d=(r.date||"").split("-").map(Number);return d[0]===y&&(!m||d[1]===m)},f=fuels().filter(same).reduce((s,r)=>s+(+r.amount||0),0),mt=maints().filter(same).reduce((s,r)=>s+(+r.amount||0),0),e=expenses().filter(same).reduce((s,r)=>s+(+r.amount||0),0);return{fuel:f,maint:mt,other:e,total:f+mt+e}}
 function recomputeFuel(){let rs=fuels().sort((a,b)=>+a.odometer-+b.odometer||stamp(a).localeCompare(stamp(b)));rs.forEach((r,i)=>{let p=rs[i-1];r.distance=p?+r.odometer-+p.odometer:null;r.fuelEconomy=p&&r.fullTank&&p.fullTank&&r.distance>0?r.distance/+r.liters:null;r.pricePerLiter=+r.liters?+r.amount/+r.liters:null});save(KEY.fuel,fuelRecords)}
-async function renderHome(){let c=car(),km=currentKm();c.odometer=km;save(KEY.vehicles,vehicles);homeCarName.textContent=c.name;homeMaker.textContent=c.maker||"";homeCarMeta.textContent=[c.model,c.year,COLOR_LABELS[c.color]||c.color].filter(Boolean).join(" / ");homeKm.textContent=nf(km)+" km";renderCarThumb(c);
+async function renderHome(){let c=car(),km=currentKm();c.odometer=km;save(KEY.vehicles,vehicles);homeCarName.textContent=c.name;homeMaker.textContent=c.maker||"";homeCarMeta.textContent=[c.model,c.year,COLOR_LABELS[c.color]||c.color].filter(Boolean).join(" / ");homeKm.textContent=nf(km)+" km";applyHomeHeroScene(c);renderCarThumb(c);
 let d=new Date(),y=d.getFullYear(),m=d.getMonth()+1,mc=costs(y,m);monthFuel.textContent=nf(mc.fuel)+" 円";monthTotal.textContent=nf(mc.total)+" 円";let md=monthDrive(y,m);monthKm.textContent=nf(Math.round(md.distance))+" km";let eco=fuels().filter(r=>+r.fuelEconomy>0).sort((a,b)=>stamp(b).localeCompare(stamp(a)))[0];latestEco.textContent=eco?(+eco.fuelEconomy).toFixed(1)+" km/L":"記録なし";
 let yc=costs(y),elapsed=m;yearTotal.textContent=nf(yc.total)+" 円";yearAvg.textContent=nf(Math.round(yc.total/elapsed))+" 円";let yd=Array.from({length:12},(_,i)=>monthDrive(y,i+1).distance).reduce((a,b)=>a+b,0);yearKm.textContent=nf(Math.round(yd))+" km";perKm.textContent=yd?(yc.total/yd).toFixed(1)+" 円/km":"---";
 if(c.inspectionDate){inspection.textContent=c.inspectionDate.replaceAll("-","/");let days=Math.ceil((new Date(c.inspectionDate+"T00:00:00")-new Date(today()+"T00:00:00"))/86400000);inspectionLeft.textContent=days>=0?"あと "+nf(days)+" 日":"期限切れ"}else{inspection.textContent="未設定";inspectionLeft.textContent=""}
 let oil=maints().filter(r=>["オイル交換","オイル＋フィルター交換"].includes(r.type)).sort((a,b)=>+b.odometer-+a.odometer)[0];if(c.oilInterval){let target=(oil?+oil.odometer:km)+(+c.oilInterval);oilTarget.textContent=nf(target)+" km";let left=target-km;oilLeft.textContent=left>=0?"あと "+nf(left)+" km":nf(Math.abs(left))+" km超過"}else{oilTarget.textContent="未設定";oilLeft.textContent=""}
 let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderRecentStable();renderCorrectDashboard(c)}
-async function renderCarThumb(c){homeCarThumb.innerHTML=vehicleImageMarkup(c.bodyType||"compact-minivan",c.color||"white","home-photo-car");if(c.photoId){let rec=await imageGet(c.photoId);if(rec){let u=URL.createObjectURL(rec.blob);homeCarThumb.innerHTML=`<img src="${u}" onload="URL.revokeObjectURL(this.src)">`}}}
+async function renderCarThumb(c){if(heroScenePath(c)&&!c.photoId){homeCarThumb.innerHTML="";return}homeCarThumb.innerHTML=vehicleImageMarkup(c.bodyType||"compact-minivan",c.color||"white","home-photo-car");if(c.photoId){let rec=await imageGet(c.photoId);if(rec){let u=URL.createObjectURL(rec.blob);homeCarThumb.innerHTML=`<img src="${u}" onload="URL.revokeObjectURL(this.src)">`}}}
 function allRecords(){let a=[];fuels().forEach(r=>a.push({...r,_kind:"fuel",_title:"給油",_detail:[r.store,r.liters?`${r.liters} L`:""].filter(Boolean).join(" ・ ")}));maints().forEach(r=>a.push({...r,_kind:"maintenance",_title:r.type||"整備・修理",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));expenses().forEach(r=>a.push({...r,_kind:"expense",_title:r.category||"その他支出",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));return a.sort((a,b)=>stamp(b).localeCompare(stamp(a)))}
 function historyHtml(r){return`<div class="recent-row"><div><b>${esc(r._title)}</b><small>${esc(r.date||"")} ${esc(r.time||"")} ${r._detail?"・ "+esc(r._detail):""}</small></div><b>${nf(r.amount)} 円</b></div>`}
 function storeNamesList(){return [...new Set([...fuelRecords,...maintenanceRecords,...expenseRecords].map(r=>(r.store||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"))}
@@ -295,7 +295,7 @@ const PHOTO_VEHICLE_ASSETS={
  "wagon|blue":"assets/vehicles/wagon_blue.webp",
  "wagon|brown":"assets/vehicles/wagon_brown.webp",
  "wagon|beige":"assets/vehicles/wagon_beige.webp",
- "compact-minivan|white":"assets/vehicles/compact-minivan_white.webp",
+ "compact-minivan|white":"assets/heroes/compact-minivan_white.webp",
  "compact-minivan|black":"assets/vehicles/compact-minivan_black.webp",
  "compact-minivan|silver":"assets/vehicles/compact-minivan_silver.webp",
  "compact-minivan|gray":"assets/vehicles/compact-minivan_gray.webp",
@@ -381,3 +381,29 @@ function renderCorrectDashboard(c){
  }).join("");
  set("dashMaker",c.maker||"---");set("dashCarName",c.name||"---");set("dashModel",c.model||"---");set("dashColor",COLOR_LABELS[c.color]||c.color||"---");
  }
+
+
+const HERO_SCENE_ASSETS={
+ "compact-minivan|white":"assets/heroes/compact-minivan_white.webp"
+};
+function heroScenePath(c){
+ if(!c) return "";
+ return HERO_SCENE_ASSETS[`${c.bodyType||"compact-minivan"}|${c.color||"white"}`]||"";
+}
+function applyHomeHeroScene(c){
+ const hero=document.querySelector(".correct-hero");
+ const thumb=document.getElementById("homeCarThumb");
+ if(!hero||!thumb)return;
+ const scene=heroScenePath(c);
+ // A user-supplied photo remains the highest priority.
+ if(scene && !c.photoId){
+   hero.classList.add("full-scene-vehicle");
+   hero.style.setProperty("--vehicle-hero",`url("${scene}")`);
+   thumb.innerHTML="";
+   thumb.setAttribute("aria-hidden","true");
+ }else{
+   hero.classList.remove("full-scene-vehicle");
+   hero.style.removeProperty("--vehicle-hero");
+   thumb.removeAttribute("aria-hidden");
+ }
+}

@@ -1,9 +1,9 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest?v=0.62"><link rel="stylesheet" href="style.css?v=0.62">
+<link rel="manifest" href="manifest.webmanifest?v=0.63"><link rel="stylesheet" href="style.css?v=0.63">
 </head><body>
-<div class="version">Ver.0.62 β</div>
+<div class="version">Ver.0.63 β</div>
 <aside class="pc-sidebar" aria-label="PCメニュー">
   <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><small>Car Maintenance Log</small></div></div>
   <button class="active" onclick="goHome()"><span class="navico">⌂</span><span>ホーム</span></button>
@@ -177,7 +177,7 @@
     <article><b>4. バックアップ</b><p>設定ページからデータや写真を含むバックアップを保存できます。</p></article>
   </div>
 </div>
-<div class="about"><b>CarLog Ver.0.62 β</b><span>ローカル保存・公開β</span></div>
+<div class="about"><b>CarLog Ver.0.63 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
 <section id="help" class="screen hidden"><div class="screen-head"><button onclick="openSettings()">‹</button><h2>使い方</h2><span></span></div>
@@ -211,6 +211,6 @@
 <button onclick="openCosts()">⌁<span>分析</span></button>
 </nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.62"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.62",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.63"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.63",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>
