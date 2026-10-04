@@ -467,3 +467,46 @@ input:focus,select:focus,textarea:focus{border-color:#3b8dd1!important;box-shado
  .bottom{display:none!important}
  #adDock{left:calc(50% + 120px)!important}
 }
+
+/* ============================================================
+   Ver.0.45 - reference faithful visual pass
+   ============================================================ */
+:root{--glass:rgba(255,255,255,.88);--nav:#173b59;--blue:#1683f3;--red:#ff5c61;--green:#18aa7b;--purple:#7957d9}
+body{
+ background:
+ linear-gradient(rgba(13,39,59,.08),rgba(255,236,221,.08)),
+ linear-gradient(180deg,#8fc2df 0%,#efb18c 28%,#dfc7b6 48%,#8296a2 100%)!important;
+}
+.ambient-scene{height:100vh!important;background:
+ radial-gradient(circle at 69% 13%,#ffe3a1 0 2.5%,rgba(255,184,101,.52) 7%,transparent 18%),
+ linear-gradient(180deg,#75b5dc 0%,#f2aa80 29%,#dfad91 45%,#8295a0 75%,#5f7380 100%)!important}
+.ambient-mountain{background:#304c60!important;opacity:.72!important}
+.card,.metric{background:rgba(255,255,255,.88)!important;backdrop-filter:blur(12px)!important;border:1px solid rgba(255,255,255,.72)!important}
+.vehicle-switch{background:
+ linear-gradient(0deg,rgba(9,37,58,.12),rgba(9,37,58,.08)),
+ linear-gradient(120deg,#17405f,#427a99 48%,#e48f67)!important}
+.pc-sidebar{background:linear-gradient(180deg,rgba(18,55,83,.98),rgba(11,36,56,.96))!important}
+.pc-sidebar button:first-of-type{background:#1683f3!important}
+.pc-home-actions .pc-fuel{background:linear-gradient(135deg,#ff6967,#ff4054)!important}
+.pc-home-actions .pc-maint{background:linear-gradient(135deg,#2bc493,#0f9e73)!important}
+.pc-home-actions .pc-expense{background:linear-gradient(135deg,#8a69e7,#6d4bcf)!important}
+#home>.grid .metric:nth-child(1){border-top:4px solid #ff6d62!important}
+#home>.grid .metric:nth-child(2){border-top:4px solid #27b99a!important}
+#home>.grid .metric:nth-child(3){border-top:4px solid #ffad39!important}
+#home>.grid .metric:nth-child(4){border-top:4px solid #8061dc!important}
+@media(max-width:899px){
+ body{background:linear-gradient(180deg,#8bbdde 0,#f1b28f 31%,#eee2d8 58%,#edf3f6 100%)!important}
+ .ambient-scene{height:420px!important}
+ #home header{color:#fff!important;text-shadow:0 1px 8px rgba(13,41,61,.25)}
+ #home header h1,#home header p{color:#fff!important}
+ #home .vehicle-switch{min-height:190px!important;margin-top:0!important}
+ #home>.grid{margin-top:12px!important}
+ .bottom{border-radius:0!important}
+}
+@media(min-width:900px){
+ body{padding-top:18px!important;padding-right:18px!important}
+ .pc-sidebar{top:18px!important;bottom:18px!important;left:18px!important}
+ .app{max-width:1380px!important}
+ #home .vehicle-switch{min-height:205px!important}
+ #home>.grid .metric{min-height:112px!important}
+}

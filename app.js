@@ -1,3 +1,40 @@
+
+/* Ver.0.45 temporary demo seed: only runs on a completely empty install */
+(function seedCarLogDemo(){
+  try{
+    const hasAny =
+      localStorage.getItem("carlog_vehicle") ||
+      localStorage.getItem("carlog_vehicles") ||
+      localStorage.getItem("fuelRecords") ||
+      localStorage.getItem("carlog_maintenance") ||
+      localStorage.getItem("carlog_expenses");
+    if(hasAny) return;
+    const vid="demo-freed";
+    const vehicle={id:vid,name:"Honda FREED",maker:"Honda",model:"GP3",year:"2014",color:"ホワイト",
+      odometer:38842,inspectionDate:"2027-06-15",oilInterval:5000,plate:"",photoId:null,memos:[]};
+    localStorage.setItem("carlog_vehicle",JSON.stringify(vehicle));
+    localStorage.setItem("carlog_vehicles",JSON.stringify([vehicle]));
+    localStorage.setItem("carlog_active_vehicle",vid);
+    const fuel=[
+      {id:"df1",vehicleId:vid,date:"2026-09-20",time:"15:30",odometer:38842,liters:39.6,store:"ENEOS",amount:6280,fullTank:true,distance:626,fuelEconomy:15.8,pricePerLiter:158.6,createdAt:"2026-09-20T15:30:00"},
+      {id:"df2",vehicleId:vid,date:"2026-08-20",time:"16:10",odometer:38216,liters:40.2,store:"コスモ石油",amount:6650,fullTank:true,distance:647,fuelEconomy:16.1,pricePerLiter:165.4,createdAt:"2026-08-20T16:10:00"},
+      {id:"df3",vehicleId:vid,date:"2026-07-18",time:"11:20",odometer:37569,liters:38.8,store:"ENEOS",amount:6360,fullTank:true,distance:605,fuelEconomy:15.6,pricePerLiter:163.9,createdAt:"2026-07-18T11:20:00"}
+    ];
+    const maint=[
+      {id:"dm1",vehicleId:vid,date:"2026-09-12",time:"10:00",type:"オイル交換",odometer:38620,amount:4800,store:"カーショップ",memo:"エンジンオイル交換"},
+      {id:"dm2",vehicleId:vid,date:"2026-08-28",time:"13:00",type:"タイヤ交換",odometer:37100,amount:28400,store:"タイヤショップ",memo:"後輪2本交換"}
+    ];
+    const exp=[
+      {id:"de1",vehicleId:vid,date:"2026-09-05",time:"14:00",category:"洗車",amount:1200,store:"洗車場",memo:"手洗い洗車"},
+      {id:"de2",vehicleId:vid,date:"2026-08-10",time:"09:00",category:"その他",amount:1400,store:"",memo:"車用品"}
+    ];
+    localStorage.setItem("fuelRecords",JSON.stringify(fuel));
+    localStorage.setItem("carlog_maintenance",JSON.stringify(maint));
+    localStorage.setItem("carlog_expenses",JSON.stringify(exp));
+    localStorage.setItem("carlog_demo_seed_v045","1");
+  }catch(e){console.warn("demo seed skipped",e)}
+})();
+
 const KEY={vehicles:"carlog_vehicles",active:"carlog_active_vehicle",legacy:"carlog_vehicle",fuel:"fuelRecords",maint:"carlog_maintenance",expense:"carlog_expenses"};
 const load=(k,d)=>{try{let v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const uid=p=>p+"_"+(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.random().toString(16).slice(2));
