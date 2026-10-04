@@ -86,7 +86,7 @@ let yc=costs(y),elapsed=m;yearTotal.textContent=nf(yc.total)+" 円";yearAvg.text
 if(c.inspectionDate){inspection.textContent=c.inspectionDate.replaceAll("-","/");let days=Math.ceil((new Date(c.inspectionDate+"T00:00:00")-new Date(today()+"T00:00:00"))/86400000);inspectionLeft.textContent=days>=0?"あと "+nf(days)+" 日":"期限切れ"}else{inspection.textContent="未設定";inspectionLeft.textContent=""}
 let oil=maints().filter(r=>["オイル交換","オイル＋フィルター交換"].includes(r.type)).sort((a,b)=>+b.odometer-+a.odometer)[0];if(c.oilInterval){let target=(oil?+oil.odometer:km)+(+c.oilInterval);oilTarget.textContent=nf(target)+" km";let left=target-km;oilLeft.textContent=left>=0?"あと "+nf(left)+" km":nf(Math.abs(left))+" km超過"}else{oilTarget.textContent="未設定";oilLeft.textContent=""}
 let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderReferenceDashboard();renderRecentStable()}
-async function renderCarThumb(c){homeCarThumb.innerHTML=carSvg(c.color,c.bodyType||"compact-minivan");if(c.photoId){let rec=await imageGet(c.photoId);if(rec){let u=URL.createObjectURL(rec.blob);homeCarThumb.innerHTML=`<img src="${u}" onload="URL.revokeObjectURL(this.src)">`}}}
+async function renderCarThumb(c){homeCarThumb.innerHTML=vehicleImageMarkup(c.bodyType||"compact-minivan",c.color||"white","home-photo-car");if(c.photoId){let rec=await imageGet(c.photoId);if(rec){let u=URL.createObjectURL(rec.blob);homeCarThumb.innerHTML=`<img src="${u}" onload="URL.revokeObjectURL(this.src)">`}}}
 function allRecords(){let a=[];fuels().forEach(r=>a.push({...r,_kind:"fuel",_title:"給油",_detail:[r.store,r.liters?`${r.liters} L`:""].filter(Boolean).join(" ・ ")}));maints().forEach(r=>a.push({...r,_kind:"maintenance",_title:r.type||"整備・修理",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));expenses().forEach(r=>a.push({...r,_kind:"expense",_title:r.category||"その他支出",_detail:[r.store,r.memo].filter(Boolean).join(" ・ ")}));return a.sort((a,b)=>stamp(b).localeCompare(stamp(a)))}
 function historyHtml(r){return`<div class="recent-row"><div><b>${esc(r._title)}</b><small>${esc(r.date||"")} ${esc(r.time||"")} ${r._detail?"・ "+esc(r._detail):""}</small></div><b>${nf(r.amount)} 円</b></div>`}
 function storeNamesList(){return [...new Set([...fuelRecords,...maintenanceRecords,...expenseRecords].map(r=>(r.store||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"))}
@@ -128,8 +128,8 @@ async function renderMemoPhotos(m){let el=document.getElementById("photos_"+m.id
 async function removeMemoPhoto(mid,pid){if(!confirm("この写真をCarLogから削除しますか？"))return;await imageDelete(pid);let m=memoDraft.find(x=>x.id===mid);m.photos=(m.photos||[]).filter(x=>x!==pid);renderMemoPhotos(m);updateStorage()}
 async function selectVehiclePhoto(e){let f=e.target.files?.[0];if(!f)return;if(pendingVehiclePhoto)await imageDelete(pendingVehiclePhoto);let blob=await processImage(f,"high"),id=uid("img");await imagePut(id,blob,{quality:"high",name:f.name});pendingVehiclePhoto=id;e.target.value="";renderVehiclePhoto();updateStorage()}
 async function removeVehiclePhoto(){if(!pendingVehiclePhoto)return;if(!confirm("車両写真をCarLogから削除しますか？"))return;await imageDelete(pendingVehiclePhoto);pendingVehiclePhoto=null;renderVehiclePhoto();updateStorage()}
-function renderVehicleColorPreview(){if(!pendingVehiclePhoto)vehiclePhotoPreview.innerHTML=carSvg(editCarColor.value,editCarBodyType?.value||"compact-minivan")}
-async function renderVehiclePhoto(){vehiclePhotoPreview.innerHTML=carSvg(editCarColor.value,editCarBodyType?.value||"compact-minivan");if(pendingVehiclePhoto){let r=await imageGet(pendingVehiclePhoto);if(r){let u=URL.createObjectURL(r.blob);vehiclePhotoPreview.innerHTML=`<img src="${u}" onclick="openImage('${u}')">`}}}
+function renderVehicleColorPreview(){if(!pendingVehiclePhoto)vehiclePhotoPreview.innerHTML=vehicleImageMarkup(editCarBodyType?.value||"compact-minivan",editCarColor.value,"preview-car")}
+async function renderVehiclePhoto(){vehiclePhotoPreview.innerHTML=vehicleImageMarkup(editCarBodyType?.value||"compact-minivan",editCarColor.value,"preview-car");if(pendingVehiclePhoto){let r=await imageGet(pendingVehiclePhoto);if(r){let u=URL.createObjectURL(r.blob);vehiclePhotoPreview.innerHTML=`<img src="${u}" onclick="openImage('${u}')">`}}}
 function openImage(url){let w=window.open();if(w)w.document.write(`<meta name="viewport" content="width=device-width"><body style="margin:0;background:#111;display:grid;place-items:center;min-height:100vh"><img src="${url}" style="max-width:100%;max-height:100vh"></body>`)}
 
 function renderHomeMemos(c){let ms=(c.memos||[]).slice(0,3);homeMemos.innerHTML=ms.length?ms.map(m=>`<button class="memo-home-row" onclick="openVehicleNotes()"><b>${esc(m.title||"無題")}</b><span>${esc((m.content||"").slice(0,70))}</span></button>`).join(""):'<p class="help">車両メモはまだありません。</p>'}
@@ -190,7 +190,7 @@ const BODY_TYPES=[
 function renderBodyTypeChoices(){
  const el=document.getElementById("bodyTypeChoices"); if(!el)return;
  const cur=document.getElementById("editCarBodyType")?.value||"compact-minivan";
- el.innerHTML=BODY_TYPES.map(([v,n])=>`<button type="button" class="body-choice ${cur===v?"selected":""}" onclick="selectBodyType('${v}')"><span>${carSvg(editCarColor?.value||"white",v)}</span><b>${n}</b></button>`).join("");
+ el.innerHTML=BODY_TYPES.map(([v,n])=>`<button type="button" class="body-choice ${cur===v?"selected":""}" onclick="selectBodyType('${v}')"><span>${vehicleImageMarkup(v,editCarColor?.value||"white","selector-car")}</span><b>${n}</b></button>`).join("");
 }
 function selectBodyType(v){editCarBodyType.value=v;renderBodyTypeChoices();renderVehicleColorPreview()}
 
@@ -239,3 +239,94 @@ function renderRecentStable(){
 }
 
 function escapeHtml(s){return String(s??"").replace(/[&<>"\']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[c]))}
+
+
+const PHOTO_VEHICLE_ASSETS={
+ "kei|white":"assets/vehicles/kei_white.webp",
+ "kei|black":"assets/vehicles/kei_black.webp",
+ "kei|silver":"assets/vehicles/kei_silver.webp",
+ "kei|gray":"assets/vehicles/kei_gray.webp",
+ "kei|red":"assets/vehicles/kei_red.webp",
+ "kei|blue":"assets/vehicles/kei_blue.webp",
+ "kei|brown":"assets/vehicles/kei_brown.webp",
+ "kei|beige":"assets/vehicles/kei_beige.webp",
+ "kei-tall|white":"assets/vehicles/kei-tall_white.webp",
+ "kei-tall|black":"assets/vehicles/kei-tall_black.webp",
+ "kei-tall|silver":"assets/vehicles/kei-tall_silver.webp",
+ "kei-tall|gray":"assets/vehicles/kei-tall_gray.webp",
+ "kei-tall|red":"assets/vehicles/kei-tall_red.webp",
+ "kei-tall|blue":"assets/vehicles/kei-tall_blue.webp",
+ "kei-tall|brown":"assets/vehicles/kei-tall_brown.webp",
+ "kei-tall|beige":"assets/vehicles/kei-tall_beige.webp",
+ "compact|white":"assets/vehicles/compact_white.webp",
+ "compact|black":"assets/vehicles/compact_black.webp",
+ "compact|silver":"assets/vehicles/compact_silver.webp",
+ "compact|gray":"assets/vehicles/compact_gray.webp",
+ "compact|red":"assets/vehicles/compact_red.webp",
+ "compact|blue":"assets/vehicles/compact_blue.webp",
+ "compact|brown":"assets/vehicles/compact_brown.webp",
+ "compact|beige":"assets/vehicles/compact_beige.webp",
+ "sedan|white":"assets/vehicles/sedan_white.webp",
+ "sedan|black":"assets/vehicles/sedan_black.webp",
+ "sedan|silver":"assets/vehicles/sedan_silver.webp",
+ "sedan|gray":"assets/vehicles/sedan_gray.webp",
+ "sedan|red":"assets/vehicles/sedan_red.webp",
+ "sedan|blue":"assets/vehicles/sedan_blue.webp",
+ "sedan|brown":"assets/vehicles/sedan_brown.webp",
+ "sedan|beige":"assets/vehicles/sedan_beige.webp",
+ "wagon|white":"assets/vehicles/wagon_white.webp",
+ "wagon|black":"assets/vehicles/wagon_black.webp",
+ "wagon|silver":"assets/vehicles/wagon_silver.webp",
+ "wagon|gray":"assets/vehicles/wagon_gray.webp",
+ "wagon|red":"assets/vehicles/wagon_red.webp",
+ "wagon|blue":"assets/vehicles/wagon_blue.webp",
+ "wagon|brown":"assets/vehicles/wagon_brown.webp",
+ "wagon|beige":"assets/vehicles/wagon_beige.webp",
+ "compact-minivan|white":"assets/vehicles/compact-minivan_white.webp",
+ "compact-minivan|black":"assets/vehicles/compact-minivan_black.webp",
+ "compact-minivan|silver":"assets/vehicles/compact-minivan_silver.webp",
+ "compact-minivan|gray":"assets/vehicles/compact-minivan_gray.webp",
+ "compact-minivan|red":"assets/vehicles/compact-minivan_red.webp",
+ "compact-minivan|blue":"assets/vehicles/compact-minivan_blue.webp",
+ "compact-minivan|brown":"assets/vehicles/compact-minivan_brown.webp",
+ "compact-minivan|beige":"assets/vehicles/compact-minivan_beige.webp",
+ "minivan|white":"assets/vehicles/minivan_white.webp",
+ "minivan|black":"assets/vehicles/minivan_black.webp",
+ "minivan|silver":"assets/vehicles/minivan_silver.webp",
+ "minivan|gray":"assets/vehicles/minivan_gray.webp",
+ "minivan|red":"assets/vehicles/minivan_red.webp",
+ "minivan|blue":"assets/vehicles/minivan_blue.webp",
+ "minivan|brown":"assets/vehicles/minivan_brown.webp",
+ "minivan|beige":"assets/vehicles/minivan_beige.webp",
+ "suv|white":"assets/vehicles/suv_white.webp",
+ "suv|black":"assets/vehicles/suv_black.webp",
+ "suv|silver":"assets/vehicles/suv_silver.webp",
+ "suv|gray":"assets/vehicles/suv_gray.webp",
+ "suv|red":"assets/vehicles/suv_red.webp",
+ "suv|blue":"assets/vehicles/suv_blue.webp",
+ "suv|brown":"assets/vehicles/suv_brown.webp",
+ "suv|beige":"assets/vehicles/suv_beige.webp",
+ "coupe|white":"assets/vehicles/coupe_white.webp",
+ "coupe|black":"assets/vehicles/coupe_black.webp",
+ "coupe|silver":"assets/vehicles/coupe_silver.webp",
+ "coupe|gray":"assets/vehicles/coupe_gray.webp",
+ "coupe|red":"assets/vehicles/coupe_red.webp",
+ "coupe|blue":"assets/vehicles/coupe_blue.webp",
+ "coupe|brown":"assets/vehicles/coupe_brown.webp",
+ "coupe|beige":"assets/vehicles/coupe_beige.webp",
+ "van|white":"assets/vehicles/van_white.webp",
+ "van|black":"assets/vehicles/van_black.webp",
+ "van|silver":"assets/vehicles/van_silver.webp",
+ "van|gray":"assets/vehicles/van_gray.webp",
+ "van|red":"assets/vehicles/van_red.webp",
+ "van|blue":"assets/vehicles/van_blue.webp",
+ "van|brown":"assets/vehicles/van_brown.webp",
+ "van|beige":"assets/vehicles/van_beige.webp"
+};
+function vehicleAssetPath(bodyType,color){
+ return PHOTO_VEHICLE_ASSETS[`${bodyType||"compact-minivan"}|${color||"white"}`]||"";
+}
+function vehicleImageMarkup(bodyType,color,cls=""){
+ const p=vehicleAssetPath(bodyType,color);
+ return p?`<img class="photo-car ${cls}" src="${p}" alt="">`:carSvg(color,bodyType);
+}

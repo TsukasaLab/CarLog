@@ -617,3 +617,13 @@ body{background:#eef4f7!important;color:var(--ink)!important}
  #recent .recent-price{font-size:13px;min-width:max-content}
  #recent .record-chevron{font-size:18px}
 }
+
+/* Ver.0.53 photoreal vehicle assets */
+.body-choice span{overflow:hidden;border-radius:10px;background:#eef3f6}
+.body-choice .photo-car{width:100%;height:100%;object-fit:cover;display:block}
+.vehicle-photo-preview .photo-car{width:100%;height:100%;object-fit:cover;display:block;border-radius:16px}
+.ref-car-visual .photo-car,#homeCarThumb .photo-car{width:100%;height:100%;object-fit:cover;display:block}
+#homeCarThumb{overflow:hidden;border-radius:18px}
+@media(max-width:599px){
+ .body-choice .photo-car{min-height:58px}
+}
