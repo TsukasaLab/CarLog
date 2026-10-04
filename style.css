@@ -708,3 +708,38 @@ body{background:#eef4f7!important;color:var(--ink)!important}
  #homeCarThumb .photo-car,.ref-car-visual .photo-car{max-height:215px!important;object-position:right bottom!important}
  .ref-hero .ref-km,.ref-hero #homeKm,.ref-hero .hero-km{top:10px!important;right:10px!important;min-width:0!important;padding:8px 10px!important;border-radius:12px!important;font-size:10px!important}
 }
+
+/* Ver.0.57 hero image correction */
+#homeCarThumb,.ref-car-visual{
+ overflow:hidden!important;
+ padding:20px 20px 12px 0!important;
+}
+#homeCarThumb .photo-car,.ref-car-visual .photo-car{
+ width:96%!important;
+ height:88%!important;
+ max-width:none!important;
+ max-height:none!important;
+ object-fit:contain!important;
+ object-position:right center!important;
+ border-radius:0!important;
+ background:transparent!important;
+}
+.ref-hero .ref-km,.ref-hero #homeKm,.ref-hero .hero-km{
+ display:flex!important;
+}
+@media(max-width:700px){
+ #homeCarThumb .photo-car,.ref-car-visual .photo-car{
+   width:100%!important;height:78%!important;object-position:right center!important;
+ }
+}
+
+/* Ver.0.58: one continuous panoramic hero background */
+.ref-hero{
+ background-image:url("assets/hero-panorama-v058.webp")!important;
+ background-size:cover!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+}
+.ref-hero::before,.ref-hero::after{background:none!important;backdrop-filter:none!important}
+.ref-hero .ref-hero-copy,.ref-hero>div:first-child{background:transparent!important}
+#homeCarThumb,.ref-car-visual{background:transparent!important}
