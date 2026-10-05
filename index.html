@@ -1,11 +1,11 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest?v=0.63"><link rel="stylesheet" href="style.css?v=0.63">
+<link rel="manifest" href="manifest.webmanifest?v=0.70"><link rel="stylesheet" href="style.css?v=0.70">
 </head><body>
-<div class="version">Ver.0.63 β</div>
+
 <aside class="pc-sidebar" aria-label="PCメニュー">
-  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><small>Car Maintenance Log</small></div></div>
+  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.70 β</span><small>Car Maintenance Log</small></div></div>
   <button class="active" onclick="goHome()"><span class="navico">⌂</span><span>ホーム</span></button>
   <button onclick="openFuel()"><span class="navico">⛽</span><span>給油記録</span></button>
   <button onclick="openMaintenance()"><span class="navico">🔧</span><span>整備・修理</span></button>
@@ -14,7 +14,8 @@
   <button onclick="openCosts()"><span class="navico">⌁</span><span>維持費・分析</span></button>
   <button onclick="openDriving()"><span class="navico">▥</span><span>走行データ</span></button>
   <button onclick="openVehicleManager()"><span class="navico">🚙</span><span>車両管理</span></button>
-  <button onclick="openSettings()"><span class="navico">⚙</span><span>設定・使い方</span></button>
+  <button onclick="openSettings()"><span class="navico">⚙</span><span>設定</span></button>
+  <button onclick="openHelp()"><span class="navico">?</span><span>使い方</span></button>
   <div class="pc-brand-foot">CarLog β</div>
 </aside><div class="ambient-scene" aria-hidden="true">
   <div class="ambient-sun"></div><div class="ambient-mountain m1"></div><div class="ambient-mountain m2"></div>
@@ -22,13 +23,13 @@
 <main class="app">
 <section id="setup" class="screen hidden">
  <div class="brand"><b>C</b><div><h1>CarLog</h1><p>愛車のお金とメンテを、ひとつに。</p></div></div>
- <div class="card form"><label>車両名<input id="setupName" placeholder="例）フリード"></label><label>メーカー<input id="setupMaker" placeholder="例）Honda"></label><label>現在走行距離（km）<input id="setupKm" type="number"></label><label>車検満了日<input id="setupInspection" type="date"></label><label>オイル交換周期（km）<input id="setupOil" type="number" value="5000"></label></div>
+ <div class="card form"><label>車両名<input id="setupName"></label><label>メーカー<input id="setupMaker"></label><label>現在走行距離（km）<input id="setupKm" type="number"></label><label>車検満了日<input id="setupInspection" type="date"></label><label>オイル交換周期（km）<input id="setupOil" type="number" value="5000"></label></div>
  <button class="primary" onclick="createVehicleFromSetup()">この車を登録</button>
 </section>
 
 <section id="home" class="screen app-page hidden correct-home">
  <header class="mobile-top">
-   <div class="mobile-brand"><span>🚙</span><b>CarLog</b></div>
+   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.70 β</span></div>
    <button onclick="openSettings()" aria-label="メニュー">☰</button>
  </header>
 
@@ -76,11 +77,18 @@
 
    <article class="correct-card vehicle-card">
     <div class="correct-card-head"><h3>車両情報</h3><button class="edit-link" onclick="openVehicleManager()">✎ 編集</button></div>
-    <div class="vehicle-card-body no-image"><dl>
-       <div><dt>メーカー</dt><dd id="dashMaker">---</dd></div>
+    <div class="vehicle-card-body no-image"><dl class="vehicle-info-all">
        <div><dt>車名</dt><dd id="dashCarName">---</dd></div>
+       <div><dt>メーカー</dt><dd id="dashMaker">---</dd></div>
        <div><dt>型式</dt><dd id="dashModel">---</dd></div>
+       <div><dt>年式</dt><dd id="dashYear">---</dd></div>
+       <div><dt>ボディタイプ</dt><dd id="dashBodyType">---</dd></div>
        <div><dt>カラー</dt><dd id="dashColor">---</dd></div>
+       <div><dt>購入日</dt><dd id="dashPurchase">---</dd></div>
+       <div><dt>ナンバー</dt><dd id="dashPlate">---</dd></div>
+       <div><dt>現在走行距離</dt><dd id="dashOdometer">---</dd></div>
+       <div><dt>車検満了日</dt><dd id="dashInspection">---</dd></div>
+       <div><dt>オイル交換周期</dt><dd id="dashOilInterval">---</dd></div>
       </dl></div>
    </article>
  </section>
@@ -95,17 +103,17 @@
 </section>
 
 <section id="fuel" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">RECORD</span><h2 id="fuelTitle">給油記録</h2><p>給油量・走行距離・支払額を記録</p></div></div>
- <div class="card form"><label>給油日<input id="fuelDate" type="date" onchange="showSameDay('fuel')"></label><label>同日給油の回数<input id="fuelCount" type="number" min="1" inputmode="numeric" placeholder="○回目"></label><div id="fuelSameDay"></div><label>走行距離（km）<input id="fuelKm" type="number"></label><label>給油量（L）<input id="fuelLiters" type="number" step="0.01"></label><label>店名<select id="fuelStoreSelect" onchange="chooseStore('fuel')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="fuelStore" class="store-input" placeholder="店名を入力"></label><label>支払金額（円）<input id="fuelAmount" type="number"></label><label class="check"><input id="fuelFull" type="checkbox" checked>満タン給油</label></div>
+ <div class="card form"><label>給油日<input id="fuelDate" type="date" onchange="showSameDay('fuel')"></label><label>同日記録の回数<input id="fuelCount" type="number" min="1" inputmode="numeric"></label><div id="fuelSameDay"></div><label>走行距離（km）<input id="fuelKm" type="number"></label><label>給油量（L）<input id="fuelLiters" type="number" step="0.01"></label><label>店名<select id="fuelStoreSelect" onchange="chooseStore('fuel')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="fuelStore" class="store-input" placeholder="店名を入力"></label><label>支払金額（円）<input id="fuelAmount" type="number"></label><label class="check"><input id="fuelFull" type="checkbox" checked>満タン給油</label></div>
  <button class="primary" id="fuelSave" onclick="saveFuel()">登録</button><button id="fuelDelete" class="danger hidden" onclick="deleteCurrent('fuel')">この記録を削除</button><button onclick="goHome()">キャンセル</button>
 </section>
 
 <section id="maintenance" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">MAINTENANCE</span><h2 id="maintTitle">整備・修理</h2><p>メンテナンス履歴をわかりやすく管理</p></div></div>
- <div class="card form"><label>日付<input id="maintDate" type="date" onchange="showSameDay('maintenance')"></label><label>時刻<input id="maintTime" type="time"></label><div id="maintSameDay"></div><label>種類<select id="maintType"><option>オイル交換</option><option>オイル＋フィルター交換</option><option>タイヤ交換</option><option>バッテリー交換</option><option>車検</option><option>点検</option><option>修理</option><option>その他</option></select></label><label>走行距離（km）<input id="maintKm" type="number"></label><label>費用（円）<input id="maintAmount" type="number"></label><label>店名<select id="maintStoreSelect" onchange="chooseStore('maint')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="maintStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="maintMemo" rows="3"></textarea></label></div>
+ <div class="card form"><label>日付<input id="maintDate" type="date" onchange="showSameDay('maintenance')"></label><label>同日記録の回数<input id="maintCount" type="number" min="1" inputmode="numeric"></label><div id="maintSameDay"></div><label>種類<select id="maintType"><option>オイル交換</option><option>オイル＋フィルター交換</option><option>タイヤ交換</option><option>バッテリー交換</option><option>車検</option><option>点検</option><option>修理</option><option>その他</option></select></label><label>走行距離（km・任意）<input id="maintKm" type="number"></label><label>費用（円）<input id="maintAmount" type="number"></label><label>店名<select id="maintStoreSelect" onchange="chooseStore('maint')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="maintStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="maintMemo" rows="3"></textarea></label></div>
  <button class="primary" id="maintSave" onclick="saveMaintenance()">登録</button><button id="maintDelete" class="danger hidden" onclick="deleteCurrent('maintenance')">この記録を削除</button><button onclick="goHome()">キャンセル</button>
 </section>
 
 <section id="expense" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">EXPENSE</span><h2 id="expenseTitle">その他支出</h2><p>税金・保険・用品などの費用を記録</p></div></div>
- <div class="card form"><label>日付<input id="expenseDate" type="date" onchange="showSameDay('expense')"></label><label>時刻<input id="expenseTime" type="time"></label><div id="expenseSameDay"></div><label>分類<select id="expenseCategory"><option>自動車税</option><option>任意保険</option><option>駐車場</option><option>高速・有料道路</option><option>洗車</option><option>用品</option><option>その他</option></select></label><label>金額（円）<input id="expenseAmount" type="number"></label><label>店名<select id="expenseStoreSelect" onchange="chooseStore('expense')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="expenseStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="expenseMemo" rows="3"></textarea></label></div>
+ <div class="card form"><label>日付<input id="expenseDate" type="date" onchange="showSameDay('expense')"></label><label>同日記録の回数<input id="expenseCount" type="number" min="1" inputmode="numeric"></label><div id="expenseSameDay"></div><label>分類<select id="expenseCategory"><option>自動車税</option><option>任意保険</option><option>駐車場</option><option>高速・有料道路</option><option>洗車</option><option>用品</option><option>その他</option></select></label><label>金額（円）<input id="expenseAmount" type="number"></label><label>店名<select id="expenseStoreSelect" onchange="chooseStore('expense')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="expenseStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="expenseMemo" rows="3"></textarea></label></div>
  <button class="primary" id="expenseSave" onclick="saveExpense()">登録</button><button id="expenseDelete" class="danger hidden" onclick="deleteCurrent('expense')">この記録を削除</button><button onclick="goHome()">キャンセル</button>
 </section>
 
@@ -125,10 +133,10 @@
 <section id="vehicles" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">VEHICLES</span><h2>車両管理</h2><p>登録車両の追加・切替・編集</p></div></div><div id="vehicleList"></div><button class="primary" onclick="openVehicleEdit()">＋ 車両を追加</button></section>
 <section id="vehicleEdit" class="screen hidden"><div class="screen-head"><button onclick="openVehicleManager()">‹</button><h2 id="vehicleEditTitle">車両を追加</h2><span></span></div>
 <div class="card form">
-<label>車両名<input id="editCarName" placeholder="例）フリード"></label>
-<label>メーカー<input id="editCarMaker" placeholder="例）Honda"></label>
-<label>型式<input id="editCarModel" placeholder="例）GP3"></label>
-<label>年式<input id="editCarYear" inputmode="numeric" placeholder="例）2012"></label>
+<label>車両名<input id="editCarName"></label>
+<label>メーカー<input id="editCarMaker"></label>
+<label>型式<input id="editCarModel"></label>
+<label>年式<input id="editCarYear" inputmode="numeric"></label>
 <div class="vehicle-image-setting full">
 <h3>車両イメージ</h3>
 <p class="help">車種名からは自動判定しません。車の形と色を選んでください。</p>
@@ -155,39 +163,61 @@
 <option value="blue">ブルー</option>
 <option value="brown">ブラウン</option>
 <option value="beige">ベージュ</option></select></label>
-<label>ナンバープレート<input id="editCarPlate" placeholder="任意"></label>
+<label>購入日<input id="editCarPurchase" type="date"></label><label>ナンバープレート<input id="editCarPlate"></label>
 <label>現在走行距離（km）<input id="editCarKm" type="number"></label>
 <label>車検満了日<input id="editCarInspection" type="date"></label>
 <label>オイル交換周期（km）<input id="editCarOil" type="number" value="5000"></label>
-<div class="photo-editor"><b>車両写真</b><div id="vehiclePhotoPreview" class="vehicle-photo-preview">🚗</div><div class="photo-source"><label class="file-btn">写真から選択<input type="file" accept="image/*" onchange="selectVehiclePhoto(event)"></label><label class="file-btn">撮影する<input type="file" accept="image/*" capture="environment" onchange="selectVehiclePhoto(event)"></label></div><button type="button" onclick="removeVehiclePhoto()">写真を削除</button></div></div>
+<div class="photo-editor">
+<h3>ホームに表示する車両画像</h3>
+<div class="vehicle-image-source" role="group" aria-label="車両画像の種類">
+  <button type="button" id="imageModePreset" onclick="setVehicleImageMode('preset')">プリセット画像</button>
+  <button type="button" id="imageModeCustom" onclick="setVehicleImageMode('custom')">自分の画像</button>
+</div>
+<div id="presetImagePanel" class="image-source-panel">
+  <p class="help">選択したボディタイプとカラーのプリセット画像を使用します。</p>
+  <div id="presetVehiclePreview" class="preset-vehicle-preview"></div>
+</div>
+<div id="customImagePanel" class="image-source-panel hidden">
+  <b>画像追加</b>
+  <div id="vehiclePhotoPreview" class="vehicle-photo-preview"><div class="vehicle-photo-empty"><span>＋</span><strong>画像を追加</strong></div></div>
+  <div class="vehicle-photo-actions">
+    <label class="photo-action-btn select">選択<input type="file" accept="image/*" onchange="selectVehiclePhoto(event)"></label>
+    <label class="photo-action-btn camera">撮影<input type="file" accept="image/*" capture="environment" onchange="selectVehiclePhoto(event)"></label>
+    <button type="button" class="photo-action-btn delete" onclick="removeVehiclePhoto()">削除</button>
+  </div>
+</div>
+</div></div>
+<div class="vehicle-photo-actions">
+<label class="photo-action-btn select">画像を選択<input type="file" accept="image/*" onchange="selectVehiclePhoto(event)"></label>
+<label class="photo-action-btn camera">撮影<input type="file" accept="image/*" capture="environment" onchange="selectVehiclePhoto(event)"></label>
+<button type="button" class="photo-action-btn delete" onclick="removeVehiclePhoto()">削除</button>
+</div>
+</div></div>
 <div class="card memo-section"><h3>装備品・車両メモ</h3><button class="primary memo-add" type="button" onclick="addMemo()">＋ メモを追加</button><div id="memoEditor"></div></div>
 <button class="primary" onclick="saveVehicleEdit()">保存</button><button id="vehicleDelete" class="danger hidden" onclick="deleteVehicle()">この車両を削除</button></section>
 
 <section id="settings" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">SETTINGS</span><h2>設定・使い方</h2><p>バックアップやアプリ設定を管理</p></div></div>
  <button class="card menu" onclick="openVehicleManager()">🚗 車両の追加・切替・編集 <span>›</span></button>
  <button class="card menu" onclick="openDriving()">📊 走行データ <span>›</span></button><button class="card menu" onclick="openHelp()">📖 使い方 <span>›</span></button>
-<div class="card"><h3>データ管理</h3><p class="help">データはこのブラウザ内に保存されます。機種変更やブラウザデータ削除に備えてバックアップしてください。</p><div class="storage"><span>CarLog使用容量</span><b id="storageTotal">計算中...</b><small id="storageDetail"></small></div><button onclick="exportBackup(false)">データのみバックアップ</button><button onclick="exportBackup(true)">写真込み完全バックアップ</button><button onclick="document.getElementById('importFile').click()">バックアップから復元</button><input class="hidden" id="importFile" type="file" accept=".json" onchange="importBackup(event)"><button onclick="exportCSV()">CSVを書き出す</button></div>
- 
-<div class="settings-help card" id="settingsHelp">
-  <div class="section-title-row"><div><span class="section-eyebrow">GUIDE</span><h3>使い方</h3></div></div>
-  <div class="guide-grid">
-    <article><b>1. 車両を登録</b><p>車名、メーカー、型式、カラー、走行距離などを登録します。</p></article>
-    <article><b>2. 記録する</b><p>給油、整備・修理、その他支出をそれぞれのページから追加します。</p></article>
-    <article><b>3. 振り返る</b><p>履歴一覧、維持費・分析、走行データから記録を確認します。</p></article>
-    <article><b>4. バックアップ</b><p>設定ページからデータや写真を含むバックアップを保存できます。</p></article>
-  </div>
+<div class="card"><h3>データ管理</h3><p class="help">データはこのブラウザ内に保存されます。機種変更やブラウザデータ削除に備えてバックアップしてください。</p><button onclick="exportBackup(false)">データのみバックアップ</button><button onclick="exportBackup(true)">写真込み完全バックアップ</button><button onclick="document.getElementById('importFile').click()">バックアップから復元</button><input class="hidden" id="importFile" type="file" accept=".json" onchange="importBackup(event)"><button onclick="exportCSV()">CSVを書き出す</button></div>
+<button class="card menu guide-page-link" onclick="openHelp()">📖 使い方を開く <span>›</span></button>
 </div>
-<div class="about"><b>CarLog Ver.0.63 β</b><span>ローカル保存・公開β</span></div>
+<div class="about"><b>CarLog Ver.0.70 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
-<section id="help" class="screen hidden"><div class="screen-head"><button onclick="openSettings()">‹</button><h2>使い方</h2><span></span></div>
-<div class="card helpdoc"><h3>1. 車両を登録</h3><p>車両名、メーカー、型式、年式、ボディカラー、ナンバー、車両写真を登録できます。ボディカラーは一覧から選択し、写真未設定時の車両イラストにも反映されます。写真は端末内からの選択とカメラ撮影に対応します。</p></div>
-<div class="card helpdoc"><h3>2. 給油・整備・支出を記録</h3><p>中央の＋から追加します。同じ日に複数件登録でき、時刻で並びます。登録済みの店名は次回から店名プルダウンに表示されます。新しい店名も追加できます。履歴を開けば編集・削除できます。</p></div>
-<div class="card helpdoc"><h3>3. 維持費と走行データ</h3><p>維持費は年間合計、ガソリン、整備・維持、その他、月平均のカードを押してグラフを切り替えます。月平均は、その年の1月から各月までの累計支出を経過月数で割った平均額の推移です。走行データでは走行距離、給油量、給油回数、平均燃費、平均単価、1kmあたり燃料代を確認できます。</p></div>
-<div class="card helpdoc"><h3>4. 装備品・車両メモ</h3><p>「題名＋内容」を1組として好きなだけ追加できます。題名と内容は長文に対応し、各項目には複数の写真を添付できます。写真は端末内からの選択とカメラ撮影に対応します。保存したメモはホーム画面から参照できます。</p></div>
-<div class="card helpdoc"><h3>5. 写真の保存</h3><p>CarLogに追加した写真は端末の写真へのリンクではなく、CarLog専用データとしてコピー保存します。端末側の元写真を削除してもCarLog内の写真は残り、CarLogから削除しても元写真は消えません。標準、高画質、原画から保存品質を選べます。</p></div>
-<div class="card helpdoc"><h3>6. 削除とバックアップ</h3><p>車両、各記録、装備品メモ、添付写真は後から編集・削除できます。大きな削除では確認画面が表示されます。写真込み完全バックアップを定期的に保存しておくと安心です。</p></div>
-<div class="card helpdoc"><h3>保存場所について</h3><p>通常データはブラウザ内、画像は大容量向けのIndexedDBに保存します。設定画面でCarLogの使用容量を確認できます。ブラウザのサイトデータを削除するとCarLogのデータも消えるため、その前にバックアップしてください。</p></div>
+<section id="help" class="screen app-page hidden">
+<div class="screen-head page-head"><div><span class="page-eyebrow">GUIDE</span><h2>使い方</h2><p>操作したい内容から各ページへ移動できます</p></div></div>
+<div class="help-link-grid">
+<button class="card help-link" onclick="openVehicleManager()"><span>🚙</span><div><b>車両を登録・編集</b><small>車両の追加、切替、基本情報の変更</small></div><em>›</em></button>
+<button class="card help-link" onclick="openFuel()"><span>⛽</span><div><b>給油を記録</b><small>給油量、走行距離、金額を登録</small></div><em>›</em></button>
+<button class="card help-link" onclick="openMaintenance()"><span>🔧</span><div><b>整備・修理を記録</b><small>オイル交換、タイヤ、点検、修理など</small></div><em>›</em></button>
+<button class="card help-link" onclick="openExpense()"><span>▣</span><div><b>その他支出を記録</b><small>税金、保険、用品、洗車など</small></div><em>›</em></button>
+<button class="card help-link" onclick="openHistory()"><span>☷</span><div><b>履歴を確認・編集</b><small>登録済みの記録を一覧から確認</small></div><em>›</em></button>
+<button class="card help-link" onclick="openCosts()"><span>⌁</span><div><b>維持費を分析</b><small>年間・月別の費用をグラフで確認</small></div><em>›</em></button>
+<button class="card help-link" onclick="openDriving()"><span>▥</span><div><b>走行データを確認</b><small>走行距離、給油量、燃費を確認</small></div><em>›</em></button>
+<button class="card help-link" onclick="openSettings()"><span>⚙</span><div><b>バックアップ・設定</b><small>データ保存、復元、CSV出力</small></div><em>›</em></button>
+</div>
+<div class="card help-notes"><h3>データ保存について</h3><p>通常の記録はこのブラウザ内に保存され、追加した画像はCarLog用データとして保存されます。ブラウザのサイトデータを削除する前や機種変更前は、設定ページからバックアップを保存してください。</p></div>
 </section></main>
 
 <div id="adDock" class="ad-area">
@@ -211,6 +241,6 @@
 <button onclick="openCosts()">⌁<span>分析</span></button>
 </nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.63"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.63",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.70"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.70",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>

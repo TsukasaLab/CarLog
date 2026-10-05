@@ -864,19 +864,6 @@ body{background:var(--page)!important;color:var(--ink)!important}
    border-radius:18px!important;
    background:#fff!important;
  }
- body[data-screen="home"] .pc-sidebar button:nth-of-type(1),
- body[data-screen="fuel"] .pc-sidebar button:nth-of-type(2),
- body[data-screen="maintenance"] .pc-sidebar button:nth-of-type(3),
- body[data-screen="expense"] .pc-sidebar button:nth-of-type(4),
- body[data-screen="costs"] .pc-sidebar button:nth-of-type(5),
- body[data-screen="driving"] .pc-sidebar button:nth-of-type(5),
- body[data-screen="vehicles"] .pc-sidebar button:nth-of-type(6),
- body[data-screen="vehicleEdit"] .pc-sidebar button:nth-of-type(6),
- body[data-screen="vehicleNotes"] .pc-sidebar button:nth-of-type(7),
- body[data-screen="settings"] .pc-sidebar button:nth-of-type(8),
- body[data-screen="help"] .pc-sidebar button:nth-of-type(9){
-   background:#1e91eb!important;
- }
 }
 
 /* Mobile: same rule, one page at a time */
@@ -1052,4 +1039,189 @@ button,input,select,textarea{font:inherit}
     width:50%!important;
     padding:38px 0 0 16px!important;
   }
+}
+
+/* =========================================================
+   CarLog Ver.0.64
+   PC版 白×コンパクトミニバン ヒーロー切れ修正
+   ========================================================= */
+@media(min-width:900px){
+  .correct-hero.full-scene-vehicle{
+    height:400px!important;
+    background-image:url("assets/heroes/compact-minivan_white_pc.webp")!important;
+    background-size:100% 100%!important;
+    background-position:center!important;
+    background-repeat:no-repeat!important;
+  }
+}
+
+/* =========================================================
+   CarLog Ver.0.65 - requested UI/data fixes
+   ========================================================= */
+.vehicle-photo-preview{
+ min-height:170px!important;background:#f7fafc!important;border:2px dashed #cbdbe5!important;
+ border-radius:16px!important;display:grid!important;place-items:center!important
+}
+.vehicle-photo-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#7890a1;gap:6px;text-align:center}
+.vehicle-photo-empty span{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#e9f4fb;color:#248fe6;font-size:27px}
+.vehicle-photo-empty strong{font-size:14px;color:#526d81}
+.vehicle-photo-actions{display:flex!important;gap:10px!important;flex-wrap:wrap!important;margin-top:12px!important}
+.photo-action-btn{
+ min-width:118px!important;min-height:44px!important;display:inline-flex!important;align-items:center!important;
+ justify-content:center!important;border-radius:12px!important;padding:10px 16px!important;margin:0!important;
+ font-weight:800!important;border:1px solid #d2e1eb!important;cursor:pointer!important
+}
+.photo-action-btn input{display:none!important}
+.photo-action-btn.select{background:#238ee8!important;color:#fff!important;border-color:#238ee8!important}
+.photo-action-btn.camera{background:#0c3d5d!important;color:#fff!important;border-color:#0c3d5d!important}
+.photo-action-btn.delete{background:#fff1f1!important;color:#c43d3d!important;border-color:#f2caca!important}
+
+#historyList{display:flex!important;flex-direction:column!important;gap:12px!important}
+.history-entry{
+ width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ align-items:center!important;gap:20px!important;text-align:left!important;padding:18px 20px!important;margin:0!important
+}
+.history-title{display:block!important;font-size:16px!important;color:#16384f!important;margin-bottom:10px!important}
+.history-detail{display:flex!important;flex-wrap:wrap!important;gap:5px 14px!important;color:#71899b!important;font-size:12px!important;line-height:1.5!important}
+.history-detail span+span:before{content:"•";margin-right:14px;color:#a0b3c0}
+.history-edit{white-space:nowrap!important;color:#147fcf!important;font-weight:800!important}
+
+.help-link-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+.help-link{
+ display:grid!important;grid-template-columns:40px minmax(0,1fr) 20px!important;align-items:center!important;
+ gap:12px!important;min-height:92px!important;text-align:left!important;margin:0!important
+}
+.help-link>span{font-size:24px!important}.help-link div{display:flex!important;flex-direction:column!important;gap:5px!important}
+.help-link b{font-size:14px!important;color:#18384f!important}.help-link small{font-size:11px!important;color:#71899b!important;font-weight:500!important}
+.help-link em{font-style:normal!important;font-size:22px!important;color:#8ba0af!important}
+.help-notes{margin-top:16px!important}.help-notes h3{margin-top:0!important}.help-notes p{color:#61798b!important;line-height:1.8!important}
+
+#costCardTotal{
+ display:flex!important;flex-direction:column!important;justify-content:center!important;min-height:112px!important;
+ border:0!important;background:linear-gradient(135deg,#123f60,#1d6c9e)!important;color:#fff!important;
+ box-shadow:0 12px 28px rgba(18,63,96,.20)!important
+}
+#costCardTotal span,#costCardTotal b{color:#fff!important}
+#costCardTotal span{font-size:12px!important;opacity:.82!important}
+#costCardTotal b{font-size:30px!important;margin-top:6px!important}
+
+/* old data-screen nth-of-type rules are neutralized; JS .active is authoritative */
+body[data-screen] .pc-sidebar button:not(.active){background:transparent!important;box-shadow:none!important}
+body[data-screen] .pc-sidebar button.active{
+ background:linear-gradient(135deg,#2b9cf1,#147ad5)!important;
+ box-shadow:0 9px 20px rgba(0,0,0,.16)!important
+}
+.settings-help,.storage{display:none!important}
+
+@media(max-width:899px){
+ .help-link-grid{grid-template-columns:1fr!important}
+ .history-entry{padding:15px!important}
+ .vehicle-photo-actions{display:grid!important;grid-template-columns:1fr 1fr!important}
+ .photo-action-btn.delete{grid-column:1/-1!important}
+}
+
+/* CarLog Ver.0.68 - version beside app title */
+.title-version{
+  display:inline-flex!important;
+  align-items:center!important;
+  margin-left:8px!important;
+  padding:3px 7px!important;
+  border-radius:999px!important;
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  letter-spacing:.02em!important;
+  white-space:nowrap!important;
+  vertical-align:middle!important;
+  background:rgba(255,255,255,.14)!important;
+  color:rgba(255,255,255,.88)!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+}
+@media(max-width:899px){
+  .title-version{
+    margin-left:6px!important;
+    padding:3px 6px!important;
+    font-size:9px!important;
+  }
+}
+
+/* =========================================================
+   CarLog Ver.0.69 requested refinements
+   ========================================================= */
+
+/* Sidebar: only the actual current page is blue */
+.pc-sidebar button{background:transparent!important;box-shadow:none!important}
+.pc-sidebar button.active{
+ background:linear-gradient(135deg,#2b9cf1,#147ad5)!important;
+ box-shadow:0 9px 20px rgba(0,0,0,.16)!important;
+}
+
+/* Full vehicle information on home */
+.vehicle-info-all{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ column-gap:28px!important;
+ row-gap:0!important;
+ width:100%!important;
+}
+.vehicle-info-all>div{min-width:0!important}
+.vehicle-info-all dd{overflow-wrap:anywhere!important}
+
+/* Preset / custom image choice */
+.vehicle-image-source{
+ display:grid!important;
+ grid-template-columns:1fr 1fr!important;
+ gap:10px!important;
+ margin:12px 0 14px!important;
+}
+.vehicle-image-source button{
+ min-height:48px!important;border:1px solid #cbdce8!important;border-radius:12px!important;
+ background:#f5f9fc!important;color:#38576d!important;font-weight:800!important;
+}
+.vehicle-image-source button.selected{
+ background:#238ee8!important;color:#fff!important;border-color:#238ee8!important;
+ box-shadow:0 7px 18px rgba(35,142,232,.22)!important;
+}
+.image-source-panel{margin-top:10px!important}
+.preset-vehicle-preview{
+ min-height:180px!important;border-radius:16px!important;overflow:hidden!important;
+ background:#eef4f8!important;display:grid!important;place-items:center!important;
+}
+.preset-vehicle-preview img{
+ display:block!important;width:100%!important;height:220px!important;object-fit:cover!important;
+}
+.preset-preview-car{max-width:80%!important;max-height:170px!important}
+
+.vehicle-photo-actions{gap:12px!important}
+.photo-action-btn{
+ border-radius:12px!important;min-height:48px!important;font-size:14px!important;
+ box-shadow:0 5px 14px rgba(20,60,85,.10)!important;
+}
+.photo-action-btn.select{background:#238ee8!important}
+.photo-action-btn.camera{background:#123f60!important}
+.photo-action-btn.delete{background:#fff!important;border:1px solid #e7b8b8!important;color:#bd3434!important}
+
+/* History stays one column with a clear title/detail gap */
+#historyList{display:flex!important;flex-direction:column!important;gap:12px!important}
+.history-title{margin-bottom:12px!important}
+.history-detail{padding-top:2px!important}
+
+/* Settings guide is now a page navigation item */
+.guide-page-link{margin-top:14px!important}
+
+/* No storage capacity display */
+.storage,[id*="storageTotal"],[id*="storageUsage"]{display:none!important}
+
+@media(max-width:899px){
+ .vehicle-info-all{grid-template-columns:1fr!important}
+ .preset-vehicle-preview img{height:160px!important}
+}
+
+/* CarLog Ver.0.70
+   Same-day count fields are functional inputs.
+   Only the old "○回目" placeholder text is removed. */
+#fuelCount,#maintCount,#expenseCount{
+ display:block!important;
+ visibility:visible!important;
+ opacity:1!important;
 }
