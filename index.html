@@ -1,11 +1,11 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest?v=0.70"><link rel="stylesheet" href="style.css?v=0.70">
+<link rel="manifest" href="manifest.webmanifest?v=0.71"><link rel="stylesheet" href="style.css?v=0.71">
 </head><body>
 
 <aside class="pc-sidebar" aria-label="PCメニュー">
-  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.70 β</span><small>Car Maintenance Log</small></div></div>
+  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.71 β</span><small>Car Maintenance Log</small></div></div>
   <button class="active" onclick="goHome()"><span class="navico">⌂</span><span>ホーム</span></button>
   <button onclick="openFuel()"><span class="navico">⛽</span><span>給油記録</span></button>
   <button onclick="openMaintenance()"><span class="navico">🔧</span><span>整備・修理</span></button>
@@ -29,7 +29,7 @@
 
 <section id="home" class="screen app-page hidden correct-home">
  <header class="mobile-top">
-   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.70 β</span></div>
+   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.71 β</span></div>
    <button onclick="openSettings()" aria-label="メニュー">☰</button>
  </header>
 
@@ -103,23 +103,30 @@
 </section>
 
 <section id="fuel" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">RECORD</span><h2 id="fuelTitle">給油記録</h2><p>給油量・走行距離・支払額を記録</p></div></div>
- <div class="card form"><label>給油日<input id="fuelDate" type="date" onchange="showSameDay('fuel')"></label><label>同日記録の回数<input id="fuelCount" type="number" min="1" inputmode="numeric"></label><div id="fuelSameDay"></div><label>走行距離（km）<input id="fuelKm" type="number"></label><label>給油量（L）<input id="fuelLiters" type="number" step="0.01"></label><label>店名<select id="fuelStoreSelect" onchange="chooseStore('fuel')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="fuelStore" class="store-input" placeholder="店名を入力"></label><label>支払金額（円）<input id="fuelAmount" type="number"></label><label class="check"><input id="fuelFull" type="checkbox" checked>満タン給油</label></div>
+ <div class="card form"><label>給油日<input id="fuelDate" type="date" onchange="showSameDay('fuel')"></label><label class="count-field">同日記録の回数<input id="fuelCount" type="number" min="1" inputmode="numeric" aria-label="同日記録の回数"></label><div id="fuelSameDay"></div><label>走行距離（km）<input id="fuelKm" type="number"></label><label>給油量（L）<input id="fuelLiters" type="number" step="0.01"></label><label>店名<select id="fuelStoreSelect" onchange="chooseStore('fuel')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="fuelStore" class="store-input" placeholder="店名を入力"></label><label>支払金額（円）<input id="fuelAmount" type="number"></label><label class="check"><input id="fuelFull" type="checkbox" checked>満タン給油</label></div>
  <button class="primary" id="fuelSave" onclick="saveFuel()">登録</button><button id="fuelDelete" class="danger hidden" onclick="deleteCurrent('fuel')">この記録を削除</button><button onclick="goHome()">キャンセル</button>
 </section>
 
 <section id="maintenance" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">MAINTENANCE</span><h2 id="maintTitle">整備・修理</h2><p>メンテナンス履歴をわかりやすく管理</p></div></div>
- <div class="card form"><label>日付<input id="maintDate" type="date" onchange="showSameDay('maintenance')"></label><label>同日記録の回数<input id="maintCount" type="number" min="1" inputmode="numeric"></label><div id="maintSameDay"></div><label>種類<select id="maintType"><option>オイル交換</option><option>オイル＋フィルター交換</option><option>タイヤ交換</option><option>バッテリー交換</option><option>車検</option><option>点検</option><option>修理</option><option>その他</option></select></label><label>走行距離（km・任意）<input id="maintKm" type="number"></label><label>費用（円）<input id="maintAmount" type="number"></label><label>店名<select id="maintStoreSelect" onchange="chooseStore('maint')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="maintStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="maintMemo" rows="3"></textarea></label></div>
+ <div class="card form"><label>日付<input id="maintDate" type="date" onchange="showSameDay('maintenance')"></label><label class="count-field">同日記録の回数<input id="maintCount" type="number" min="1" inputmode="numeric" aria-label="同日記録の回数"></label><div id="maintSameDay"></div><label>種類<select id="maintType"><option>オイル交換</option><option>オイル＋フィルター交換</option><option>タイヤ交換</option><option>バッテリー交換</option><option>車検</option><option>点検</option><option>修理</option><option>その他</option></select></label><label>走行距離（km・任意）<input id="maintKm" type="number"></label><label>費用（円）<input id="maintAmount" type="number"></label><label>店名<select id="maintStoreSelect" onchange="chooseStore('maint')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="maintStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="maintMemo" rows="3"></textarea></label></div>
  <button class="primary" id="maintSave" onclick="saveMaintenance()">登録</button><button id="maintDelete" class="danger hidden" onclick="deleteCurrent('maintenance')">この記録を削除</button><button onclick="goHome()">キャンセル</button>
 </section>
 
 <section id="expense" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">EXPENSE</span><h2 id="expenseTitle">その他支出</h2><p>税金・保険・用品などの費用を記録</p></div></div>
- <div class="card form"><label>日付<input id="expenseDate" type="date" onchange="showSameDay('expense')"></label><label>同日記録の回数<input id="expenseCount" type="number" min="1" inputmode="numeric"></label><div id="expenseSameDay"></div><label>分類<select id="expenseCategory"><option>自動車税</option><option>任意保険</option><option>駐車場</option><option>高速・有料道路</option><option>洗車</option><option>用品</option><option>その他</option></select></label><label>金額（円）<input id="expenseAmount" type="number"></label><label>店名<select id="expenseStoreSelect" onchange="chooseStore('expense')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="expenseStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="expenseMemo" rows="3"></textarea></label></div>
+ <div class="card form"><label>日付<input id="expenseDate" type="date" onchange="showSameDay('expense')"></label><label class="count-field">同日記録の回数<input id="expenseCount" type="number" min="1" inputmode="numeric" aria-label="同日記録の回数"></label><div id="expenseSameDay"></div><label>分類<select id="expenseCategory"><option>自動車税</option><option>任意保険</option><option>駐車場</option><option>高速・有料道路</option><option>洗車</option><option>用品</option><option>その他</option></select></label><label>金額（円）<input id="expenseAmount" type="number"></label><label>店名<select id="expenseStoreSelect" onchange="chooseStore('expense')"><option value="">店名を選択</option><option value="__new__">新しい店名を入力</option></select><input id="expenseStore" class="store-input" placeholder="店名を入力"></label><label>メモ<textarea id="expenseMemo" rows="3"></textarea></label></div>
  <button class="primary" id="expenseSave" onclick="saveExpense()">登録</button><button id="expenseDelete" class="danger hidden" onclick="deleteCurrent('expense')">この記録を削除</button><button onclick="goHome()">キャンセル</button>
 </section>
 
 <section id="history" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">HISTORY</span><h2>履歴一覧</h2><p>すべての記録を時系列で確認</p></div></div><div class="tabs"><button onclick="renderHistory('all')">すべて</button><button onclick="renderHistory('fuel')">給油</button><button onclick="renderHistory('maintenance')">整備</button><button onclick="renderHistory('expense')">支出</button></div><div id="historyList"></div></section>
 
-<section id="costs" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">ANALYTICS</span><h2>維持費・分析</h2><p>年間・月別の支出を比較</p></div></div><div class="card yearpick"><button onclick="changeYear(-1)">‹</button><b id="costYear"></b><button onclick="changeYear(1)">›</button></div><button id="costCardTotal" class="card total cost-switch active" onclick="setCostChart('total')"><span>年間合計</span><b id="costTotal">0 円</b></button><div class="grid"><button id="costCardFuel" class="card metric cost-switch" onclick="setCostChart('fuel')"><span>ガソリン</span><b id="costFuel">0 円</b></button><button id="costCardMaint" class="card metric cost-switch" onclick="setCostChart('maint')"><span>整備・維持</span><b id="costMaint">0 円</b></button><button id="costCardOther" class="card metric cost-switch" onclick="setCostChart('other')"><span>その他</span><b id="costOther">0 円</b></button><button id="costCardAvg" class="card metric cost-switch" onclick="setCostChart('avg')"><span>月平均</span><b id="costAvg">0 円</b></button></div><div class="card"><h3 id="monthChartTitle">月別 年間合計</h3><div id="monthBars" class="bars"></div></div></section>
+<section id="costs" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">ANALYTICS</span><h2>維持費・分析</h2><p>年間・月別の支出を比較</p></div></div><div class="card yearpick"><button onclick="changeYear(-1)">‹</button><b id="costYear"></b><button onclick="changeYear(1)">›</button></div><button id="costCardTotal" class="card total cost-switch active" onclick="setCostChart('total')"><span>年間合計</span><b id="costTotal">0 円</b></button><div id="selectedMonthCost" class="card selected-month-cost">
+ <div><span id="selectedMonthLabel">月別合計</span><b id="selectedMonthTotal">バーを選択</b></div>
+ <div class="selected-month-breakdown">
+  <span>ガソリン <b id="selectedMonthFuel">---</b></span>
+  <span>整備・維持 <b id="selectedMonthMaint">---</b></span>
+  <span>その他 <b id="selectedMonthOther">---</b></span>
+ </div>
+</div><div class="grid"><button id="costCardFuel" class="card metric cost-switch" onclick="setCostChart('fuel')"><span>ガソリン</span><b id="costFuel">0 円</b></button><button id="costCardMaint" class="card metric cost-switch" onclick="setCostChart('maint')"><span>整備・維持</span><b id="costMaint">0 円</b></button><button id="costCardOther" class="card metric cost-switch" onclick="setCostChart('other')"><span>その他</span><b id="costOther">0 円</b></button><button id="costCardAvg" class="card metric cost-switch" onclick="setCostChart('avg')"><span>月平均</span><b id="costAvg">0 円</b></button></div><div class="card"><h3 id="monthChartTitle">月別 年間合計</h3><div id="monthBars" class="bars"></div></div></section>
 
 <section id="driving" class="screen app-page hidden"><div class="screen-head page-head"><div><span class="page-eyebrow">DRIVING</span><h2>走行データ</h2><p>走行距離・給油量・燃費を確認</p></div></div>
 <div class="grid driving-grid">
@@ -202,7 +209,7 @@
 <div class="card"><h3>データ管理</h3><p class="help">データはこのブラウザ内に保存されます。機種変更やブラウザデータ削除に備えてバックアップしてください。</p><button onclick="exportBackup(false)">データのみバックアップ</button><button onclick="exportBackup(true)">写真込み完全バックアップ</button><button onclick="document.getElementById('importFile').click()">バックアップから復元</button><input class="hidden" id="importFile" type="file" accept=".json" onchange="importBackup(event)"><button onclick="exportCSV()">CSVを書き出す</button></div>
 <button class="card menu guide-page-link" onclick="openHelp()">📖 使い方を開く <span>›</span></button>
 </div>
-<div class="about"><b>CarLog Ver.0.70 β</b><span>ローカル保存・公開β</span></div>
+<div class="about"><b>CarLog Ver.0.71 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
 <section id="help" class="screen app-page hidden">
@@ -241,6 +248,6 @@
 <button onclick="openCosts()">⌁<span>分析</span></button>
 </nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.70"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.70",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.71"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.71",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>
