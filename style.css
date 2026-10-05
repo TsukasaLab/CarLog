@@ -1226,34 +1226,33 @@ body[data-screen] .pc-sidebar button.active{
  opacity:1!important;
 }
 
-/* Ver.0.71 */
-.form label.count-field{
- display:flex!important;
- visibility:visible!important;
- opacity:1!important;
- grid-column:auto!important;
-}
-.form label.count-field input{
- display:block!important;
- visibility:visible!important;
- opacity:1!important;
-}
-.selected-month-cost{
- margin-top:12px!important;
- display:flex!important;
- justify-content:space-between!important;
- align-items:center!important;
- gap:20px!important;
- border-left:5px solid #45a8ef!important;
-}
-.selected-month-cost>div:first-child>span{display:block;color:#6d8599;font-size:12px;font-weight:800;margin-bottom:6px}
-.selected-month-cost>div:first-child>b{font-size:25px;color:#123c5a}
-.selected-month-breakdown{display:flex;gap:18px;flex-wrap:wrap;color:#6d8599;font-size:12px}
-.selected-month-breakdown b{color:#123c5a;margin-left:5px}
+/* Ver.0.72 */
+.selected-month-cost{margin-top:14px!important}
+.cost-category-section{margin-top:18px}
+.cost-category-section h3{margin:0 0 9px;color:#173d58;font-size:14px}
+.cost-category-buttons{display:flex;gap:7px;width:100%;flex-wrap:nowrap}
+.cost-category-buttons button{flex:1 1 0;min-width:0;padding:9px 5px;border:1px solid #cfe0eb;border-radius:10px;background:#fff;color:#456579;font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cost-category-buttons button.active{background:#238ee8;color:#fff;border-color:#238ee8}
+.renewal-manager{margin-top:18px}
+.section-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.section-title-row h3{margin:0 0 4px}
+.small-primary{background:#238ee8!important;color:#fff!important;border:0!important;border-radius:10px!important;padding:9px 12px!important;font-weight:800!important}
+.renewal-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid #e3edf3}
+.renewal-form label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;color:#577184}
+.renewal-form .full{grid-column:1/-1}
+.renewal-form-actions{display:flex;gap:8px}
+.renewal-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #e8eff4}
+.renewal-row>div:first-child{display:flex;flex-direction:column;gap:4px}.renewal-row span,.renewal-row small{font-size:12px;color:#6b8496}.renewal-row em{font-style:normal;font-size:11px;font-weight:900;color:#688194}.renewal-row em.soon{color:#d56a22}
+.renewal-row>div:last-child{display:flex;gap:5px}.renewal-row button{padding:7px 9px}
+.home-renewals{display:flex;flex-direction:column}
+.home-renewal-row{display:grid;grid-template-columns:minmax(90px,1.2fr) 1fr 1fr auto;gap:10px;align-items:center;width:100%;padding:11px 0;border:0;border-bottom:1px solid #e9f0f4;background:transparent;text-align:left;color:#486579}
+.home-renewal-row b{color:#183f5c}.home-renewal-row span{font-size:12px}.home-renewal-row em{font-style:normal;font-size:11px;font-weight:900}.home-renewal-row em.soon{color:#d56a22}
 #monthBars .barcol[role="button"]{cursor:pointer;border-radius:8px;padding-top:5px;transition:.15s}
-#monthBars .barcol[role="button"]:hover,#monthBars .barcol.selected-month{background:#eaf5fd;transform:translateY(-2px)}
-#monthBars .barcol.selected-month .bar{filter:brightness(.82)}
+#monthBars .barcol.selected-month{background:#eaf5fd;transform:translateY(-2px)}
 @media(max-width:899px){
- .selected-month-cost{align-items:flex-start!important;flex-direction:column!important}
- .selected-month-breakdown{gap:8px 14px}
+ .cost-category-buttons{gap:4px}.cost-category-buttons button{font-size:9px;padding:8px 3px}
+ .renewal-form{grid-template-columns:1fr}
+ .renewal-form .full{grid-column:auto}
+ .renewal-row{grid-template-columns:1fr auto}.renewal-row>div:last-child{grid-column:1/-1}
+ .home-renewal-row{grid-template-columns:1fr auto}.home-renewal-row span{grid-column:1/-1}
 }

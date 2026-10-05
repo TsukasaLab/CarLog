@@ -1,4 +1,4 @@
-const CACHE="carlog-v0.71";const FILES=["./","./index.html","./style.css?v=0.71","./app.js?v=0.71","./manifest.webmanifest?v=0.71","./icon-192-v043.png","./icon-512-v043.png",
+const CACHE="carlog-v0.72";const FILES=["./","./index.html","./style.css?v=0.72","./app.js?v=0.72","./manifest.webmanifest?v=0.72","./icon-192-v043.png","./icon-512-v043.png",
   "./assets/vehicles/compact-minivan_white.webp",
   "./assets/vehicles/sedan_black.webp",
   "./assets/heroes/compact-minivan_white.webp",

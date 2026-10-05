@@ -44,7 +44,7 @@ const load=(k,d)=>{try{let v=localStorage.getItem(k);return v?JSON.parse(v):d}ca
 const uid=p=>p+"_"+(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.random().toString(16).slice(2));
 const today=()=>{let d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10)},nowTime=()=>new Date().toTimeString().slice(0,5),nf=v=>Number(v||0).toLocaleString("ja-JP"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 let vehicles=load(KEY.vehicles,[]),activeId=localStorage.getItem(KEY.active)||"",fuelRecords=load(KEY.fuel,[]),maintenanceRecords=load(KEY.maint,[]),expenseRecords=load(KEY.expense,[]);
-let edit={fuel:null,maintenance:null,expense:null,vehicle:null},costYear=new Date().getFullYear(),costChartMode="total",driveMode="distance",pendingVehiclePhoto=null,memoDraft=[];
+let historyNavigating=false;let edit={fuel:null,maintenance:null,expense:null,vehicle:null},costYear=new Date().getFullYear(),costChartMode="total",driveMode="distance",pendingVehiclePhoto=null,memoDraft=[];
 const COLOR_LABELS={white:"ホワイト",black:"ブラック",silver:"シルバー",gray:"グレー",red:"レッド",blue:"ブルー",navy:"ネイビー",green:"グリーン",beige:"ベージュ",brown:"ブラウン",yellow:"イエロー",orange:"オレンジ",purple:"パープル",other:"その他"};
 const COLOR_HEX={white:"#f4f4f2",black:"#25282d",silver:"#b8bdc5",gray:"#737982",red:"#c93c3c",blue:"#3478c8",navy:"#263f68",green:"#4f7d57",beige:"#d5c4a1",brown:"#795548",yellow:"#e5bf36",orange:"#df7b2c",purple:"#76518d",other:"#8b95a5"};
 function carSvg(color,bodyType="compact-minivan"){
@@ -74,6 +74,8 @@ function stamp(r){
  return `${d}_${n}_${x}`;
 }
 function show(id){
+ const prev=document.body.dataset.screen||"";
+ if(!historyNavigating&&prev&&prev!==id&&id!=="setup")history.pushState({screen:id},"","#"+id);
  document.querySelectorAll(".screen").forEach(x=>x.classList.add("hidden"));
  const target=document.getElementById(id);
  if(target)target.classList.remove("hidden");
@@ -87,7 +89,8 @@ function show(id){
  if(map[id]!=null&&buttons[map[id]])buttons[map[id]].classList.add("active");
  window.scrollTo(0,0);
 }
-document.addEventListener("DOMContentLoaded",()=>{migrate();refreshStoreNames();car()?goHome():show("setup")});
+document.addEventListener("DOMContentLoaded",()=>{migrate();refreshStoreNames();historyNavigating=true;car()?goHome():show("setup");history.replaceState({screen:document.body.dataset.screen||"home"},"",location.hash||"#"+(document.body.dataset.screen||"home"));historyNavigating=false});
+window.addEventListener("popstate",e=>{let s=e.state?.screen;if(!s)return;historyNavigating=true;const routes={home:()=>goHome(),fuel:()=>openFuel(),maintenance:()=>openMaintenance(),expense:()=>openExpense(),history:()=>openHistory(),costs:()=>openCosts(),driving:()=>openDriving(),vehicles:()=>openVehicleManager(),settings:()=>openSettings(),help:()=>openHelp()};(routes[s]||(()=>show(s)))();historyNavigating=false});
 
 function currentKm(){let c=car();return Math.max(Number(c?.odometer)||0,...fuels().map(r=>+r.odometer||0),...maints().map(r=>+r.odometer||0))}
 function createVehicleFromSetup(){let n=setupName.value.trim(),km=+setupKm.value;if(!n||km<0)return alert("車両名と走行距離を入力してください。");let v={id:uid("vehicle"),name:n,maker:setupMaker.value.trim(),odometer:km,inspectionDate:setupInspection.value,oilInterval:+setupOil.value||5000,createdAt:new Date().toISOString(),memos:[]};vehicles.push(v);activeId=v.id;save(KEY.vehicles,vehicles);localStorage.setItem(KEY.active,activeId);goHome()}
@@ -99,7 +102,7 @@ let d=new Date(),y=d.getFullYear(),m=d.getMonth()+1,mc=costs(y,m);monthFuel.text
 let yc=costs(y),elapsed=m;yearTotal.textContent=nf(yc.total)+" 円";yearAvg.textContent=nf(Math.round(yc.total/elapsed))+" 円";let yd=Array.from({length:12},(_,i)=>monthDrive(y,i+1).distance).reduce((a,b)=>a+b,0);yearKm.textContent=nf(Math.round(yd))+" km";perKm.textContent=yd?(yc.total/yd).toFixed(1)+" 円/km":"---";
 if(c.inspectionDate){inspection.textContent=c.inspectionDate.replaceAll("-","/");let days=Math.ceil((new Date(c.inspectionDate+"T00:00:00")-new Date(today()+"T00:00:00"))/86400000);inspectionLeft.textContent=days>=0?"あと "+nf(days)+" 日":"期限切れ"}else{inspection.textContent="未設定";inspectionLeft.textContent=""}
 let oil=maints().filter(r=>["オイル交換","オイル＋フィルター交換"].includes(r.type)).sort((a,b)=>+b.odometer-+a.odometer)[0];if(c.oilInterval){let target=(oil?+oil.odometer:km)+(+c.oilInterval);oilTarget.textContent=nf(target)+" km";let left=target-km;oilLeft.textContent=left>=0?"あと "+nf(left)+" km":nf(Math.abs(left))+" km超過"}else{oilTarget.textContent="未設定";oilLeft.textContent=""}
-let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderRecentStable();renderCorrectDashboard(c)}
+let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderRecentStable();renderCorrectDashboard(c);renderHomeRenewals(c)}
 async function renderCarThumb(c){
  const useCustom=c.imageMode==="custom"&&c.photoId;
  if(!useCustom&&heroScenePath(c)){homeCarThumb.innerHTML="";return}
@@ -124,30 +127,87 @@ function showSameDay(kind){let date=kind==="fuel"?fuelDate.value:kind==="mainten
 
 function openHistory(){show("history");renderHistory("all")}function renderHistory(filter){let rs=allRecords().filter(r=>filter==="all"||r._kind===filter);historyList.innerHTML=rs.length?rs.map(r=>`<button class="card history-entry" onclick="${r._kind==="fuel"?"openFuel":r._kind==="maintenance"?"openMaintenance":"openExpense"}('${r.id}')"><div class="history-main"><b class="history-title">${esc(r._title)}</b><div class="history-detail"><span>${esc(r.date)}</span><span>${nf(r.amount)}円</span>${r.store?`<span>${esc(r.store)}</span>`:""}${r._detail?`<span>${esc(r._detail)}</span>`:""}</div></div><span class="history-edit">編集 ›</span></button>`).join(""):'<div class="card">記録はありません。</div>'}
 
-function openCosts(mode){if(mode)costChartMode=mode;show("costs");renderCosts()}function changeYear(n){costYear+=n;renderCosts()}function setCostChart(m){costChartMode=m;renderCostChart()}
+function openCosts(mode){if(mode)costChartMode=mode;show("costs");renderCosts()}
+function changeYear(n){costYear+=n;renderCosts()}
+function setCostChart(m){costChartMode=m;renderCosts()}
+function categoryCost(kind,category,y,m){
+ let same=r=>{let d=(r.date||"").split("-").map(Number);return d[0]===y&&(!m||d[1]===m)};
+ let arr=kind==="maint"?maints():expenses(),key=kind==="maint"?"type":"category";
+ return arr.filter(same).filter(r=>r[key]===category).reduce((s,r)=>s+(+r.amount||0),0)
+}
+function costModeValue(y,m){
+ if(costChartMode.startsWith("maintcat:"))return categoryCost("maint",costChartMode.slice(9),y,m);
+ if(costChartMode.startsWith("othercat:"))return categoryCost("other",costChartMode.slice(9),y,m);
+ let x=costs(y,m);return costChartMode==="avg"?x.total:x[costChartMode]
+}
+function costModeLabel(){
+ if(costChartMode.startsWith("maintcat:"))return "整備・維持 / "+costChartMode.slice(9);
+ if(costChartMode.startsWith("othercat:"))return "その他支出 / "+costChartMode.slice(9);
+ return({total:"年間合計",fuel:"ガソリン",maint:"整備・維持",other:"その他",avg:"月平均"})[costChartMode]||"年間合計"
+}
+function renderCostCategoryButtons(){
+ let ms=[...new Set(maints().map(r=>r.type).filter(Boolean))],os=[...new Set(expenses().map(r=>r.category).filter(Boolean))];
+ maintCategoryButtons.innerHTML=`<button class="${costChartMode==="maint"?"active":""}" onclick="setCostChart('maint')">全体</button>`+ms.map(x=>`<button class="${costChartMode==="maintcat:"+x?"active":""}" onclick="setCostChart('maintcat:${esc(x)}')">${esc(x)}</button>`).join("");
+ otherCategoryButtons.innerHTML=`<button class="${costChartMode==="other"?"active":""}" onclick="setCostChart('other')">全体</button>`+os.map(x=>`<button class="${costChartMode==="othercat:"+x?"active":""}" onclick="setCostChart('othercat:${esc(x)}')">${esc(x)}</button>`).join("")
+}
 function selectCostMonth(month){
  month=Number(month);if(!month||month<1||month>12)return;
- let x=costs(costYear,month);
+ let x=costs(costYear,month),selected=costModeValue(costYear,month);
  selectedMonthLabel.textContent=`${costYear}年${month}月の合計`;
- selectedMonthTotal.textContent=nf(x.total)+" 円";
- selectedMonthFuel.textContent=nf(x.fuel)+" 円";
- selectedMonthMaint.textContent=nf(x.maint)+" 円";
- selectedMonthOther.textContent=nf(x.other)+" 円";
- document.querySelectorAll("#monthBars .barcol").forEach((el,i)=>el.classList.toggle("selected-month",i===month-1));
+ selectedMonthTotal.textContent=nf(selected)+" 円";
+ selectedMonthFuel.textContent=nf(x.fuel)+" 円";selectedMonthMaint.textContent=nf(x.maint)+" 円";selectedMonthOther.textContent=nf(x.other)+" 円";
+ document.querySelectorAll("#monthBars .barcol").forEach((el,i)=>el.classList.toggle("selected-month",i===month-1))
 }
-function renderCosts(){costYearEl=document.getElementById("costYear");costYearEl.textContent=costYear+"年";let c=costs(costYear),months=costYear===new Date().getFullYear()?new Date().getMonth()+1:12;costTotal.textContent=nf(c.total)+" 円";costFuel.textContent=nf(c.fuel)+" 円";costMaint.textContent=nf(c.maint)+" 円";costOther.textContent=nf(c.other)+" 円";costAvg.textContent=nf(Math.round(c.total/months))+" 円";renderCostChart();selectCostMonth(costYear===new Date().getFullYear()?new Date().getMonth()+1:1)}
-function renderCostChart(){let labels={total:"年間合計",fuel:"ガソリン",maint:"整備・維持",other:"その他",avg:"月平均"};["total","fuel","maint","other","avg"].forEach(k=>document.getElementById("costCard"+({total:"Total",fuel:"Fuel",maint:"Maint",other:"Other",avg:"Avg"}[k])).classList.toggle("active",costChartMode===k));monthChartTitle.textContent=costChartMode==="avg"?"月ごとの累計平均":"月別 "+labels[costChartMode];let vals;if(costChartMode==="avg"){let now=new Date(),currentYear=now.getFullYear(),lastMonth=costYear<currentYear?12:costYear===currentYear?now.getMonth()+1:0,run=0;vals=Array.from({length:12},(_,i)=>{let month=i+1;if(month>lastMonth)return null;run+=costs(costYear,month).total;return run/month})}else vals=Array.from({length:12},(_,i)=>costs(costYear,i+1)[costChartMode]);renderBars(monthBars,vals,"円",true)}
-
-function monthDrive(y,m){let key=`${y}-${String(m).padStart(2,"0")}`,rs=fuels().filter(r=>r.date?.startsWith(key)).sort((a,b)=>stamp(a).localeCompare(stamp(b))),liters=rs.reduce((s,r)=>s+(+r.liters||0),0),amount=rs.reduce((s,r)=>s+(+r.amount||0),0),distance=rs.reduce((s,r)=>s+(+r.distance>0?+r.distance:0),0),ecos=rs.filter(r=>+r.fuelEconomy>0).map(r=>+r.fuelEconomy);return{distance,liters,count:rs.length,economy:ecos.length?ecos.reduce((a,b)=>a+b,0)/ecos.length:0,price:liters?amount/liters:0,fuelkm:distance?amount/distance:0}}
-function openDriving(mode){if(mode)driveMode=mode;show("driving");renderDriving()}function setDriveChart(m){driveMode=m;renderDriving()}
-function renderDriving(){let y=new Date().getFullYear(),vals=Array.from({length:12},(_,i)=>monthDrive(y,i+1)),sum=k=>vals.reduce((s,x)=>s+x[k],0),lit=sum("liters"),dist=sum("distance"),amount=costs(y).fuel,eco=vals.filter(x=>x.economy).map(x=>x.economy);driveDistance.textContent=nf(Math.round(dist))+" km";driveLiters.textContent=lit.toFixed(1)+" L";driveCount.textContent=nf(sum("count"))+" 回";driveEconomy.textContent=eco.length?(eco.reduce((a,b)=>a+b,0)/eco.length).toFixed(1)+" km/L":"---";drivePrice.textContent=lit?(amount/lit).toFixed(1)+" 円/L":"---";driveFuelKm.textContent=dist?(amount/dist).toFixed(1)+" 円/km":"---";let map={distance:["Distance","走行距離","km"],liters:["Liters","給油量","L"],count:["Count","給油回数","回"],economy:["Economy","平均燃費","km/L"],price:["Price","平均単価","円/L"],fuelkm:["FuelKm","1km燃料代","円/km"]};Object.keys(map).forEach(k=>document.getElementById("driveCard"+map[k][0]).classList.toggle("active",driveMode===k));driveChartTitle.textContent="月別 "+map[driveMode][1];renderBars(driveBars,vals.map(x=>x[driveMode]),map[driveMode][2])}
+function renderCosts(){
+ document.getElementById("costYear").textContent=costYear+"年";
+ let all=costs(costYear),months=costYear===new Date().getFullYear()?new Date().getMonth()+1:12;
+ let annual=costChartMode.startsWith("maintcat:")||costChartMode.startsWith("othercat:")?Array.from({length:12},(_,i)=>costModeValue(costYear,i+1)).reduce((a,b)=>a+b,0):costChartMode==="avg"?all.total:costModeValue(costYear);
+ costTotalLabel.textContent=(costChartMode.startsWith("maintcat:")||costChartMode.startsWith("othercat:"))?costModeLabel()+" 年間合計":"年間合計";
+ costTotal.textContent=nf(annual)+" 円";costFuel.textContent=nf(all.fuel)+" 円";costMaint.textContent=nf(all.maint)+" 円";costOther.textContent=nf(all.other)+" 円";costAvg.textContent=nf(Math.round(all.total/months))+" 円";
+ renderCostCategoryButtons();renderCostChart();selectCostMonth(costYear===new Date().getFullYear()?new Date().getMonth()+1:1)
+}
+function renderCostChart(){
+ ["total","fuel","maint","other","avg"].forEach(k=>{let el=document.getElementById("costCard"+({total:"Total",fuel:"Fuel",maint:"Maint",other:"Other",avg:"Avg"}[k]));if(el)el.classList.toggle("active",costChartMode===k)});
+ monthChartTitle.textContent="月別 "+costModeLabel();
+ let vals;
+ if(costChartMode==="avg"){let now=new Date(),last=costYear<now.getFullYear()?12:costYear===now.getFullYear()?now.getMonth()+1:0,run=0;vals=Array.from({length:12},(_,i)=>{let m=i+1;if(m>last)return null;run+=costs(costYear,m).total;return run/m})}
+ else vals=Array.from({length:12},(_,i)=>costModeValue(costYear,i+1));
+ renderBars(monthBars,vals,"円",true)
+}
 function renderBars(el,vals,unit,clickMonths=false){
  let numeric=vals.filter(v=>v!==null&&Number.isFinite(+v)),max=Math.max(1,...numeric);
- el.innerHTML=vals.map((v,i)=>{
-  let click=clickMonths?` role="button" tabindex="0" onclick="selectCostMonth(${i+1})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCostMonth(${i+1})}"`:"";
-  if(v===null)return `<div class="barcol future"${click}><div class="bar-empty"></div><small></small>${i+1}</div>`;
-  return `<div class="barcol"${click}><div class="bar" style="height:${Math.max(2,(+v)/max*145)}px" title="${(+v).toFixed((+v)%1?1:0)} ${unit}"></div><small>${v?(+v).toFixed((+v)>=100?0:1):""}</small>${i+1}</div>`;
- }).join("");
+ el.innerHTML=vals.map((v,i)=>{let click=clickMonths?` role="button" tabindex="0" onclick="selectCostMonth(${i+1})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCostMonth(${i+1})}"`:"";if(v===null)return `<div class="barcol future"${click}><div class="bar-empty"></div><small></small>${i+1}</div>`;return `<div class="barcol"${click}><div class="bar" style="height:${Math.max(2,(+v)/max*145)}px" title="${(+v).toFixed((+v)%1?1:0)} ${unit}"></div><small>${v?(+v).toFixed((+v)>=100?0:1):""}</small>${i+1}</div>`}).join("")
+}
+function openDriving(mode){if(mode)driveMode=mode;show("driving");renderDriving()}function setDriveChart(m){driveMode=m;renderDriving()}
+function renderDriving(){let y=new Date().getFullYear(),vals=Array.from({length:12},(_,i)=>monthDrive(y,i+1)),sum=k=>vals.reduce((s,x)=>s+x[k],0),lit=sum("liters"),dist=sum("distance"),amount=costs(y).fuel,eco=vals.filter(x=>x.economy).map(x=>x.economy);driveDistance.textContent=nf(Math.round(dist))+" km";driveLiters.textContent=lit.toFixed(1)+" L";driveCount.textContent=nf(sum("count"))+" 回";driveEconomy.textContent=eco.length?(eco.reduce((a,b)=>a+b,0)/eco.length).toFixed(1)+" km/L":"---";drivePrice.textContent=lit?(amount/lit).toFixed(1)+" 円/L":"---";driveFuelKm.textContent=dist?(amount/dist).toFixed(1)+" 円/km":"---";let map={distance:["Distance","走行距離","km"],liters:["Liters","給油量","L"],count:["Count","給油回数","回"],economy:["Economy","平均燃費","km/L"],price:["Price","平均単価","円/L"],fuelkm:["FuelKm","1km燃料代","円/km"]};Object.keys(map).forEach(k=>document.getElementById("driveCard"+map[k][0]).classList.toggle("active",driveMode===k));driveChartTitle.textContent="月別 "+map[driveMode][1];renderBars(driveBars,vals.map(x=>x[driveMode]),map[driveMode][2])}
+function renderBars(el,vals,unit){let numeric=vals.filter(v=>v!==null&&Number.isFinite(+v)),max=Math.max(1,...numeric);el.innerHTML=vals.map((v,i)=>v===null?`<div class="barcol future"><div class="bar-empty"></div><small></small>${i+1}</div>`:`<div class="barcol"><div class="bar" style="height:${Math.max(2,(+v)/max*145)}px" title="${(+v).toFixed((+v)%1?1:0)} ${unit}"></div><small>${v?(+v).toFixed((+v)>=100?0:1):""}</small>${i+1}</div>`).join("")}
+
+function openVehicleManager(){show("vehicles");renderVehicles()}function renderVehicles(){vehicleList.innerHTML=vehicles.map(v=>`<div class="card vehicle-row"><button class="vehicle-select" onclick="selectVehicle('${v.id}')"><div><b>${esc(v.name)} ${v.id===activeId?"✓":""}</b><small>${esc([v.maker,v.model,v.color].filter(Boolean).join(" / "))} ・ ${nf(v.odometer)} km</small></div><span>切替</span></button><button class="vehicle-edit-btn" onclick="openVehicleEdit('${v.id}')">編集</button></div>`).join("")}function selectVehicle(id){activeId=id;localStorage.setItem(KEY.active,id);goHome()}
+async function openVehicleEdit(id=null){edit.vehicle=id;let v=id?vehicles.find(x=>x.id===id):null;vehicleEditTitle.textContent=v?"車両を編集":"車両を追加";vehicleDelete.classList.toggle("hidden",!v);editCarName.value=v?.name||"";editCarMaker.value=v?.maker||"";editCarModel.value=v?.model||"";editCarYear.value=v?.year||"";let vc=v?.color||"";if(vc&&!COLOR_LABELS[vc]){let x=vc.toLowerCase();vc=x.includes("白")||x.includes("white")?"white":x.includes("黒")||x.includes("black")?"black":x.includes("銀")||x.includes("silver")?"silver":x.includes("灰")||x.includes("gray")?"gray":x.includes("赤")||x.includes("red")?"red":x.includes("青")||x.includes("blue")?"blue":x.includes("緑")||x.includes("green")?"green":x.includes("黄")||x.includes("yellow")?"yellow":"other"}editCarColor.value=vc;editCarBodyType.value=v?.bodyType||"compact-minivan";renderBodyTypeChoices();editCarPurchase.value=v?.purchaseDate||"";editCarPlate.value=v?.plate||"";editCarKm.value=v?.odometer??"";editCarInspection.value=v?.inspectionDate||"";editCarOil.value=v?.oilInterval||5000;pendingVehiclePhoto=v?.photoId||null;pendingImageMode=v?.imageMode||(v?.photoId?"custom":"preset");memoDraft=JSON.parse(JSON.stringify(v?.memos||[]));show("vehicleEdit");await renderVehiclePhoto();renderVehicleImageMode();renderPresetVehiclePreview();renderMemoEditor()}
+async function saveVehicleEdit(){syncMemoText();let n=editCarName.value.trim(),km=+editCarKm.value;if(!n||km<0)return alert("車両名と走行距離を入力してください。");let data={name:n,maker:editCarMaker.value.trim(),model:editCarModel.value.trim(),year:editCarYear.value.trim(),color:editCarColor.value.trim(),bodyType:editCarBodyType.value||"compact-minivan",imageMode:pendingImageMode,purchaseDate:editCarPurchase.value,plate:editCarPlate.value.trim(),odometer:km,inspectionDate:editCarInspection.value,oilInterval:+editCarOil.value||5000,photoId:pendingVehiclePhoto,memos:memoDraft};if(edit.vehicle){let i=vehicles.findIndex(x=>x.id===edit.vehicle);vehicles[i]={...vehicles[i],...data}}else{let v={id:uid("vehicle"),...data,createdAt:new Date().toISOString()};vehicles.push(v);activeId=v.id;localStorage.setItem(KEY.active,activeId)}save(KEY.vehicles,vehicles);goHome()}
+async function deleteVehicle(){let id=edit.vehicle;if(!id||!confirm("この車両と関連するすべての記録・写真を削除しますか？"))return;let v=vehicles.find(x=>x.id===id);if(v){let ids=[v.photoId,...(v.memos||[]).flatMap(m=>m.photos||[])].filter(Boolean);for(let x of ids)await imageDelete(x)}vehicles=vehicles.filter(v=>v.id!==id);fuelRecords=fuelRecords.filter(r=>r.vehicleId!==id);maintenanceRecords=maintenanceRecords.filter(r=>r.vehicleId!==id);expenseRecords=expenseRecords.filter(r=>r.vehicleId!==id);activeId=vehicles[0]?.id||"";save(KEY.vehicles,vehicles);localStorage.setItem(KEY.active,activeId);persistRecords();activeId?goHome():show("setup")}
+
+function addMemo(){syncMemoText();memoDraft.push({id:uid("memo"),title:"",content:"",photos:[]});renderMemoEditor()}
+function syncMemoText(){document.querySelectorAll("[data-memo]").forEach(el=>{let m=memoDraft.find(x=>x.id===el.dataset.memo);if(m)m[el.dataset.field]=el.value})}
+function renderMemoEditor(){memoEditor.innerHTML=memoDraft.length?memoDraft.map((m,i)=>`<div class="memo-edit"><div class="memo-number">メモ ${i+1}</div><label>題名<textarea rows="3" data-memo="${m.id}" data-field="title"></textarea></label><label>内容<textarea rows="7" data-memo="${m.id}" data-field="content"></textarea></label><div id="photos_${m.id}" class="photo-grid"></div><div class="photo-actions"><select id="quality_${m.id}"><option value="standard">標準</option><option value="high">高画質</option><option value="original">原画</option></select><label class="file-btn">写真から選択<input type="file" accept="image/*" multiple onchange="addMemoPhotos('${m.id}',event)"></label><label class="file-btn">撮影する<input type="file" accept="image/*" capture="environment" onchange="addMemoPhotos('${m.id}',event)"></label><button type="button" class="danger-mini" onclick="removeMemo('${m.id}')">メモを削除</button></div></div>`).join(""):'<div class="empty-memo">「＋ メモを追加」で新しいメモを作成します。</div>';memoDraft.forEach(m=>{document.querySelector(`[data-memo="${m.id}"][data-field="title"]`).value=m.title||"";document.querySelector(`[data-memo="${m.id}"][data-field="content"]`).value=m.content||"";renderMemoPhotos(m)})}
+function removeMemo(id){if(!confirm("このメモと添付写真を削除しますか？"))return;let m=memoDraft.find(x=>x.id===id);Promise.all((m?.photos||[]).map(imageDelete)).then(()=>{memoDraft=memoDraft.filter(x=>x.id!==id);renderMemoEditor()})}
+async function addMemoPhotos(id,e){syncMemoText();let m=memoDraft.find(x=>x.id===id),q=document.getElementById("quality_"+id).value;for(let f of [...e.target.files]){let blob=await processImage(f,q),pid=uid("img");await imagePut(pid,blob,{quality:q,name:f.name});m.photos.push(pid)}e.target.value="";renderMemoEditor();updateStorage()}
+async function renderMemoPhotos(m){let el=document.getElementById("photos_"+m.id);if(!el)return;el.innerHTML="";for(let pid of m.photos||[]){let rec=await imageGet(pid);if(!rec)continue;let u=URL.createObjectURL(rec.blob),d=document.createElement("div");d.className="photo-tile";d.innerHTML=`<img src="${u}"><button type="button" onclick="removeMemoPhoto('${m.id}','${pid}')">×</button>`;d.querySelector("img").onclick=()=>openImage(u);el.appendChild(d)}}
+async function removeMemoPhoto(mid,pid){if(!confirm("この写真をCarLogから削除しますか？"))return;await imageDelete(pid);let m=memoDraft.find(x=>x.id===mid);m.photos=(m.photos||[]).filter(x=>x!==pid);renderMemoPhotos(m);updateStorage()}
+async function selectVehiclePhoto(e){let f=e.target.files?.[0];if(!f)return;if(pendingVehiclePhoto)await imageDelete(pendingVehiclePhoto);let blob=await processImage(f,"high"),id=uid("img");await imagePut(id,blob,{quality:"high",name:f.name});pendingVehiclePhoto=id;e.target.value="";renderVehiclePhoto();updateStorage()}
+async function removeVehiclePhoto(){if(!pendingVehiclePhoto)return;if(!confirm("車両写真をCarLogから削除しますか？"))return;await imageDelete(pendingVehiclePhoto);pendingVehiclePhoto=null;renderVehiclePhoto();updateStorage()}
+function renderVehicleColorPreview(){renderBodyTypeChoices();renderPresetVehiclePreview()}
+
+function openVehicleManager(){show("vehicles");renderVehicles();renderRenewals()}
+function renderVehicles(){vehicleList.innerHTML=vehicles.map(v=>`<div class="card vehicle-row"><button class="vehicle-select" onclick="selectVehicle('${v.id}')"><div><b>${esc(v.name)} ${v.id===activeId?"✓":""}</b><small>${esc([v.maker,v.model,COLOR_LABELS[v.color]||v.color].filter(Boolean).join(" / "))} ・ ${nf(v.odometer)} km</small></div><span>切替</span></button><button class="vehicle-edit-btn" onclick="openVehicleEdit('${v.id}')">編集</button></div>`).join("")}
+function selectVehicle(id){activeId=id;localStorage.setItem(KEY.active,id);goHome()}
+async function openVehicleEdit(id=null){edit.vehicle=id;let v=id?vehicles.find(x=>x.id===id):null;vehicleEditTitle.textContent=v?"車両を編集":"車両を追加";vehicleDelete.classList.toggle("hidden",!v);editCarName.value=v?.name||"";editCarMaker.value=v?.maker||"";editCarModel.value=v?.model||"";editCarYear.value=v?.year||"";let vc=v?.color||"white";if(vc&&!COLOR_LABELS[vc]){let x=vc.toLowerCase();vc=x.includes("白")||x.includes("white")?"white":x.includes("黒")||x.includes("black")?"black":x.includes("銀")||x.includes("silver")?"silver":x.includes("灰")||x.includes("gray")?"gray":x.includes("赤")||x.includes("red")?"red":x.includes("青")||x.includes("blue")?"blue":x.includes("茶")||x.includes("brown")?"brown":x.includes("ベージュ")||x.includes("beige")?"beige":"white"}editCarColor.value=vc;editCarBodyType.value=v?.bodyType||"compact-minivan";renderBodyTypeChoices();editCarPurchase.value=v?.purchaseDate||"";editCarPlate.value=v?.plate||"";editCarKm.value=v?.odometer??"";editCarInspection.value=v?.inspectionDate||"";editCarOil.value=v?.oilInterval||5000;pendingVehiclePhoto=v?.photoId||null;pendingImageMode=v?.imageMode||(v?.photoId?"custom":"preset");memoDraft=JSON.parse(JSON.stringify(v?.memos||[]));show("vehicleEdit");await renderVehiclePhoto();renderVehicleImageMode();renderPresetVehiclePreview();renderMemoEditor()}
+async function saveVehicleEdit(){syncMemoText();let n=editCarName.value.trim(),km=+editCarKm.value;if(!n||km<0)return alert("車両名と走行距離を入力してください。");let data={name:n,maker:editCarMaker.value.trim(),model:editCarModel.value.trim(),year:editCarYear.value.trim(),color:editCarColor.value.trim(),bodyType:editCarBodyType.value||"compact-minivan",imageMode:pendingImageMode,purchaseDate:editCarPurchase.value,plate:editCarPlate.value.trim(),odometer:km,inspectionDate:editCarInspection.value,oilInterval:+editCarOil.value||5000,photoId:pendingVehiclePhoto,memos:memoDraft,renewals:(edit.vehicle?vehicles.find(x=>x.id===edit.vehicle)?.renewals:[])||[]};if(edit.vehicle){let i=vehicles.findIndex(x=>x.id===edit.vehicle);vehicles[i]={...vehicles[i],...data}}else{let v={id:uid("vehicle"),...data,createdAt:new Date().toISOString()};vehicles.push(v);activeId=v.id;localStorage.setItem(KEY.active,activeId)}save(KEY.vehicles,vehicles);goHome()}
+function deleteVehicle(){if(!edit.vehicle||!confirm("この車両を削除しますか？"))return;vehicles=vehicles.filter(v=>v.id!==edit.vehicle);if(activeId===edit.vehicle){activeId=vehicles[0]?.id||"";localStorage.setItem(KEY.active,activeId)}save(KEY.vehicles,vehicles);activeId?goHome():show("setup")}
+function setVehicleImageMode(mode){
+ pendingImageMode=mode==="custom"?"custom":"preset";
+ renderVehicleImageMode();
+ renderPresetVehiclePreview();
 }
 function renderVehicleImageMode(){
  const p=document.getElementById("imageModePreset"),u=document.getElementById("imageModeCustom");
@@ -178,6 +238,30 @@ function openImage(url){let w=window.open();if(w)w.document.write(`<meta name="v
 
 function renderHomeMemos(c){let ms=(c.memos||[]).slice(0,3);homeMemos.innerHTML=ms.length?ms.map(m=>`<button class="memo-home-row" onclick="openVehicleNotes()"><b>${esc(m.title||"無題")}</b><span>${esc((m.content||"").slice(0,70))}</span></button>`).join(""):'<p class="help">車両メモはまだありません。</p>'}
 async function openVehicleNotes(){show("vehicleNotes");let c=car(),ms=c?.memos||[];vehicleNotesList.innerHTML=ms.length?ms.map(m=>`<div class="card note-view"><h3>${esc(m.title||"無題")}</h3><div class="note-content">${esc(m.content||"").replace(/\n/g,"<br>")}</div><div id="viewphotos_${m.id}" class="photo-grid"></div></div>`).join(""):'<div class="card">車両メモはありません。</div>';for(let m of ms){let el=document.getElementById("viewphotos_"+m.id);for(let pid of m.photos||[]){let rec=await imageGet(pid);if(!rec)continue;let u=URL.createObjectURL(rec.blob),img=document.createElement("img");img.src=u;img.className="note-photo";img.onclick=()=>openImage(u);el.appendChild(img)}}}
+
+function addMonthsDate(dateStr,months){
+ if(!dateStr)return"";let d=new Date(dateStr+"T00:00:00"),day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+months);let last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();d.setDate(Math.min(day,last));return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10)
+}
+function calcRenewalNext(){let cur=renewalCurrent.value,cycle=renewalCycle.value;if(cycle==="month")renewalNext.value=addMonthsDate(cur,1);else if(cycle==="year")renewalNext.value=addMonthsDate(cur,12)}
+function toggleRenewalForm(){renewalForm.classList.remove("hidden");renewalEditId.value="";renewalName.value="";renewalCurrent.value=today();renewalCycle.value="year";renewalAmount.value="";renewalMemo.value="";calcRenewalNext()}
+function cancelRenewal(){renewalForm.classList.add("hidden")}
+function saveRenewal(){
+ let c=car();if(!c)return;let name=renewalName.value.trim();if(!name||!renewalCurrent.value||!renewalNext.value)return alert("項目名・今回の日付・次回の日付を入力してください。");
+ c.renewals=c.renewals||[];let data={name,currentDate:renewalCurrent.value,cycle:renewalCycle.value,nextDate:renewalNext.value,amount:+renewalAmount.value||0,memo:renewalMemo.value.trim()};
+ let id=renewalEditId.value;if(id){let i=c.renewals.findIndex(x=>x.id===id);if(i>=0)c.renewals[i]={...c.renewals[i],...data}}else c.renewals.push({id:uid("renewal"),...data});
+ save(KEY.vehicles,vehicles);cancelRenewal();renderRenewals();renderHomeRenewals(c)
+}
+function editRenewal(id){let r=(car()?.renewals||[]).find(x=>x.id===id);if(!r)return;renewalForm.classList.remove("hidden");renewalEditId.value=r.id;renewalName.value=r.name;renewalCurrent.value=r.currentDate||"";renewalCycle.value=r.cycle||"custom";renewalNext.value=r.nextDate||"";renewalAmount.value=r.amount||"";renewalMemo.value=r.memo||""}
+function deleteRenewal(id){let c=car();if(!c||!confirm("この更新情報を削除しますか？"))return;c.renewals=(c.renewals||[]).filter(x=>x.id!==id);save(KEY.vehicles,vehicles);renderRenewals();renderHomeRenewals(c)}
+function renewalDays(dateStr){if(!dateStr)return null;let a=new Date(today()+"T00:00:00"),b=new Date(dateStr+"T00:00:00");return Math.ceil((b-a)/86400000)}
+function renderRenewals(){
+ let rs=(car()?.renewals||[]).slice().sort((a,b)=>(a.nextDate||"").localeCompare(b.nextDate||""));
+ renewalList.innerHTML=rs.length?rs.map(r=>{let d=renewalDays(r.nextDate),badge=d==null?"":d<0?`${Math.abs(d)}日超過`:d===0?"今日":`あと${d}日`;return `<div class="renewal-row"><div><b>${esc(r.name)}</b><span>今回：${esc((r.currentDate||"---").replaceAll("-","/"))}　次回：${esc((r.nextDate||"---").replaceAll("-","/"))}</span>${r.amount?`<small>${nf(r.amount)} 円</small>`:""}</div><em class="${d!=null&&d<=30?"soon":""}">${badge}</em><div><button onclick="editRenewal('${r.id}')">編集</button><button onclick="deleteRenewal('${r.id}')">削除</button></div></div>`}).join(""):'<p class="help">更新・期限の登録はありません。</p>'
+}
+function renderHomeRenewals(c){
+ let el=document.getElementById("homeRenewals");if(!el)return;let rs=(c?.renewals||[]).slice().sort((a,b)=>(a.nextDate||"").localeCompare(b.nextDate||"")).slice(0,4);
+ el.innerHTML=rs.length?rs.map(r=>{let d=renewalDays(r.nextDate);return `<button class="home-renewal-row" onclick="openVehicleManager()"><b>${esc(r.name)}</b><span>今回：${esc((r.currentDate||"---").replaceAll("-","/"))}</span><span>次回：${esc((r.nextDate||"---").replaceAll("-","/"))}</span><em class="${d!=null&&d<=30?"soon":""}">${d==null?"":d<0?`${Math.abs(d)}日超過`:d===0?"今日":`あと${d}日`}</em></button>`}).join(""):'<p class="help">更新・期限の登録はありません。</p>'
+}
 function openSettings(){show("settings")}function openHelp(){show("help")}
 function openQuick(){quickBackdrop.classList.remove("hidden")}function closeQuick(e){if(e&&e.target!==quickBackdrop)return;quickBackdrop.classList.add("hidden")}
 
@@ -397,7 +481,7 @@ function renderCorrectDashboard(c){
  const cur=monthCostFor(y,m);
  const pd=new Date(y,m-2,1),prev=monthCostFor(pd.getFullYear(),pd.getMonth()+1);
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set("dashFuel",nf(cur.fuel)+" 円"); set("dashMaint",nf(cur.maint)+" 円"); set("dashOther",nf(cur.other)+" 円"); set("dashTotal",nf(cur.total)+" 円");
+ set("dashFuel",nf(cur.fuel||0)+" 円"); set("dashMaint",nf(cur.maint||0)+" 円"); set("dashOther",nf(cur.other||0)+" 円"); set("dashTotal",nf(cur.total||0)+" 円");
  [["dashFuelDiff",cur.fuel,prev.fuel],["dashMaintDiff",cur.maint,prev.maint],["dashOtherDiff",cur.other,prev.other],["dashTotalDiff",cur.total,prev.total]].forEach(([id,a,b])=>{
    const e=document.getElementById(id);if(e){e.textContent=diffText(a,b);e.className=a>b?"up":a<b?"down":""}
  });
