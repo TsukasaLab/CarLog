@@ -45,7 +45,7 @@ const uid=p=>p+"_"+(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.ra
 const today=()=>{let d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10)},nowTime=()=>new Date().toTimeString().slice(0,5),nf=v=>Number(v||0).toLocaleString("ja-JP"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 let vehicles=load(KEY.vehicles,[]),activeId=localStorage.getItem(KEY.active)||"",fuelRecords=load(KEY.fuel,[]),maintenanceRecords=load(KEY.maint,[]),expenseRecords=load(KEY.expense,[]);
 let historyNavigating=false;let edit={fuel:null,maintenance:null,expense:null,vehicle:null},costYear=new Date().getFullYear(),costChartMode="total",driveMode="distance",pendingVehiclePhoto=null,memoDraft=[];
-const COLOR_LABELS={white:"ホワイト",black:"ブラック",silver:"シルバー",gray:"グレー",red:"レッド",blue:"ブルー",navy:"ネイビー",green:"グリーン",beige:"ベージュ",brown:"ブラウン",yellow:"イエロー",orange:"オレンジ",purple:"パープル",other:"その他"};
+const COLOR_LABELS={white:"ホワイト",black:"ブラック",silver:"シルバー",gray:"グレー",red:"レッド",blue:"ブルー",navy:"ネイビー",lightblue:"ライトブルー",green:"グリーン",pink:"ピンク",beige:"ベージュ",brown:"ブラウン",yellow:"イエロー",orange:"オレンジ",purple:"パープル",other:"その他"};
 const COLOR_HEX={white:"#f4f4f2",black:"#25282d",silver:"#b8bdc5",gray:"#737982",red:"#c93c3c",blue:"#3478c8",navy:"#263f68",green:"#4f7d57",beige:"#d5c4a1",brown:"#795548",yellow:"#e5bf36",orange:"#df7b2c",purple:"#76518d",other:"#8b95a5"};
 function carSvg(color,bodyType="compact-minivan"){
  let fill=COLOR_HEX[color]||"#f4f5f6";
@@ -370,6 +370,18 @@ function escapeHtml(s){return String(s??"").replace(/[&<>"\']/g,c=>({"&":"&amp;"
 
 
 const PHOTO_VEHICLE_ASSETS={
+ "compact-minivan|white":"assets/vehicles/compact-minivan_white_v073.webp",
+ "compact-minivan|black":"assets/vehicles/compact-minivan_black_v073.webp",
+ "compact-minivan|gray":"assets/vehicles/compact-minivan_gray_v073.webp",
+ "compact-minivan|silver":"assets/vehicles/compact-minivan_silver_v073.webp",
+ "compact-minivan|beige":"assets/vehicles/compact-minivan_beige_v073.webp",
+ "compact-minivan|brown":"assets/vehicles/compact-minivan_brown_v073.webp",
+ "compact-minivan|navy":"assets/vehicles/compact-minivan_navy_v073.webp",
+ "compact-minivan|blue":"assets/vehicles/compact-minivan_blue_v073.webp",
+ "compact-minivan|lightblue":"assets/vehicles/compact-minivan_lightblue_v073.webp",
+ "compact-minivan|green":"assets/vehicles/compact-minivan_green_v073.webp",
+ "compact-minivan|red":"assets/vehicles/compact-minivan_red_v073.webp",
+ "compact-minivan|pink":"assets/vehicles/compact-minivan_pink_v073.webp",
  "kei|white":"assets/vehicles/kei_white.webp",
  "kei|black":"assets/vehicles/kei_black.webp",
  "kei|silver":"assets/vehicles/kei_silver.webp",
@@ -410,14 +422,6 @@ const PHOTO_VEHICLE_ASSETS={
  "wagon|blue":"assets/vehicles/wagon_blue.webp",
  "wagon|brown":"assets/vehicles/wagon_brown.webp",
  "wagon|beige":"assets/vehicles/wagon_beige.webp",
- "compact-minivan|white":"assets/heroes/compact-minivan_white.webp",
- "compact-minivan|black":"assets/vehicles/compact-minivan_black.webp",
- "compact-minivan|silver":"assets/vehicles/compact-minivan_silver.webp",
- "compact-minivan|gray":"assets/vehicles/compact-minivan_gray.webp",
- "compact-minivan|red":"assets/vehicles/compact-minivan_red.webp",
- "compact-minivan|blue":"assets/vehicles/compact-minivan_blue.webp",
- "compact-minivan|brown":"assets/vehicles/compact-minivan_brown.webp",
- "compact-minivan|beige":"assets/vehicles/compact-minivan_beige.webp",
  "minivan|white":"assets/vehicles/minivan_white.webp",
  "minivan|black":"assets/vehicles/minivan_black.webp",
  "minivan|silver":"assets/vehicles/minivan_silver.webp",
@@ -503,9 +507,7 @@ function renderCorrectDashboard(c){
  }
 
 
-const HERO_SCENE_ASSETS={
- "compact-minivan|white":"assets/heroes/compact-minivan_white.webp"
-};
+const HERO_SCENE_ASSETS={};
 function heroScenePath(c){
  if(!c) return "";
  return HERO_SCENE_ASSETS[`${c.bodyType||"compact-minivan"}|${c.color||"white"}`]||"";

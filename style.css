@@ -1048,7 +1048,7 @@ button,input,select,textarea{font:inherit}
 @media(min-width:900px){
   .correct-hero.full-scene-vehicle{
     height:400px!important;
-    background-image:url("assets/heroes/compact-minivan_white_pc.webp")!important;
+    background-image:var(--vehicle-hero)!important;
     background-size:100% 100%!important;
     background-position:center!important;
     background-repeat:no-repeat!important;
@@ -1255,4 +1255,13 @@ body[data-screen] .pc-sidebar button.active{
  .renewal-form .full{grid-column:auto}
  .renewal-row{grid-template-columns:1fr auto}.renewal-row>div:last-child{grid-column:1/-1}
  .home-renewal-row{grid-template-columns:1fr auto}.home-renewal-row span{grid-column:1/-1}
+}
+
+/* Ver.0.73 fictional compact minivan */
+#homeCarThumb .photo-car.home-photo-car{
+ width:min(48vw,620px)!important;max-height:260px!important;object-fit:contain!important;
+ filter:drop-shadow(0 18px 15px rgba(0,0,0,.24));
+}
+@media(max-width:899px){
+ #homeCarThumb .photo-car.home-photo-car{width:54vw!important;max-height:150px!important}
 }
