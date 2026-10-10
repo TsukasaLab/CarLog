@@ -1265,3 +1265,53 @@ body[data-screen] .pc-sidebar button.active{
 @media(max-width:899px){
  #homeCarThumb .photo-car.home-photo-car{width:54vw!important;max-height:150px!important}
 }
+
+/* Ver.0.74: hero background and vehicle are independent layers */
+.correct-hero{overflow:hidden!important}
+#homeCarThumb{
+ position:absolute!important;
+ right:3.5%!important;
+ bottom:0!important;
+ width:52%!important;
+ height:88%!important;
+ display:flex!important;
+ align-items:flex-end!important;
+ justify-content:center!important;
+ overflow:visible!important;
+ pointer-events:none!important;
+ z-index:2!important;
+}
+#homeCarThumb .photo-car.home-photo-car{
+ position:static!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ max-width:100%!important;
+ max-height:100%!important;
+ object-fit:contain!important;
+ object-position:center bottom!important;
+ transform:none!important;
+ filter:drop-shadow(0 14px 12px rgba(0,0,0,.28))!important;
+}
+@media(max-width:899px){
+ #homeCarThumb{
+   right:-1%!important;
+   bottom:0!important;
+   width:61%!important;
+   height:67%!important;
+ }
+ #homeCarThumb .photo-car.home-photo-car{
+   width:100%!important;
+   height:100%!important;
+   max-height:100%!important;
+   object-fit:contain!important;
+   object-position:center bottom!important;
+ }
+}
+@media(max-width:520px){
+ #homeCarThumb{
+   right:-3%!important;
+   width:64%!important;
+   height:58%!important;
+ }
+}
