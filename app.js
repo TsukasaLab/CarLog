@@ -223,7 +223,9 @@ function renderPresetVehiclePreview(){
  if(!el)return;
  const bt=document.getElementById("editCarBodyType")?.value||"compact-minivan";
  const col=document.getElementById("editCarColor")?.value||"white";
- const path=vehicleAssetPath(bt,col);
+ const scene=HERO_SCENE_ASSETS[`${bt}|${col}`]||null;
+ const scenePreview=scene?(typeof scene==="string"?scene:(scene.preview||scene.mobile||scene.desktop)):"";
+ const path=scenePreview||vehicleAssetPath(bt,col);
  el.innerHTML=path?`<img src="${path}" alt="プリセット車両画像">`:vehicleImageMarkup(bt,col,"preset-preview-car");
 }
 async function renderVehiclePhoto(){
@@ -519,10 +521,19 @@ function renderHomeVehicleInfo(c){
 }
 
 const HERO_SCENE_ASSETS={
- "compact-minivan|white":{
-   desktop:"assets/heroes/compact-minivan_white_lakeside_v078_pc.webp",
-   mobile:"assets/heroes/compact-minivan_white_lakeside_v078_mobile.webp"
- }
+ "compact-minivan|white":{desktop:"assets/heroes/compact-minivan_white_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_white_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_white_lakeside_v080_preview.webp"},
+ "compact-minivan|black":{desktop:"assets/heroes/compact-minivan_black_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_black_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_black_lakeside_v080_preview.webp"},
+ "compact-minivan|silver":{desktop:"assets/heroes/compact-minivan_silver_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_silver_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_silver_lakeside_v080_preview.webp"},
+ "compact-minivan|gray":{desktop:"assets/heroes/compact-minivan_gray_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_gray_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_gray_lakeside_v080_preview.webp"},
+ "compact-minivan|navy":{desktop:"assets/heroes/compact-minivan_navy_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_navy_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_navy_lakeside_v080_preview.webp"},
+ "compact-minivan|blue":{desktop:"assets/heroes/compact-minivan_blue_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_blue_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_blue_lakeside_v080_preview.webp"},
+ "compact-minivan|burgundy":{desktop:"assets/heroes/compact-minivan_burgundy_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_burgundy_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_burgundy_lakeside_v080_preview.webp"},
+ "compact-minivan|red":{desktop:"assets/heroes/compact-minivan_red_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_red_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_red_lakeside_v080_preview.webp"},
+ "compact-minivan|beige":{desktop:"assets/heroes/compact-minivan_beige_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_beige_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_beige_lakeside_v080_preview.webp"},
+ "compact-minivan|brown":{desktop:"assets/heroes/compact-minivan_brown_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_brown_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_brown_lakeside_v080_preview.webp"},
+ "compact-minivan|lightblue":{desktop:"assets/heroes/compact-minivan_lightblue_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lightblue_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_lightblue_lakeside_v080_preview.webp"},
+ "compact-minivan|lavender":{desktop:"assets/heroes/compact-minivan_lavender_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lavender_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_lavender_lakeside_v080_preview.webp"},
+ "compact-minivan|green":{desktop:"assets/heroes/compact-minivan_green_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_green_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_green_lakeside_v080_preview.webp"}
 };
 function heroScenePath(c){
  if(!c)return "";
