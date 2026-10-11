@@ -259,7 +259,7 @@ function renderRenewals(){
  renewalList.innerHTML=rs.length?rs.map(r=>{let d=renewalDays(r.nextDate),badge=d==null?"":d<0?`${Math.abs(d)}日超過`:d===0?"今日":`あと${d}日`;return `<div class="renewal-row"><div><b>${esc(r.name)}</b><span>今回：${esc((r.currentDate||"---").replaceAll("-","/"))}　次回：${esc((r.nextDate||"---").replaceAll("-","/"))}</span>${r.amount?`<small>${nf(r.amount)} 円</small>`:""}</div><em class="${d!=null&&d<=30?"soon":""}">${badge}</em><div><button onclick="editRenewal('${r.id}')">編集</button><button onclick="deleteRenewal('${r.id}')">削除</button></div></div>`}).join(""):'<p class="help">更新・期限の登録はありません。</p>'
 }
 function renderHomeRenewals(c){
- let el=document.getElementById("homeRenewals");if(!el)return;let rs=(c?.renewals||[]).slice().sort((a,b)=>(a.nextDate||"").localeCompare(b.nextDate||"")).slice(0,4);
+ let el=document.getElementById("homeRenewals");if(!el)return;let rs=(c?.renewals||[]).slice().sort((a,b)=>(a.nextDate||"").localeCompare(b.nextDate||"")).slice(0,4);let panel=el.closest(".renewal-home-panel");if(panel)panel.classList.toggle("hidden",rs.length===0);
  el.innerHTML=rs.length?rs.map(r=>{let d=renewalDays(r.nextDate);return `<button class="home-renewal-row" onclick="openVehicleManager()"><b>${esc(r.name)}</b><span>今回：${esc((r.currentDate||"---").replaceAll("-","/"))}</span><span>次回：${esc((r.nextDate||"---").replaceAll("-","/"))}</span><em class="${d!=null&&d<=30?"soon":""}">${d==null?"":d<0?`${Math.abs(d)}日超過`:d===0?"今日":`あと${d}日`}</em></button>`}).join(""):'<p class="help">更新・期限の登録はありません。</p>'
 }
 function openSettings(){show("settings")}function openHelp(){show("help")}

@@ -1322,3 +1322,12 @@ body[data-screen] .pc-sidebar button.active{
 .renewal-home-panel{position:relative!important;z-index:1!important;clear:both!important;margin-top:18px!important}
 #dashTotal:empty::after{content:"0 円"}
 @media(max-width:899px){.correct-hero{min-height:344px!important;height:auto!important}}
+
+/* Ver.0.76 */
+.renewal-home-panel{position:relative!important;clear:both!important;z-index:auto!important;margin:16px 0!important}
+.renewal-home-panel.hidden{display:none!important}
+#dashTotal:empty::after{content:"0 円"!important}
+#homeCarThumb{display:none!important}
+@media(max-width:899px){
+ .correct-hero{height:344px!important;min-height:344px!important;max-height:344px!important}
+}
