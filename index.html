@@ -1,11 +1,11 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest?v=0.82"><link rel="stylesheet" href="style.css?v=0.82">
+<link rel="manifest" href="manifest.webmanifest?v=0.83"><link rel="stylesheet" href="style.css?v=0.83">
 </head><body>
 
 <aside class="pc-sidebar" aria-label="PCメニュー">
-  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.82 β</span><small>Car Maintenance Log</small></div></div>
+  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.83 β</span><small>Car Maintenance Log</small></div></div>
   <button class="active" onclick="goHome()"><span class="navico">⌂</span><span>ホーム</span></button>
   <button onclick="openFuel()"><span class="navico">⛽</span><span>給油記録</span></button>
   <button onclick="openMaintenance()"><span class="navico">🔧</span><span>整備・修理</span></button>
@@ -17,7 +17,44 @@
   <button onclick="openSettings()"><span class="navico">⚙</span><span>設定</span></button>
   <button onclick="openHelp()"><span class="navico">?</span><span>使い方</span></button>
   <div class="pc-brand-foot">CarLog β</div>
-</aside><div class="ambient-scene" aria-hidden="true">
+</aside>
+<!-- Mobile: PC sidebar counterpart. Bottom nav remains for frequent actions. -->
+<button id="mobileMenuFab" class="mobile-menu-fab hidden" type="button"
+        onclick="openMobileMenu()" aria-label="メニューを開く"
+        aria-controls="mobileNavBackdrop" aria-expanded="false">☰</button>
+
+<div id="mobileNavBackdrop" class="mobile-nav-backdrop hidden" aria-hidden="true">
+  <aside class="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="CarLog メニュー">
+    <div class="mobile-nav-head">
+      <div class="mobile-nav-brand">
+        <span class="mobile-nav-brandmark">🚙</span>
+        <div><strong>CarLog</strong><small>Ver.0.83 β</small></div>
+      </div>
+      <button class="mobile-nav-close" type="button" onclick="closeMobileMenu()" aria-label="メニューを閉じる">×</button>
+    </div>
+
+    <div class="mobile-nav-current">
+      <small>現在の車両</small>
+      <strong id="mobileNavCarName">---</strong>
+    </div>
+
+    <nav class="mobile-nav-list" aria-label="スマホメニュー">
+      <button data-mobile-screen="home" onclick="closeMobileMenu();goHome()"><span>⌂</span><b>ホーム</b></button>
+      <button data-mobile-screen="fuel" onclick="closeMobileMenu();openFuel()"><span>⛽</span><b>給油記録</b></button>
+      <button data-mobile-screen="maintenance" onclick="closeMobileMenu();openMaintenance()"><span>🔧</span><b>整備・修理</b></button>
+      <button data-mobile-screen="expense" onclick="closeMobileMenu();openExpense()"><span>▣</span><b>その他支出</b></button>
+      <button data-mobile-screen="history" onclick="closeMobileMenu();openHistory()"><span>☷</span><b>履歴一覧</b></button>
+      <button data-mobile-screen="costs" onclick="closeMobileMenu();openCosts()"><span>⌁</span><b>維持費・分析</b></button>
+      <button data-mobile-screen="driving" onclick="closeMobileMenu();openDriving()"><span>▥</span><b>走行データ</b></button>
+      <button data-mobile-screen="vehicles" onclick="closeMobileMenu();openVehicleManager()"><span>🚙</span><b>車両管理</b></button>
+      <button data-mobile-screen="settings" onclick="closeMobileMenu();openSettings()"><span>⚙</span><b>設定</b></button>
+      <button data-mobile-screen="help" onclick="closeMobileMenu();openHelp()"><span>?</span><b>使い方</b></button>
+    </nav>
+
+    <div class="mobile-nav-foot">よく使う記録は下部メニューからも開けます。</div>
+  </aside>
+</div>
+<div class="ambient-scene" aria-hidden="true">
   <div class="ambient-sun"></div><div class="ambient-mountain m1"></div><div class="ambient-mountain m2"></div>
 </div>
 <main class="app">
@@ -29,8 +66,8 @@
 
 <section id="home" class="screen app-page hidden correct-home">
  <header class="mobile-top">
-   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.82 β</span></div>
-   <button onclick="openSettings()" aria-label="メニュー">☰</button>
+   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.83 β</span></div>
+   <button onclick="openMobileMenu()" aria-label="メニュー" aria-controls="mobileNavBackdrop" aria-expanded="false">☰</button>
  </header>
 
  <section class="correct-hero">
@@ -233,7 +270,7 @@
 <div class="card"><h3>データ管理</h3><p class="help">データはこのブラウザ内に保存されます。機種変更やブラウザデータ削除に備えてバックアップしてください。</p><button onclick="exportBackup(false)">データのみバックアップ</button><button onclick="exportBackup(true)">写真込み完全バックアップ</button><button onclick="document.getElementById('importFile').click()">バックアップから復元</button><input class="hidden" id="importFile" type="file" accept=".json" onchange="importBackup(event)"><button onclick="exportCSV()">CSVを書き出す</button></div>
 <button class="card menu guide-page-link" onclick="openHelp()">📖 使い方を開く <span>›</span></button>
 </div>
-<div class="about"><b>CarLog Ver.0.82 β</b><span>ローカル保存・公開β</span></div>
+<div class="about"><b>CarLog Ver.0.83 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
 <section id="help" class="screen app-page hidden">
@@ -272,6 +309,6 @@
 <button onclick="openCosts()">⌁<span>分析</span></button>
 </nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.82"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.82",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.83"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.83",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>

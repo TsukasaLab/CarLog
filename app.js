@@ -73,6 +73,38 @@ function stamp(r){
  const x=r?.createdAt||r?.time||"";
  return `${d}_${n}_${x}`;
 }
+
+function syncMobileMenu(){
+ const label=document.getElementById("mobileNavCarName");
+ if(label){
+   const current=car();
+   label.textContent=current?.name||"車両未選択";
+ }
+}
+function openMobileMenu(){
+ const backdrop=document.getElementById("mobileNavBackdrop");
+ if(!backdrop)return;
+ syncMobileMenu();
+ backdrop.classList.remove("hidden");
+ backdrop.setAttribute("aria-hidden","false");
+ document.body.classList.add("mobile-menu-open");
+ document.querySelectorAll('[aria-controls="mobileNavBackdrop"]').forEach(b=>b.setAttribute("aria-expanded","true"));
+ requestAnimationFrame(()=>backdrop.querySelector(".mobile-nav-close")?.focus());
+}
+function closeMobileMenu(){
+ const backdrop=document.getElementById("mobileNavBackdrop");
+ if(!backdrop)return;
+ backdrop.classList.add("hidden");
+ backdrop.setAttribute("aria-hidden","true");
+ document.body.classList.remove("mobile-menu-open");
+ document.querySelectorAll('[aria-controls="mobileNavBackdrop"]').forEach(b=>b.setAttribute("aria-expanded","false"));
+}
+document.addEventListener("click",e=>{
+ const backdrop=document.getElementById("mobileNavBackdrop");
+ if(backdrop&&!backdrop.classList.contains("hidden")&&e.target===backdrop)closeMobileMenu();
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMobileMenu()});
+
 function show(id){
  const prev=document.body.dataset.screen||"";
  if(!historyNavigating&&prev&&prev!==id&&id!=="setup")history.pushState({screen:id},"","#"+id);
@@ -87,6 +119,18 @@ function show(id){
  const map={home:0,fuel:1,maintenance:2,expense:3,history:4,costs:5,driving:6,vehicles:7,vehicleEdit:7,vehicleNotes:7,settings:8,help:9};
  const buttons=document.querySelectorAll(".pc-sidebar button");
  if(map[id]!=null&&buttons[map[id]])buttons[map[id]].classList.add("active");
+
+ // Mobile navigation mirrors the PC sidebar while keeping the bottom quick nav.
+ const mobileTarget={vehicleEdit:"vehicles",vehicleNotes:"vehicles"}[id]||id;
+ document.querySelectorAll("[data-mobile-screen]").forEach(b=>b.classList.toggle("active",b.dataset.mobileScreen===mobileTarget));
+ const bottomButtons=document.querySelectorAll("#bottomNav button");
+ const bottomMap={home:0,fuel:1,maintenance:2,expense:3,costs:4};
+ bottomButtons.forEach(b=>b.classList.remove("mobile-active"));
+ if(bottomMap[id]!=null&&bottomButtons[bottomMap[id]])bottomButtons[bottomMap[id]].classList.add("mobile-active");
+ const mobileFab=document.getElementById("mobileMenuFab");
+ if(mobileFab)mobileFab.classList.toggle("hidden",hide||id==="home");
+ syncMobileMenu();
+ closeMobileMenu();
  window.scrollTo(0,0);
 }
 document.addEventListener("DOMContentLoaded",()=>{migrate();refreshStoreNames();historyNavigating=true;car()?goHome():show("setup");history.replaceState({screen:document.body.dataset.screen||"home"},"",location.hash||"#"+(document.body.dataset.screen||"home"));historyNavigating=false});

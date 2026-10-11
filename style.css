@@ -1425,3 +1425,159 @@ body[data-screen] .pc-sidebar button.active{
  .body-choice .selector-hero-crop{height:58px;object-position:79% 58%}
  .preset-vehicle-preview .preset-hero-crop{min-height:160px;object-position:74% 58%}
 }
+
+
+/* =========================================================
+   CarLog Ver.0.83
+   Mobile navigation aligned with the PC sidebar.
+   The existing bottom navigation remains for frequent actions.
+   ========================================================= */
+.mobile-menu-fab,
+.mobile-nav-backdrop{display:none}
+
+@media(max-width:899px){
+  body.mobile-menu-open{overflow:hidden!important}
+
+  /* Home already has its own top-right menu button. Other pages get this fixed button. */
+  .mobile-menu-fab{
+    display:grid;
+    place-items:center;
+    position:fixed;
+    top:max(12px,env(safe-area-inset-top));
+    right:12px;
+    z-index:92;
+    width:46px;
+    height:46px;
+    min-height:46px!important;
+    padding:0!important;
+    border-radius:14px!important;
+    background:#0b3a59!important;
+    color:#fff!important;
+    font-size:24px!important;
+    box-shadow:0 8px 22px rgba(7,45,70,.24)!important;
+  }
+  .mobile-menu-fab.hidden{display:none!important}
+
+  /* Leave room for the fixed menu button on non-home page headers. */
+  .screen:not(#home):not(#setup) .screen-head{
+    padding-right:62px!important;
+  }
+
+  .mobile-nav-backdrop{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:rgba(4,22,34,.48);
+    backdrop-filter:blur(3px);
+  }
+  .mobile-nav-backdrop.hidden{display:none!important}
+
+  .mobile-nav-drawer{
+    position:absolute;
+    right:0;
+    top:0;
+    bottom:0;
+    width:min(86vw,360px);
+    overflow-y:auto;
+    padding:
+      calc(18px + env(safe-area-inset-top))
+      14px
+      calc(22px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,#0d3b5c 0%,#082e49 100%);
+    color:#fff;
+    box-shadow:-14px 0 34px rgba(0,0,0,.24);
+  }
+
+  .mobile-nav-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:2px 4px 17px;
+    border-bottom:1px solid rgba(255,255,255,.15);
+  }
+  .mobile-nav-brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .mobile-nav-brandmark{font-size:25px}
+  .mobile-nav-brand div{display:flex;flex-direction:column;min-width:0}
+  .mobile-nav-brand strong{font-size:21px;line-height:1.1}
+  .mobile-nav-brand small{margin-top:4px;color:rgba(255,255,255,.68);font-size:10px}
+  .mobile-nav-close{
+    display:grid!important;
+    place-items:center!important;
+    width:42px!important;
+    height:42px!important;
+    min-height:42px!important;
+    padding:0!important;
+    border-radius:12px!important;
+    background:rgba(255,255,255,.10)!important;
+    color:#fff!important;
+    font-size:27px!important;
+  }
+
+  .mobile-nav-current{
+    margin:15px 3px 11px;
+    padding:12px 13px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:13px;
+    background:rgba(255,255,255,.07);
+  }
+  .mobile-nav-current small{display:block;color:rgba(255,255,255,.62);font-size:10px;margin-bottom:4px}
+  .mobile-nav-current strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+
+  .mobile-nav-list{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .mobile-nav-list button{
+    display:grid!important;
+    grid-template-columns:34px 1fr!important;
+    align-items:center!important;
+    width:100%!important;
+    min-height:51px!important;
+    margin:0!important;
+    padding:0 13px!important;
+    border-radius:10px!important;
+    background:transparent!important;
+    color:#e9f3fa!important;
+    text-align:left!important;
+    box-shadow:none!important;
+  }
+  .mobile-nav-list button>span{
+    display:grid;
+    place-items:center;
+    font-size:19px;
+  }
+  .mobile-nav-list button>b{
+    font-size:13px;
+    font-weight:800;
+  }
+  .mobile-nav-list button.active{
+    background:linear-gradient(135deg,#2b9cf1,#147ad5)!important;
+    color:#fff!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.16)!important;
+  }
+  .mobile-nav-list button:active{transform:scale(.985)}
+
+  .mobile-nav-foot{
+    margin:15px 4px 0;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.13);
+    color:rgba(255,255,255,.58);
+    font-size:10px;
+    line-height:1.5;
+  }
+
+  /* Bottom nav stays thumb-friendly, but active state now follows the current page. */
+  .bottom button:first-child{color:#39566b!important}
+  .bottom button.mobile-active{
+    color:#168ce8!important;
+    background:#edf7ff!important;
+    border-radius:13px!important;
+  }
+}
+
+@media(min-width:900px){
+  .mobile-menu-fab,.mobile-nav-backdrop{display:none!important}
+}
