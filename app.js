@@ -224,9 +224,9 @@ function renderPresetVehiclePreview(){
  const bt=document.getElementById("editCarBodyType")?.value||"compact-minivan";
  const col=document.getElementById("editCarColor")?.value||"white";
  const scene=HERO_SCENE_ASSETS[`${bt}|${col}`]||null;
- const scenePreview=scene?(typeof scene==="string"?scene:(scene.preview||scene.mobile||scene.desktop)):"";
- const path=scenePreview||vehicleAssetPath(bt,col);
- el.innerHTML=path?`<img src="${path}" alt="プリセット車両画像">`:vehicleImageMarkup(bt,col,"preset-preview-car");
+ const sceneImage=scene?(typeof scene==="string"?scene:(scene.mobile||scene.desktop)):"";
+ const path=sceneImage||vehicleAssetPath(bt,col);
+ el.innerHTML=path?`<img class="${sceneImage?"preset-hero-crop":""}" src="${path}" alt="プリセット車両画像">`:vehicleImageMarkup(bt,col,"preset-preview-car");
 }
 async function renderVehiclePhoto(){
  let empty=`<div class="vehicle-photo-empty"><span>＋</span><strong>画像を追加</strong></div>`;
@@ -317,10 +317,19 @@ const BODY_TYPES=[
  ["kei","軽自動車"],["kei-tall","軽ハイト"],["compact","コンパクト"],["sedan","セダン"],["wagon","ワゴン"],
  ["compact-minivan","コンパクトミニバン"],["minivan","ミニバン"],["suv","SUV"],["coupe","スポーツ"],["van","商用バン"]
 ];
+function bodyChoiceImageMarkup(bodyType,color){
+ const scene=HERO_SCENE_ASSETS[`${bodyType}|${color}`]||null;
+ if(scene){
+  const path=typeof scene==="string"?scene:(scene.mobile||scene.desktop||"");
+  if(path)return `<img class="selector-hero-crop" src="${path}" alt="">`;
+ }
+ return vehicleImageMarkup(bodyType,color,"selector-car");
+}
 function renderBodyTypeChoices(){
  const el=document.getElementById("bodyTypeChoices"); if(!el)return;
  const cur=document.getElementById("editCarBodyType")?.value||"compact-minivan";
- el.innerHTML=BODY_TYPES.map(([v,n])=>`<button type="button" class="body-choice ${cur===v?"selected":""}" onclick="selectBodyType('${v}')"><span>${vehicleImageMarkup(v,editCarColor?.value||"white","selector-car")}</span><b>${n}</b></button>`).join("");
+ const color=editCarColor?.value||"white";
+ el.innerHTML=BODY_TYPES.map(([v,n])=>`<button type="button" class="body-choice ${cur===v?"selected":""}" onclick="selectBodyType('${v}')"><span>${bodyChoiceImageMarkup(v,color)}</span><b>${n}</b></button>`).join("");
 }
 function selectBodyType(v){editCarBodyType.value=v;renderBodyTypeChoices();renderVehicleColorPreview()}
 
@@ -521,19 +530,19 @@ function renderHomeVehicleInfo(c){
 }
 
 const HERO_SCENE_ASSETS={
- "compact-minivan|white":{desktop:"assets/heroes/compact-minivan_white_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_white_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_white_lakeside_v080_preview.webp"},
- "compact-minivan|black":{desktop:"assets/heroes/compact-minivan_black_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_black_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_black_lakeside_v080_preview.webp"},
- "compact-minivan|silver":{desktop:"assets/heroes/compact-minivan_silver_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_silver_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_silver_lakeside_v080_preview.webp"},
- "compact-minivan|gray":{desktop:"assets/heroes/compact-minivan_gray_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_gray_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_gray_lakeside_v080_preview.webp"},
- "compact-minivan|navy":{desktop:"assets/heroes/compact-minivan_navy_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_navy_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_navy_lakeside_v080_preview.webp"},
- "compact-minivan|blue":{desktop:"assets/heroes/compact-minivan_blue_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_blue_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_blue_lakeside_v080_preview.webp"},
- "compact-minivan|burgundy":{desktop:"assets/heroes/compact-minivan_burgundy_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_burgundy_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_burgundy_lakeside_v080_preview.webp"},
- "compact-minivan|red":{desktop:"assets/heroes/compact-minivan_red_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_red_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_red_lakeside_v080_preview.webp"},
- "compact-minivan|beige":{desktop:"assets/heroes/compact-minivan_beige_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_beige_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_beige_lakeside_v080_preview.webp"},
- "compact-minivan|brown":{desktop:"assets/heroes/compact-minivan_brown_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_brown_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_brown_lakeside_v080_preview.webp"},
- "compact-minivan|lightblue":{desktop:"assets/heroes/compact-minivan_lightblue_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lightblue_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_lightblue_lakeside_v080_preview.webp"},
- "compact-minivan|lavender":{desktop:"assets/heroes/compact-minivan_lavender_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lavender_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_lavender_lakeside_v080_preview.webp"},
- "compact-minivan|green":{desktop:"assets/heroes/compact-minivan_green_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_green_lakeside_v080_mobile.webp",preview:"assets/heroes/compact-minivan_green_lakeside_v080_preview.webp"}
+ "compact-minivan|white":{desktop:"assets/heroes/compact-minivan_white_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_white_lakeside_v080_mobile.webp"},
+ "compact-minivan|black":{desktop:"assets/heroes/compact-minivan_black_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_black_lakeside_v080_mobile.webp"},
+ "compact-minivan|silver":{desktop:"assets/heroes/compact-minivan_silver_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_silver_lakeside_v080_mobile.webp"},
+ "compact-minivan|gray":{desktop:"assets/heroes/compact-minivan_gray_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_gray_lakeside_v080_mobile.webp"},
+ "compact-minivan|navy":{desktop:"assets/heroes/compact-minivan_navy_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_navy_lakeside_v080_mobile.webp"},
+ "compact-minivan|blue":{desktop:"assets/heroes/compact-minivan_blue_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_blue_lakeside_v080_mobile.webp"},
+ "compact-minivan|burgundy":{desktop:"assets/heroes/compact-minivan_burgundy_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_burgundy_lakeside_v080_mobile.webp"},
+ "compact-minivan|red":{desktop:"assets/heroes/compact-minivan_red_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_red_lakeside_v080_mobile.webp"},
+ "compact-minivan|beige":{desktop:"assets/heroes/compact-minivan_beige_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_beige_lakeside_v080_mobile.webp"},
+ "compact-minivan|brown":{desktop:"assets/heroes/compact-minivan_brown_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_brown_lakeside_v080_mobile.webp"},
+ "compact-minivan|lightblue":{desktop:"assets/heroes/compact-minivan_lightblue_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lightblue_lakeside_v080_mobile.webp"},
+ "compact-minivan|lavender":{desktop:"assets/heroes/compact-minivan_lavender_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lavender_lakeside_v080_mobile.webp"},
+ "compact-minivan|green":{desktop:"assets/heroes/compact-minivan_green_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_green_lakeside_v080_mobile.webp"}
 };
 function heroScenePath(c){
  if(!c)return "";
