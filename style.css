@@ -1315,3 +1315,10 @@ body[data-screen] .pc-sidebar button.active{
    height:58%!important;
  }
 }
+
+/* Ver.0.75 hero hotfix */
+.correct-hero{position:relative!important;overflow:hidden!important;isolation:isolate!important}
+#homeCarThumb{display:none!important}
+.renewal-home-panel{position:relative!important;z-index:1!important;clear:both!important;margin-top:18px!important}
+#dashTotal:empty::after{content:"0 円"}
+@media(max-width:899px){.correct-hero{min-height:344px!important;height:auto!important}}
