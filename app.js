@@ -45,7 +45,7 @@ const uid=p=>p+"_"+(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.ra
 const today=()=>{let d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10)},nowTime=()=>new Date().toTimeString().slice(0,5),nf=v=>Number(v||0).toLocaleString("ja-JP"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 let vehicles=load(KEY.vehicles,[]),activeId=localStorage.getItem(KEY.active)||"",fuelRecords=load(KEY.fuel,[]),maintenanceRecords=load(KEY.maint,[]),expenseRecords=load(KEY.expense,[]);
 let historyNavigating=false;let edit={fuel:null,maintenance:null,expense:null,vehicle:null},costYear=new Date().getFullYear(),costChartMode="total",driveMode="distance",pendingVehiclePhoto=null,memoDraft=[];
-const COLOR_LABELS={white:"ホワイト",black:"ブラック",silver:"シルバー",gray:"グレー",red:"レッド",blue:"ブルー",navy:"ネイビー",lightblue:"ライトブルー",green:"グリーン",pink:"ピンク",beige:"ベージュ",brown:"ブラウン",yellow:"イエロー",orange:"オレンジ",purple:"パープル",other:"その他"};
+const COLOR_LABELS={lavender:"ラベンダー",burgundy:"バーガンディ",white:"ホワイト",black:"ブラック",silver:"シルバー",gray:"グレー",red:"レッド",blue:"ブルー",navy:"ネイビー",lightblue:"ライトブルー",green:"グリーン",pink:"ピンク",beige:"ベージュ",brown:"ブラウン",yellow:"イエロー",orange:"オレンジ",purple:"パープル",other:"その他"};
 const COLOR_HEX={white:"#f4f4f2",black:"#25282d",silver:"#b8bdc5",gray:"#737982",red:"#c93c3c",blue:"#3478c8",navy:"#263f68",green:"#4f7d57",beige:"#d5c4a1",brown:"#795548",yellow:"#e5bf36",orange:"#df7b2c",purple:"#76518d",other:"#8b95a5"};
 function carSvg(color,bodyType="compact-minivan"){
  let fill=COLOR_HEX[color]||"#f4f5f6";
@@ -259,7 +259,7 @@ function renderRenewals(){
  renewalList.innerHTML=rs.length?rs.map(r=>{let d=renewalDays(r.nextDate),badge=d==null?"":d<0?`${Math.abs(d)}日超過`:d===0?"今日":`あと${d}日`;return `<div class="renewal-row"><div><b>${esc(r.name)}</b><span>今回：${esc((r.currentDate||"---").replaceAll("-","/"))}　次回：${esc((r.nextDate||"---").replaceAll("-","/"))}</span>${r.amount?`<small>${nf(r.amount)} 円</small>`:""}</div><em class="${d!=null&&d<=30?"soon":""}">${badge}</em><div><button onclick="editRenewal('${r.id}')">編集</button><button onclick="deleteRenewal('${r.id}')">削除</button></div></div>`}).join(""):'<p class="help">更新・期限の登録はありません。</p>'
 }
 function renderHomeRenewals(c){
- let el=document.getElementById("homeRenewals");if(!el)return;let rs=(c?.renewals||[]).slice().sort((a,b)=>(a.nextDate||"").localeCompare(b.nextDate||"")).slice(0,4);
+ let el=document.getElementById("homeRenewals");if(!el)return;let rs=(c?.renewals||[]).slice().sort((a,b)=>(a.nextDate||"").localeCompare(b.nextDate||"")).slice(0,4);let panel=el.closest(".renewal-home-panel");if(panel)panel.classList.toggle("hidden",rs.length===0);
  el.innerHTML=rs.length?rs.map(r=>{let d=renewalDays(r.nextDate);return `<button class="home-renewal-row" onclick="openVehicleManager()"><b>${esc(r.name)}</b><span>今回：${esc((r.currentDate||"---").replaceAll("-","/"))}</span><span>次回：${esc((r.nextDate||"---").replaceAll("-","/"))}</span><em class="${d!=null&&d<=30?"soon":""}">${d==null?"":d<0?`${Math.abs(d)}日超過`:d===0?"今日":`あと${d}日`}</em></button>`}).join(""):'<p class="help">更新・期限の登録はありません。</p>'
 }
 function openSettings(){show("settings")}function openHelp(){show("help")}
@@ -370,18 +370,19 @@ function escapeHtml(s){return String(s??"").replace(/[&<>"\']/g,c=>({"&":"&amp;"
 
 
 const PHOTO_VEHICLE_ASSETS={
- "compact-minivan|white":"assets/vehicles/compact-minivan_white_v074.webp",
- "compact-minivan|black":"assets/vehicles/compact-minivan_black_v074.webp",
- "compact-minivan|gray":"assets/vehicles/compact-minivan_gray_v074.webp",
- "compact-minivan|silver":"assets/vehicles/compact-minivan_silver_v074.webp",
- "compact-minivan|beige":"assets/vehicles/compact-minivan_beige_v074.webp",
- "compact-minivan|brown":"assets/vehicles/compact-minivan_brown_v074.webp",
- "compact-minivan|navy":"assets/vehicles/compact-minivan_navy_v074.webp",
- "compact-minivan|blue":"assets/vehicles/compact-minivan_blue_v074.webp",
- "compact-minivan|lightblue":"assets/vehicles/compact-minivan_lightblue_v074.webp",
- "compact-minivan|green":"assets/vehicles/compact-minivan_green_v074.webp",
- "compact-minivan|red":"assets/vehicles/compact-minivan_red_v074.webp",
- "compact-minivan|pink":"assets/vehicles/compact-minivan_pink_v074.webp",
+ "compact-minivan|white":"assets/vehicles/compact-minivan_white_v077.png",
+ "compact-minivan|black":"assets/vehicles/compact-minivan_black_v077.png",
+ "compact-minivan|silver":"assets/vehicles/compact-minivan_silver_v077.png",
+ "compact-minivan|gray":"assets/vehicles/compact-minivan_gray_v077.png",
+ "compact-minivan|navy":"assets/vehicles/compact-minivan_navy_v077.png",
+ "compact-minivan|blue":"assets/vehicles/compact-minivan_blue_v077.png",
+ "compact-minivan|burgundy":"assets/vehicles/compact-minivan_burgundy_v077.png",
+ "compact-minivan|red":"assets/vehicles/compact-minivan_red_v077.png",
+ "compact-minivan|beige":"assets/vehicles/compact-minivan_beige_v077.png",
+ "compact-minivan|brown":"assets/vehicles/compact-minivan_brown_v077.png",
+ "compact-minivan|lightblue":"assets/vehicles/compact-minivan_lightblue_v077.png",
+ "compact-minivan|lavender":"assets/vehicles/compact-minivan_lavender_v077.png",
+ "compact-minivan|green":"assets/vehicles/compact-minivan_green_v077.png",
  "kei|white":"assets/vehicles/kei_white.webp",
  "kei|black":"assets/vehicles/kei_black.webp",
  "kei|silver":"assets/vehicles/kei_silver.webp",
