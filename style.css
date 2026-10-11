@@ -1362,3 +1362,55 @@ body[data-screen] .pc-sidebar button.active{
  .correct-hero{height:344px!important;min-height:344px!important;max-height:344px!important}
  #homeCarThumb{right:0!important;bottom:0!important;width:58%!important;height:54%!important}
 }
+
+
+/* =========================================================
+   CarLog Ver.0.78
+   Lakeside integrated hero + vehicle editor information flow
+   ========================================================= */
+.correct-hero.full-scene-vehicle{
+  background-image:var(--vehicle-hero-desktop)!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+.correct-hero.full-scene-vehicle:after{
+  background:linear-gradient(90deg,rgba(3,29,48,.82) 0%,rgba(3,29,48,.58) 24%,rgba(3,29,48,.18) 43%,rgba(3,29,48,0) 58%)!important;
+}
+@media(min-width:900px){
+  .correct-hero.full-scene-vehicle{
+    height:390px!important;
+    background-image:var(--vehicle-hero-desktop)!important;
+    background-size:cover!important;
+    background-position:center!important;
+  }
+  .correct-hero.full-scene-vehicle .correct-hero-copy{width:40%!important;padding:105px 0 0 42px!important}
+}
+@media(max-width:899px){
+  .correct-hero.full-scene-vehicle{
+    height:344px!important;
+    min-height:344px!important;
+    max-height:344px!important;
+    background-image:var(--vehicle-hero-mobile,var(--vehicle-hero-desktop))!important;
+    background-size:cover!important;
+    background-position:center!important;
+  }
+  .correct-hero.full-scene-vehicle:after{
+    background:linear-gradient(90deg,rgba(3,29,48,.88) 0%,rgba(3,29,48,.62) 34%,rgba(3,29,48,.18) 55%,rgba(3,29,48,0) 72%)!important;
+  }
+  .correct-hero.full-scene-vehicle .correct-hero-copy{width:55%!important;padding:54px 0 0 18px!important}
+}
+
+.vehicle-info-setting,.vehicle-image-setting{grid-column:1/-1!important}
+.vehicle-info-setting>h3,.vehicle-image-setting>h3{margin:0 0 14px!important}
+.vehicle-info-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}
+.vehicle-info-form-grid label{min-width:0}
+.vehicle-image-setting{border-top:1px solid #e6edf2;padding-top:20px!important;margin-top:2px}
+.vehicle-image-source{max-width:520px}
+#presetImagePanel>label{display:block;margin:12px 0!important}
+.preset-vehicle-preview img{object-fit:contain!important;background:#eef4f8!important}
+#customImagePanel .vehicle-photo-actions{margin-top:12px!important}
+@media(max-width:899px){
+  .vehicle-info-form-grid{grid-template-columns:1fr}
+  .vehicle-image-source{max-width:none}
+}

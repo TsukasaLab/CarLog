@@ -44,7 +44,7 @@ const load=(k,d)=>{try{let v=localStorage.getItem(k);return v?JSON.parse(v):d}ca
 const uid=p=>p+"_"+(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.random().toString(16).slice(2));
 const today=()=>{let d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10)},nowTime=()=>new Date().toTimeString().slice(0,5),nf=v=>Number(v||0).toLocaleString("ja-JP"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 let vehicles=load(KEY.vehicles,[]),activeId=localStorage.getItem(KEY.active)||"",fuelRecords=load(KEY.fuel,[]),maintenanceRecords=load(KEY.maint,[]),expenseRecords=load(KEY.expense,[]);
-let historyNavigating=false;let edit={fuel:null,maintenance:null,expense:null,vehicle:null},costYear=new Date().getFullYear(),costChartMode="total",driveMode="distance",pendingVehiclePhoto=null,memoDraft=[];
+let historyNavigating=false;let edit={fuel:null,maintenance:null,expense:null,vehicle:null},costYear=new Date().getFullYear(),costChartMode="total",driveMode="distance",pendingVehiclePhoto=null,pendingImageMode="preset",memoDraft=[];
 const COLOR_LABELS={lavender:"ラベンダー",burgundy:"バーガンディ",white:"ホワイト",black:"ブラック",silver:"シルバー",gray:"グレー",red:"レッド",blue:"ブルー",navy:"ネイビー",lightblue:"ライトブルー",green:"グリーン",pink:"ピンク",beige:"ベージュ",brown:"ブラウン",yellow:"イエロー",orange:"オレンジ",purple:"パープル",other:"その他"};
 const COLOR_HEX={white:"#f4f4f2",black:"#25282d",silver:"#b8bdc5",gray:"#737982",red:"#c93c3c",blue:"#3478c8",navy:"#263f68",green:"#4f7d57",beige:"#d5c4a1",brown:"#795548",yellow:"#e5bf36",orange:"#df7b2c",purple:"#76518d",other:"#8b95a5"};
 function carSvg(color,bodyType="compact-minivan"){
@@ -97,7 +97,7 @@ function createVehicleFromSetup(){let n=setupName.value.trim(),km=+setupKm.value
 function goHome(){edit.fuel=edit.maintenance=edit.expense=null;if(!car())return show("setup");show("home");renderHome()}
 function costs(y,m){let same=r=>{let d=(r.date||"").split("-").map(Number);return d[0]===y&&(!m||d[1]===m)},f=fuels().filter(same).reduce((s,r)=>s+(+r.amount||0),0),mt=maints().filter(same).reduce((s,r)=>s+(+r.amount||0),0),e=expenses().filter(same).reduce((s,r)=>s+(+r.amount||0),0);return{fuel:f,maint:mt,other:e,total:f+mt+e}}
 function recomputeFuel(){let rs=fuels().sort((a,b)=>+a.odometer-+b.odometer||stamp(a).localeCompare(stamp(b)));rs.forEach((r,i)=>{let p=rs[i-1];r.distance=p?+r.odometer-+p.odometer:null;r.fuelEconomy=p&&r.fullTank&&p.fullTank&&r.distance>0?r.distance/+r.liters:null;r.pricePerLiter=+r.liters?+r.amount/+r.liters:null});save(KEY.fuel,fuelRecords)}
-async function renderHome(){let c=car(),km=currentKm();c.odometer=km;save(KEY.vehicles,vehicles);homeCarName.textContent=c.name;homeMaker.textContent=c.maker||"";homeCarMeta.textContent=[c.model,c.year,COLOR_LABELS[c.color]||c.color].filter(Boolean).join(" / ");homeKm.textContent=nf(km)+" km";applyHomeHeroScene(c);renderCarThumb(c);
+async function renderHome(){let c=car(),km=currentKm();c.odometer=km;save(KEY.vehicles,vehicles);homeCarName.textContent=c.name;homeMaker.textContent=c.maker||"";homeCarMeta.textContent=[c.model,c.year,COLOR_LABELS[c.color]||c.color].filter(Boolean).join(" / ");homeKm.textContent=nf(km)+" km";renderHomeVehicleInfo(c);applyHomeHeroScene(c);renderCarThumb(c);
 let d=new Date(),y=d.getFullYear(),m=d.getMonth()+1,mc=costs(y,m);monthFuel.textContent=nf(mc.fuel)+" 円";monthTotal.textContent=nf(mc.total)+" 円";let md=monthDrive(y,m);monthKm.textContent=nf(Math.round(md.distance))+" km";let eco=fuels().filter(r=>+r.fuelEconomy>0).sort((a,b)=>stamp(b).localeCompare(stamp(a)))[0];latestEco.textContent=eco?(+eco.fuelEconomy).toFixed(1)+" km/L":"記録なし";
 let yc=costs(y),elapsed=m;yearTotal.textContent=nf(yc.total)+" 円";yearAvg.textContent=nf(Math.round(yc.total/elapsed))+" 円";let yd=Array.from({length:12},(_,i)=>monthDrive(y,i+1).distance).reduce((a,b)=>a+b,0);yearKm.textContent=nf(Math.round(yd))+" km";perKm.textContent=yd?(yc.total/yd).toFixed(1)+" 円/km":"---";
 if(c.inspectionDate){inspection.textContent=c.inspectionDate.replaceAll("-","/");let days=Math.ceil((new Date(c.inspectionDate+"T00:00:00")-new Date(today()+"T00:00:00"))/86400000);inspectionLeft.textContent=days>=0?"あと "+nf(days)+" 日":"期限切れ"}else{inspection.textContent="未設定";inspectionLeft.textContent=""}
@@ -223,7 +223,7 @@ function renderPresetVehiclePreview(){
  if(!el)return;
  const bt=document.getElementById("editCarBodyType")?.value||"compact-minivan";
  const col=document.getElementById("editCarColor")?.value||"white";
- const path=HERO_SCENE_ASSETS[`${bt}|${col}`]||VEHICLE_IMAGE_ASSETS[`${bt}|${col}`]||"";
+ const path=vehicleAssetPath(bt,col);
  el.innerHTML=path?`<img src="${path}" alt="プリセット車両画像">`:vehicleImageMarkup(bt,col,"preset-preview-car");
 }
 async function renderVehiclePhoto(){
@@ -499,34 +499,55 @@ function renderCorrectDashboard(c){
    const fh=x.fuel/max*100,mh=x.maint/max*100,oh=x.other/max*100;
    return `<div class="dm"><div class="dm-stack"><i class="o" style="height:${oh}%"></i><i class="m" style="height:${mh}%"></i><i class="f" style="height:${fh}%"></i></div><small>${i+1}</small></div>`
  }).join("");
- set("dashCarName",c.name||"---");set("dashMaker",c.maker||"---");set("dashModel",c.model||"---");
- set("dashYear",c.year||"---");set("dashBodyType",(BODY_TYPES.find(x=>x[0]===(c.bodyType||"compact-minivan"))||[])[1]||"---");
- set("dashColor",COLOR_LABELS[c.color]||c.color||"---");set("dashPurchase",c.purchaseDate?c.purchaseDate.replaceAll("-","/"):"---");
- set("dashPlate",c.plate||"---");set("dashOdometer",nf(currentKm())+" km");
- set("dashInspection",c.inspectionDate?c.inspectionDate.replaceAll("-","/"):"---");
- set("dashOilInterval",c.oilInterval?nf(c.oilInterval)+" km":"---");
+ renderHomeVehicleInfo(c);
  }
 
+function renderHomeVehicleInfo(c){
+ if(!c)return;
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ set("dashCarName",c.name||"---");
+ set("dashMaker",c.maker||"---");
+ set("dashModel",c.model||"---");
+ set("dashYear",c.year||"---");
+ set("dashBodyType",(BODY_TYPES.find(x=>x[0]===(c.bodyType||"compact-minivan"))||[])[1]||"---");
+ set("dashColor",COLOR_LABELS[c.color]||c.color||"---");
+ set("dashPurchase",c.purchaseDate?c.purchaseDate.replaceAll("-","/"):"---");
+ set("dashPlate",c.plate||"---");
+ set("dashOdometer",nf(currentKm())+" km");
+ set("dashInspection",c.inspectionDate?c.inspectionDate.replaceAll("-","/"):"---");
+ set("dashOilInterval",c.oilInterval?nf(c.oilInterval)+" km":"---");
+}
 
-const HERO_SCENE_ASSETS={};
+const HERO_SCENE_ASSETS={
+ "compact-minivan|white":{
+   desktop:"assets/heroes/compact-minivan_white_lakeside_v078_pc.webp",
+   mobile:"assets/heroes/compact-minivan_white_lakeside_v078_mobile.webp"
+ }
+};
 function heroScenePath(c){
- if(!c) return "";
- return HERO_SCENE_ASSETS[`${c.bodyType||"compact-minivan"}|${c.color||"white"}`]||"";
+ if(!c)return "";
+ const s=HERO_SCENE_ASSETS[`${c.bodyType||"compact-minivan"}|${c.color||"white"}`]||"";
+ return typeof s==="string"?s:(s.desktop||s.mobile||"");
 }
 function applyHomeHeroScene(c){
  const hero=document.querySelector(".correct-hero");
  const thumb=document.getElementById("homeCarThumb");
  if(!hero||!thumb)return;
- const scene=heroScenePath(c);
+ const scene=HERO_SCENE_ASSETS[`${c.bodyType||"compact-minivan"}|${c.color||"white"}`]||"";
+ const hasScene=!!scene;
  // A user-supplied photo remains the highest priority.
- if(scene && !(c.imageMode==="custom"&&c.photoId)){
+ if(hasScene && !(c.imageMode==="custom"&&c.photoId)){
+   const desktop=typeof scene==="string"?scene:(scene.desktop||scene.mobile);
+   const mobile=typeof scene==="string"?scene:(scene.mobile||scene.desktop);
    hero.classList.add("full-scene-vehicle");
-   hero.style.setProperty("--vehicle-hero",`url("${scene}")`);
+   hero.style.setProperty("--vehicle-hero-desktop",`url("${desktop}")`);
+   hero.style.setProperty("--vehicle-hero-mobile",`url("${mobile}")`);
    thumb.innerHTML="";
    thumb.setAttribute("aria-hidden","true");
  }else{
    hero.classList.remove("full-scene-vehicle");
-   hero.style.removeProperty("--vehicle-hero");
+   hero.style.removeProperty("--vehicle-hero-desktop");
+   hero.style.removeProperty("--vehicle-hero-mobile");
    thumb.removeAttribute("aria-hidden");
  }
 }
