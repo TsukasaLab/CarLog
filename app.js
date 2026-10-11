@@ -542,7 +542,17 @@ const HERO_SCENE_ASSETS={
  "compact-minivan|brown":{desktop:"assets/heroes/compact-minivan_brown_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_brown_lakeside_v080_mobile.webp"},
  "compact-minivan|lightblue":{desktop:"assets/heroes/compact-minivan_lightblue_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lightblue_lakeside_v080_mobile.webp"},
  "compact-minivan|lavender":{desktop:"assets/heroes/compact-minivan_lavender_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_lavender_lakeside_v080_mobile.webp"},
- "compact-minivan|green":{desktop:"assets/heroes/compact-minivan_green_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_green_lakeside_v080_mobile.webp"}
+ "compact-minivan|green":{desktop:"assets/heroes/compact-minivan_green_lakeside_v080_pc.webp",mobile:"assets/heroes/compact-minivan_green_lakeside_v080_mobile.webp"},
+  "compact|white":"assets/heroes/compact_white_lakeside_v082.webp",
+  "kei|white":"assets/heroes/kei_white_lakeside_v082.webp",
+  "kei-tall|white":"assets/heroes/kei-tall_white_lakeside_v082.webp",
+  "sedan|white":"assets/heroes/sedan_white_lakeside_v082.webp",
+  "wagon|white":"assets/heroes/wagon_white_lakeside_v082.webp",
+  "minivan|white":"assets/heroes/minivan_white_lakeside_v082.webp",
+  "suv|white":"assets/heroes/suv_white_lakeside_v082.webp",
+  "coupe|white":"assets/heroes/coupe_white_lakeside_v082.webp",
+  "van|white":"assets/heroes/van_white_lakeside_v082.webp",
+
 };
 function heroScenePath(c){
  if(!c)return "";
