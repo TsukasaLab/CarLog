@@ -171,6 +171,8 @@ function showSameDay(kind){let date=kind==="fuel"?fuelDate.value:kind==="mainten
 
 function openHistory(){show("history");renderHistory("all")}function renderHistory(filter){let rs=allRecords().filter(r=>filter==="all"||r._kind===filter);historyList.innerHTML=rs.length?rs.map(r=>`<button class="card history-entry" onclick="${r._kind==="fuel"?"openFuel":r._kind==="maintenance"?"openMaintenance":"openExpense"}('${r.id}')"><div class="history-main"><b class="history-title">${esc(r._title)}</b><div class="history-detail"><span>${esc(r.date)}</span><span>${nf(r.amount)}円</span>${r.store?`<span>${esc(r.store)}</span>`:""}${r._detail?`<span>${esc(r._detail)}</span>`:""}</div></div><span class="history-edit">編集 ›</span></button>`).join(""):'<div class="card">記録はありません。</div>'}
 
+const MAINTENANCE_CATEGORIES=["オイル交換","オイル＋フィルター交換","タイヤ交換","バッテリー交換","車検","点検","修理","その他"];
+const OTHER_EXPENSE_CATEGORIES=["自動車税","任意保険","駐車場","高速・有料道路","洗車","用品","その他"];
 function openCosts(mode){if(mode)costChartMode=mode;show("costs");renderCosts()}
 function changeYear(n){costYear+=n;renderCosts()}
 function setCostChart(m){costChartMode=m;renderCosts()}
@@ -187,10 +189,11 @@ function costModeValue(y,m){
 function costModeLabel(){
  if(costChartMode.startsWith("maintcat:"))return "整備・維持 / "+costChartMode.slice(9);
  if(costChartMode.startsWith("othercat:"))return "その他支出 / "+costChartMode.slice(9);
- return({total:"年間合計",fuel:"ガソリン",maint:"整備・維持",other:"その他",avg:"月平均"})[costChartMode]||"年間合計"
+ return({total:"年間合計",fuel:"ガソリン",maint:"整備・維持",other:"その他支出",avg:"月平均"})[costChartMode]||"年間合計"
 }
 function renderCostCategoryButtons(){
- let ms=[...new Set(maints().map(r=>r.type).filter(Boolean))],os=[...new Set(expenses().map(r=>r.category).filter(Boolean))];
+ let ms=[...new Set([...MAINTENANCE_CATEGORIES,...maints().map(r=>r.type).filter(Boolean)])];
+ let os=[...new Set([...OTHER_EXPENSE_CATEGORIES,...expenses().map(r=>r.category).filter(Boolean)])];
  maintCategoryButtons.innerHTML=`<button class="${costChartMode==="maint"?"active":""}" onclick="setCostChart('maint')">全体</button>`+ms.map(x=>`<button class="${costChartMode==="maintcat:"+x?"active":""}" onclick="setCostChart('maintcat:${esc(x)}')">${esc(x)}</button>`).join("");
  otherCategoryButtons.innerHTML=`<button class="${costChartMode==="other"?"active":""}" onclick="setCostChart('other')">全体</button>`+os.map(x=>`<button class="${costChartMode==="othercat:"+x?"active":""}" onclick="setCostChart('othercat:${esc(x)}')">${esc(x)}</button>`).join("")
 }
@@ -198,8 +201,8 @@ function selectCostMonth(month){
  month=Number(month);if(!month||month<1||month>12)return;
  let x=costs(costYear,month),selected=costModeValue(costYear,month);
  selectedMonthLabel.textContent=`${costYear}年${month}月の合計`;
- selectedMonthTotal.textContent=nf(selected)+" 円";
- selectedMonthFuel.textContent=nf(x.fuel)+" 円";selectedMonthMaint.textContent=nf(x.maint)+" 円";selectedMonthOther.textContent=nf(x.other)+" 円";
+ selectedMonthTotal.textContent=nf(Number.isFinite(+selected)?+selected:0)+" 円";
+ selectedMonthFuel.textContent=nf(+x.fuel||0)+" 円";selectedMonthMaint.textContent=nf(+x.maint||0)+" 円";selectedMonthOther.textContent=nf(+x.other||0)+" 円";
  document.querySelectorAll("#monthBars .barcol").forEach((el,i)=>el.classList.toggle("selected-month",i===month-1))
 }
 function renderCosts(){
@@ -541,7 +544,7 @@ function renderCorrectDashboard(c){
  const cur=monthCostFor(y,m);
  const pd=new Date(y,m-2,1),prev=monthCostFor(pd.getFullYear(),pd.getMonth()+1);
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set("dashFuel",nf(cur.fuel||0)+" 円"); set("dashMaint",nf(cur.maint||0)+" 円"); set("dashOther",nf(cur.other||0)+" 円"); set("dashTotal",nf(cur.total||0)+" 円");
+ set("dashFuel",nf(+cur.fuel||0)+" 円"); set("dashMaint",nf(+cur.maint||0)+" 円"); set("dashOther",nf(+cur.other||0)+" 円"); set("dashTotal",nf(+cur.total||0)+" 円");
  [["dashFuelDiff",cur.fuel,prev.fuel],["dashMaintDiff",cur.maint,prev.maint],["dashOtherDiff",cur.other,prev.other],["dashTotalDiff",cur.total,prev.total]].forEach(([id,a,b])=>{
    const e=document.getElementById(id);if(e){e.textContent=diffText(a,b);e.className=a>b?"up":a<b?"down":""}
  });

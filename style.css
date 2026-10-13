@@ -1581,3 +1581,112 @@ body[data-screen] .pc-sidebar button.active{
 @media(min-width:900px){
   .mobile-menu-fab,.mobile-nav-backdrop{display:none!important}
 }
+
+
+/* =========================================================
+   CarLog Ver.0.84
+   Mobile visibility + labels + complete cost category controls
+   ========================================================= */
+@media(max-width:899px){
+  /* Light mobile header: make the brand and version readable. */
+  .correct-home .mobile-top{
+    background:rgba(255,255,255,.88)!important;
+    color:#123f60!important;
+    border-bottom:1px solid #d9e6ee!important;
+    text-shadow:none!important;
+  }
+  .correct-home .mobile-top .mobile-brand,
+  .correct-home .mobile-top .mobile-brand b{
+    color:#123f60!important;
+    text-shadow:none!important;
+  }
+  .correct-home .mobile-top .title-version{
+    background:#e9f4fb!important;
+    color:#46697f!important;
+    border-color:#c8dfea!important;
+    text-shadow:none!important;
+  }
+
+  /* Home menu button now matches the fixed menu button used on other screens. */
+  .correct-home .mobile-top button[aria-controls="mobileNavBackdrop"]{
+    display:grid!important;
+    place-items:center!important;
+    width:46px!important;
+    height:46px!important;
+    min-height:46px!important;
+    padding:0!important;
+    border-radius:14px!important;
+    background:#0b3a59!important;
+    color:#fff!important;
+    font-size:24px!important;
+    box-shadow:0 8px 22px rgba(7,45,70,.24)!important;
+  }
+
+  /* Selected month summary: one item per line on narrow screens. */
+  .selected-month-cost{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:12px!important;
+  }
+  .selected-month-cost>div:first-child{
+    display:flex!important;
+    align-items:baseline!important;
+    gap:6px!important;
+    flex-wrap:wrap!important;
+  }
+  .selected-month-breakdown{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:7px!important;
+  }
+  .selected-month-breakdown>span{
+    display:block!important;
+    width:100%!important;
+    line-height:1.35!important;
+  }
+  .selected-month-breakdown>span b{
+    margin-left:1ch!important;
+  }
+}
+
+/* Global .total styling used by the analysis card must not hide Home's total amount. */
+.correct-stat.total{
+  background:#fff!important;
+  color:var(--ink)!important;
+}
+.correct-stat.total small{color:#647e91!important}
+.correct-stat.total b{color:var(--ink)!important}
+.correct-stat.total .stat-ico{color:#173d58!important}
+#dashTotal:empty::after{content:"0 円"!important;color:var(--ink)!important}
+
+/* All maintenance/other-expense categories are available, with horizontal scrolling. */
+.cost-category-buttons{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:7px!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  padding:2px 1px 8px!important;
+  scroll-snap-type:x proximity;
+  scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch;
+}
+.cost-category-buttons button{
+  flex:0 0 auto!important;
+  min-width:max-content!important;
+  padding:9px 13px!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  scroll-snap-align:start;
+}
+@media(max-width:899px){
+  .cost-category-buttons{gap:6px!important}
+  .cost-category-buttons button{
+    font-size:11px!important;
+    padding:9px 12px!important;
+  }
+}
