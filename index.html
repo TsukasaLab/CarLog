@@ -1,11 +1,11 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest?v=0.90"><link rel="stylesheet" href="style.css?v=0.90">
+<link rel="manifest" href="manifest.webmanifest?v=0.91"><link rel="stylesheet" href="style.css?v=0.91">
 </head><body>
 
 <aside class="pc-sidebar" aria-label="PCメニュー">
-  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.90 β</span><small>Car Maintenance Log</small></div></div>
+  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.91 β</span><small>Car Maintenance Log</small></div></div>
   <button class="active" onclick="goHome()"><span class="navico">⌂</span><span>ホーム</span></button>
   <button onclick="openFuel()"><span class="navico">⛽</span><span>給油記録</span></button>
   <button onclick="openMaintenance()"><span class="navico">🔧</span><span>整備・修理</span></button>
@@ -28,7 +28,7 @@
     <div class="mobile-nav-head">
       <div class="mobile-nav-brand">
         <span class="mobile-nav-brandmark">🚙</span>
-        <div><strong>CarLog</strong><small>Ver.0.90 β</small></div>
+        <div><strong>CarLog</strong><small>Ver.0.91 β</small></div>
       </div>
       <button class="mobile-nav-close" type="button" onclick="closeMobileMenu()" aria-label="メニューを閉じる">×</button>
     </div>
@@ -66,7 +66,7 @@
 
 <section id="home" class="screen app-page hidden correct-home">
  <header class="mobile-top">
-   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.90 β</span></div>
+   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.91 β</span></div>
    <button onclick="openMobileMenu()" aria-label="メニュー" aria-controls="mobileNavBackdrop" aria-expanded="false">☰</button>
  </header>
 
@@ -304,7 +304,7 @@
 <div class="card debug-reset-card"><h3>デバッグ</h3><p class="help">車両・給油・整備・その他支出・更新期限・画像を削除し、初回セットアップ画面へ戻します。</p><button class="debug-reset-btn" type="button" onclick="debugResetCarLog()">デバッグ用：初期化</button><small class="debug-reset-note">※ CarLogの保存データだけを削除します。他のTsukasaLabツールのデータには触れません。</small></div>
 <button class="card menu guide-page-link" onclick="openHelp()">📖 使い方を開く <span>›</span></button>
 </div>
-<div class="about"><b>CarLog Ver.0.90 β</b><span>ローカル保存・公開β</span></div>
+<div class="about"><b>CarLog Ver.0.91 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
 <section id="help" class="screen app-page hidden">
@@ -343,6 +343,6 @@
 <button onclick="openCosts()">⌁<span>分析</span></button>
 </nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.90"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.90",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.91"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.91",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>

@@ -311,13 +311,11 @@ function currentLocalYearMonth(){
 }
 function openCosts(mode){
  reloadRecordState();
- if(mode){
-  const now=currentLocalYearMonth();
-  costYear=now.y;
-  costMonth=now.m;
-  costGraphScope="month";
-  costChartMode=mode;
- }
+ const now=currentLocalYearMonth();
+ costYear=now.y;
+ costMonth=now.m;
+ costGraphScope="month";
+ costChartMode=mode||"total";
  show("costs");
  renderCosts();
 }
@@ -383,7 +381,7 @@ function renderOtherBreakdown(el,scope,y,m=null){
 }
 function renderCosts(){
  document.getElementById("costYear").textContent=costYear+"年";
- document.getElementById("costMonth").textContent=costYear+"年 "+costMonth+"月";
+ document.getElementById("costMonth").textContent=costMonth+"月";
  document.getElementById("costMonthPrev").disabled=costMonth<=1;
  document.getElementById("costMonthNext").disabled=costMonth>=12;
 

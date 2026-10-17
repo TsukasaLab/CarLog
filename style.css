@@ -1997,3 +1997,182 @@ body[data-screen] .pc-sidebar button.active{
     padding-left:16px!important;
   }
 }
+
+
+/* =========================================================
+   CarLog Ver.0.91
+   Cost analysis: compact summary layout + stable selectors
+   ========================================================= */
+
+/* 年/月選択は常に同じ形で見えるよう固定サイズ化 */
+#costs .cost-period-picker{
+  display:grid!important;
+  grid-template-columns:46px minmax(90px,1fr) 46px!important;
+  align-items:center!important;
+  width:min(100%,300px)!important;
+  min-height:50px!important;
+  padding:4px 6px!important;
+  margin:0 auto 14px!important;
+}
+#costs .cost-period-picker>b{
+  text-align:center!important;
+  font-size:16px!important;
+  color:#173d58!important;
+}
+#costs .cost-period-picker>button{
+  display:grid!important;
+  place-items:center!important;
+  width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:10px!important;
+  background:#eef5fa!important;
+  color:#173d58!important;
+  font-size:24px!important;
+  line-height:1!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#costs .cost-period-picker>button:disabled{
+  opacity:.48!important;
+  visibility:visible!important;
+  background:#f3f6f8!important;
+  color:#8ca0ae!important;
+}
+
+/* セクション間の余白を詰める */
+#costs .cost-period-label{
+  margin:14px 2px 5px!important;
+}
+#costs .cost-section-title{
+  margin:12px 2px 6px!important;
+}
+#costs .cost-month-label{
+  margin-top:20px!important;
+  padding-top:18px!important;
+}
+
+/* 合計欄を薄く・低くして、カード感を残しつつスマートに */
+#costs .cost-summary-card{
+  min-height:62px!important;
+  padding:11px 12px!important;
+  margin:5px 0!important;
+  border-radius:13px!important;
+}
+#costs .cost-summary-card span{
+  margin-bottom:4px!important;
+  font-size:10px!important;
+}
+#costs .cost-summary-card b{
+  font-size:17px!important;
+  line-height:1.2!important;
+}
+#costs .cost-total-card{
+  min-height:76px!important;
+  padding:12px 14px!important;
+}
+#costs .cost-total-card b{
+  font-size:24px!important;
+}
+
+/* 年/月の3内訳はスマホでも横3列 */
+#costs .cost-summary-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+#costs .cost-summary-grid .cost-summary-card{
+  min-width:0!important;
+  min-height:62px!important;
+}
+#costs .cost-summary-grid .cost-summary-card span{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#costs .cost-summary-grid .cost-summary-card b{
+  font-size:15px!important;
+  white-space:nowrap!important;
+}
+
+/* その他支出の内訳もコンパクトに */
+#costs .other-breakdown-card{
+  margin-top:6px!important;
+  padding:10px 10px 10px 14px!important;
+  border-left-width:3px!important;
+  border-radius:12px!important;
+}
+#costs .other-breakdown-head{
+  margin-bottom:7px!important;
+  gap:6px!important;
+}
+#costs .other-breakdown-head>span{
+  font-size:16px!important;
+}
+#costs .other-breakdown-head b{
+  font-size:11px!important;
+}
+#costs .other-breakdown-head small{
+  font-size:8px!important;
+}
+#costs .other-breakdown-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+}
+#costs .other-breakdown-item{
+  min-height:50px!important;
+  padding:7px 8px!important;
+  border-radius:9px!important;
+}
+#costs .other-breakdown-item span{
+  margin-bottom:3px!important;
+  font-size:8px!important;
+}
+#costs .other-breakdown-item b{
+  font-size:11px!important;
+  white-space:nowrap!important;
+}
+
+/* グラフまわりも上部との間隔を縮小 */
+#costs .cost-chart-card{
+  margin-top:18px!important;
+  padding:14px!important;
+}
+#costs .cost-chart-head{
+  margin-bottom:4px!important;
+}
+#costs .cost-chart-head h3{
+  font-size:14px!important;
+}
+
+@media(max-width:899px){
+  #costs .cost-section-title{
+    margin-top:10px!important;
+  }
+  #costs .cost-section-title>small{
+    font-size:9px!important;
+  }
+  #costs .cost-summary-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  #costs .cost-summary-card{
+    min-height:60px!important;
+  }
+  #costs .cost-total-card{
+    min-height:72px!important;
+  }
+  #costs .other-breakdown-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+
+/* 極端に狭い端末のみ内訳を2列へ退避 */
+@media(max-width:360px){
+  #costs .other-breakdown-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #costs .cost-summary-grid .cost-summary-card b{
+    font-size:13px!important;
+  }
+}
