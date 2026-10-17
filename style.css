@@ -2176,3 +2176,87 @@ body[data-screen] .pc-sidebar button.active{
     font-size:13px!important;
   }
 }
+
+
+/* =========================================================
+   CarLog Ver.0.92
+   Maintenance breakdown + stacked total bars
+   ========================================================= */
+
+/* 整備・維持も「内訳」であることが分かるデザインに統一 */
+#costs .maint-breakdown-card{
+  border-left-color:#e6a24b!important;
+  background:#fffaf3!important;
+}
+#costs .maint-breakdown-card .other-breakdown-head>span{
+  color:#d98c2f!important;
+}
+#costs .maint-breakdown-item{
+  border-color:#f0dfc9!important;
+}
+#costs .maint-breakdown-item.active{
+  border-color:#e29a42!important;
+  background:#fff7ec!important;
+  box-shadow:0 8px 20px rgba(226,154,66,.12)!important;
+}
+
+/* 総計バーの色分け凡例 */
+#costs .cost-stack-legend{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin:7px 0 4px;
+  padding:7px 9px;
+  border-radius:10px;
+  background:#f7fafc;
+  color:#60798b;
+  font-size:10px;
+  font-weight:800;
+}
+#costs .cost-stack-legend.hidden{display:none!important}
+#costs .cost-stack-legend span{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+#costs .cost-stack-legend i{
+  display:block;
+  width:10px;
+  height:10px;
+  border-radius:3px;
+}
+#costs .legend-fuel{background:#2e91e5}
+#costs .legend-maint{background:#ee9b38}
+#costs .legend-other{background:#8a63d2}
+
+/* 総計は1本のバーの中を3色で積み上げる */
+#costs .stacked-cost-bar{
+  width:100%;
+  min-height:2px;
+  display:flex;
+  flex-direction:column-reverse;
+  justify-content:flex-start;
+  overflow:hidden;
+  border-radius:8px 8px 3px 3px;
+  background:#eaf0f4;
+}
+#costs .cost-stack-segment{
+  width:100%;
+  min-height:1px;
+}
+#costs .stack-fuel{background:#2e91e5}
+#costs .stack-maint{background:#ee9b38}
+#costs .stack-other{background:#8a63d2}
+
+/* 既存の単項目バーは従来通り。積み上げバーにグラデーションを上書きしない */
+#costs .stacked-cost-bar .cost-stack-segment{
+  border-radius:0!important;
+}
+
+@media(max-width:899px){
+  #costs .cost-stack-legend{
+    gap:10px;
+    font-size:9px;
+  }
+}

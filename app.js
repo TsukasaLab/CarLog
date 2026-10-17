@@ -344,6 +344,9 @@ function costArraySum(arr,y,m=null,d=null){
 function expenseCategories(){
  return [...new Set([...OTHER_EXPENSE_CATEGORIES,...expenses().map(r=>r.category).filter(Boolean)])];
 }
+function maintenanceCategories(){
+ return [...new Set([...MAINTENANCE_CATEGORIES,...maints().map(r=>r.type).filter(Boolean)])];
+}
 function categoryCost(kind,category,y,m=null,d=null){
  const arr=kind==="maint"?maints():expenses();
  const key=kind==="maint"?"type":"category";
@@ -370,14 +373,21 @@ function selectCostGraph(scope,mode){
  costChartMode=mode||"total";
  renderCostChart();
 }
-function renderOtherBreakdown(el,scope,y,m=null){
+function renderCategoryBreakdown(el,kind,scope,y,m=null){
  if(!el)return;
- const cats=expenseCategories();
+ const isMaint=kind==="maint";
+ const cats=isMaint?maintenanceCategories():expenseCategories();
  el.innerHTML=cats.map(cat=>{
-  const mode="othercat:"+encodeURIComponent(cat);
-  const val=categoryCost("other",cat,y,m);
-  return `<button class="other-breakdown-item" data-cost-scope="${scope}" data-cost-mode="${mode}" onclick="selectCostGraph('${scope}','${mode}')"><span>${esc(cat)}</span><b>${nf(val)} 円</b></button>`;
+  const mode=(isMaint?"maintcat:":"othercat:")+encodeURIComponent(cat);
+  const val=categoryCost(kind,cat,y,m);
+  return `<button class="other-breakdown-item ${isMaint?"maint-breakdown-item":""}" data-cost-scope="${scope}" data-cost-mode="${mode}" onclick="selectCostGraph('${scope}','${mode}')"><span>${esc(cat)}</span><b>${nf(val)} 円</b></button>`;
  }).join("");
+}
+function renderOtherBreakdown(el,scope,y,m=null){
+ renderCategoryBreakdown(el,"other",scope,y,m);
+}
+function renderMaintBreakdown(el,scope,y,m=null){
+ renderCategoryBreakdown(el,"maint",scope,y,m);
 }
 function renderCosts(){
  document.getElementById("costYear").textContent=costYear+"年";
@@ -395,6 +405,7 @@ function renderCosts(){
  document.getElementById("costYearFuel").textContent=nf(annual.fuel)+" 円";
  document.getElementById("costYearMaint").textContent=nf(annual.maint)+" 円";
  document.getElementById("costYearOther").textContent=nf(annual.other)+" 円";
+ renderMaintBreakdown(document.getElementById("costYearMaintBreakdown"),"year",costYear);
  renderOtherBreakdown(document.getElementById("costYearOtherBreakdown"),"year",costYear);
 
  const monthly={
@@ -408,7 +419,9 @@ function renderCosts(){
  document.getElementById("costMonthFuel").textContent=nf(monthly.fuel)+" 円";
  document.getElementById("costMonthMaint").textContent=nf(monthly.maint)+" 円";
  document.getElementById("costMonthOther").textContent=nf(monthly.other)+" 円";
+ document.getElementById("costMonthMaintBreakdownLabel").textContent=costMonth+"月の各種合計";
  document.getElementById("costMonthBreakdownLabel").textContent=costMonth+"月の各種合計";
+ renderMaintBreakdown(document.getElementById("costMonthMaintBreakdown"),"month",costYear,costMonth);
  renderOtherBreakdown(document.getElementById("costMonthOtherBreakdown"),"month",costYear,costMonth);
 
  renderCostChart();
@@ -421,23 +434,37 @@ function renderCostChart(){
  const title=document.getElementById("monthChartTitle");
  const scopeLabel=document.getElementById("costChartScopeLabel");
  const bars=document.getElementById("monthBars");
+ const legend=document.getElementById("costStackLegend");
  const label=costModeLabel();
+ const isTotal=costChartMode==="total";
+
+ legend?.classList.toggle("hidden",!isTotal);
 
  if(costGraphScope==="month"){
   const days=new Date(costYear,costMonth,0).getDate();
-  const vals=Array.from({length:days},(_,i)=>costValue(costChartMode,costYear,costMonth,i+1));
   const labels=Array.from({length:days},(_,i)=>(i+1)+"日");
   scopeLabel.textContent=`${costYear}年${costMonth}月の表示欄から選択`;
   title.textContent=`${costYear}年${costMonth}月 ${label}（日別）`;
   bars.classList.add("daily-bars");
-  renderCostBars(bars,vals,labels,"円");
+  if(isTotal){
+   const rows=Array.from({length:days},(_,i)=>costStackParts(costYear,costMonth,i+1));
+   renderStackedCostBars(bars,rows,labels);
+  }else{
+   const vals=Array.from({length:days},(_,i)=>costValue(costChartMode,costYear,costMonth,i+1));
+   renderCostBars(bars,vals,labels,"円");
+  }
  }else{
-  const vals=Array.from({length:12},(_,i)=>costValue(costChartMode,costYear,i+1));
   const labels=Array.from({length:12},(_,i)=>(i+1)+"月");
   scopeLabel.textContent=`${costYear}年の表示欄から選択`;
   title.textContent=`${costYear}年 ${label}（月別）`;
   bars.classList.remove("daily-bars");
-  renderCostBars(bars,vals,labels,"円");
+  if(isTotal){
+   const rows=Array.from({length:12},(_,i)=>costStackParts(costYear,i+1));
+   renderStackedCostBars(bars,rows,labels);
+  }else{
+   const vals=Array.from({length:12},(_,i)=>costValue(costChartMode,costYear,i+1));
+   renderCostBars(bars,vals,labels,"円");
+  }
  }
 }
 function renderCostBars(el,vals,labels,unit){
@@ -447,6 +474,32 @@ function renderCostBars(el,vals,labels,unit){
   const n=Number(v)||0;
   const valueText=n?nf(Math.round(n)):"";
   return `<div class="barcol"><div class="bar" style="height:${Math.max(2,n/max*145)}px" title="${nf(n)} ${unit}"></div><small>${valueText}</small><span>${labels[i]||i+1}</span></div>`;
+ }).join("");
+}
+function costStackParts(y,m=null,d=null){
+ const fuel=costValue("fuel",y,m,d);
+ const maint=costValue("maint",y,m,d);
+ const other=costValue("other",y,m,d);
+ return{fuel,maint,other,total:fuel+maint+other};
+}
+function renderStackedCostBars(el,rows,labels){
+ const max=Math.max(1,...rows.map(r=>Number(r.total)||0));
+ el.innerHTML=rows.map((r,i)=>{
+  const total=Number(r.total)||0;
+  const outerHeight=Math.max(2,total/max*145);
+  const fuel=Number(r.fuel)||0,maint=Number(r.maint)||0,other=Number(r.other)||0;
+  const fuelPct=total?fuel/total*100:0;
+  const maintPct=total?maint/total*100:0;
+  const otherPct=total?other/total*100:0;
+  const valueText=total?nf(Math.round(total)):"";
+  return `<div class="barcol">
+   <div class="stacked-cost-bar" style="height:${outerHeight}px" title="合計 ${nf(total)} 円">
+    ${fuel?`<div class="cost-stack-segment stack-fuel" style="height:${fuelPct}%" title="ガソリン ${nf(fuel)} 円"></div>`:""}
+    ${maint?`<div class="cost-stack-segment stack-maint" style="height:${maintPct}%" title="整備・維持 ${nf(maint)} 円"></div>`:""}
+    ${other?`<div class="cost-stack-segment stack-other" style="height:${otherPct}%" title="その他支出 ${nf(other)} 円"></div>`:""}
+   </div>
+   <small>${valueText}</small><span>${labels[i]||i+1}</span>
+  </div>`;
  }).join("");
 }
 

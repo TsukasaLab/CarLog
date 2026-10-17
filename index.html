@@ -1,11 +1,11 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#202631"><title>CarLog</title>
-<link rel="manifest" href="manifest.webmanifest?v=0.91"><link rel="stylesheet" href="style.css?v=0.91">
+<link rel="manifest" href="manifest.webmanifest?v=0.92"><link rel="stylesheet" href="style.css?v=0.92">
 </head><body>
 
 <aside class="pc-sidebar" aria-label="PCメニュー">
-  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.91 β</span><small>Car Maintenance Log</small></div></div>
+  <div class="pc-brand"><span class="brand-mark">🚙</span><div><strong>CarLog</strong><span class="title-version">Ver.0.92 β</span><small>Car Maintenance Log</small></div></div>
   <button class="active" onclick="goHome()"><span class="navico">⌂</span><span>ホーム</span></button>
   <button onclick="openFuel()"><span class="navico">⛽</span><span>給油記録</span></button>
   <button onclick="openMaintenance()"><span class="navico">🔧</span><span>整備・修理</span></button>
@@ -28,7 +28,7 @@
     <div class="mobile-nav-head">
       <div class="mobile-nav-brand">
         <span class="mobile-nav-brandmark">🚙</span>
-        <div><strong>CarLog</strong><small>Ver.0.91 β</small></div>
+        <div><strong>CarLog</strong><small>Ver.0.92 β</small></div>
       </div>
       <button class="mobile-nav-close" type="button" onclick="closeMobileMenu()" aria-label="メニューを閉じる">×</button>
     </div>
@@ -66,7 +66,7 @@
 
 <section id="home" class="screen app-page hidden correct-home">
  <header class="mobile-top">
-   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.91 β</span></div>
+   <div class="mobile-brand"><span>🚙</span><b>CarLog</b><span class="title-version">Ver.0.92 β</span></div>
    <button onclick="openMobileMenu()" aria-label="メニュー" aria-controls="mobileNavBackdrop" aria-expanded="false">☰</button>
  </header>
 
@@ -181,6 +181,10 @@
  <button class="card cost-summary-card" data-cost-scope="year" data-cost-mode="maint" onclick="selectCostGraph('year','maint')"><span>整備・維持</span><b id="costYearMaint">0 円</b></button>
  <button class="card cost-summary-card" data-cost-scope="year" data-cost-mode="other" onclick="selectCostGraph('year','other')"><span>その他支出</span><b id="costYearOther">0 円</b></button>
 </div>
+<div class="card other-breakdown-card maint-breakdown-card">
+ <div class="other-breakdown-head"><span>↳</span><div><b>整備・維持の内訳</b><small>年間の各種合計</small></div></div>
+ <div id="costYearMaintBreakdown" class="other-breakdown-grid"></div>
+</div>
 <div class="card other-breakdown-card">
  <div class="other-breakdown-head"><span>↳</span><div><b>その他支出の内訳</b><small>年間の各種合計</small></div></div>
  <div id="costYearOtherBreakdown" class="other-breakdown-grid"></div>
@@ -202,6 +206,10 @@
  <button class="card cost-summary-card" data-cost-scope="month" data-cost-mode="maint" onclick="selectCostGraph('month','maint')"><span>整備・維持</span><b id="costMonthMaint">0 円</b></button>
  <button class="card cost-summary-card" data-cost-scope="month" data-cost-mode="other" onclick="selectCostGraph('month','other')"><span>その他支出</span><b id="costMonthOther">0 円</b></button>
 </div>
+<div class="card other-breakdown-card maint-breakdown-card">
+ <div class="other-breakdown-head"><span>↳</span><div><b>整備・維持の内訳</b><small id="costMonthMaintBreakdownLabel">月の各種合計</small></div></div>
+ <div id="costMonthMaintBreakdown" class="other-breakdown-grid"></div>
+</div>
 <div class="card other-breakdown-card">
  <div class="other-breakdown-head"><span>↳</span><div><b>その他支出の内訳</b><small id="costMonthBreakdownLabel">月の各種合計</small></div></div>
  <div id="costMonthOtherBreakdown" class="other-breakdown-grid"></div>
@@ -210,6 +218,11 @@
 <div class="card cost-chart-card">
  <div class="cost-chart-head">
   <div><small id="costChartScopeLabel">年間集計から選択</small><h3 id="monthChartTitle">月別 年間合計</h3></div>
+ </div>
+ <div id="costStackLegend" class="cost-stack-legend hidden">
+  <span><i class="legend-fuel"></i>ガソリン</span>
+  <span><i class="legend-maint"></i>整備・維持</span>
+  <span><i class="legend-other"></i>その他支出</span>
  </div>
  <div class="cost-chart-scroll"><div id="monthBars" class="bars cost-bars"></div></div>
 </div>
@@ -304,7 +317,7 @@
 <div class="card debug-reset-card"><h3>デバッグ</h3><p class="help">車両・給油・整備・その他支出・更新期限・画像を削除し、初回セットアップ画面へ戻します。</p><button class="debug-reset-btn" type="button" onclick="debugResetCarLog()">デバッグ用：初期化</button><small class="debug-reset-note">※ CarLogの保存データだけを削除します。他のTsukasaLabツールのデータには触れません。</small></div>
 <button class="card menu guide-page-link" onclick="openHelp()">📖 使い方を開く <span>›</span></button>
 </div>
-<div class="about"><b>CarLog Ver.0.91 β</b><span>ローカル保存・公開β</span></div>
+<div class="about"><b>CarLog Ver.0.92 β</b><span>ローカル保存・公開β</span></div>
 </section>
 <section id="vehicleNotes" class="screen hidden"><div class="screen-head"><button onclick="goHome()">‹</button><h2>車両メモ</h2><button onclick="openVehicleEdit(activeId)">編集</button></div><div id="vehicleNotesList"></div></section>
 <section id="help" class="screen app-page hidden">
@@ -343,6 +356,6 @@
 <button onclick="openCosts()">⌁<span>分析</span></button>
 </nav>
 <div id="quickBackdrop" class="backdrop hidden" onclick="closeQuick(event)"><div class="sheet"><h2>記録を追加</h2><p>何を記録しますか？</p><div class="quick"><button onclick="closeQuick();openFuel()">⛽<span>給油</span></button><button onclick="closeQuick();openMaintenance()">🔧<span>整備・修理</span></button><button onclick="closeQuick();openExpense()">¥<span>その他支出</span></button></div><button onclick="closeQuick()">キャンセル</button></div></div>
-<script src="app.js?v=0.91"></script><script>
-if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.91",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
+<script src="app.js?v=0.92"></script><script>
+if("serviceWorker"in navigator&&location.protocol!=="file:")window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=0.92",{updateViaCache:"none"}).then(r=>r.update()).catch(console.error));
 </script></body></html>
