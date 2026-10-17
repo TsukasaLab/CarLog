@@ -1776,3 +1776,224 @@ body[data-screen] .pc-sidebar button.active{
 
 /* CarLog Ver.0.89
    Restored monthDrive so Home rendering no longer stops before monthly-cost cards. */
+
+
+/* =========================================================
+   CarLog Ver.0.90
+   Cost analysis: fixed annual/month summaries + card-driven graph
+   ========================================================= */
+#costs .cost-period-label{
+  margin:22px 2px 7px;
+  color:#70889a;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+#costs .cost-period-picker{
+  max-width:440px;
+  margin:0 auto 20px!important;
+}
+#costs .cost-period-picker button:disabled{
+  opacity:.28!important;
+  cursor:default!important;
+}
+#costs .cost-section-title{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin:18px 2px 8px;
+}
+#costs .cost-section-title>span{
+  color:#173d58;
+  font-size:17px;
+  font-weight:900;
+}
+#costs .cost-section-title>small{
+  color:#8295a4;
+  font-size:10px;
+  text-align:right;
+}
+#costs .cost-summary-card{
+  width:100%;
+  min-height:92px;
+  margin:8px 0!important;
+  text-align:left;
+  border:2px solid transparent;
+  background:#fff!important;
+  color:#17384f!important;
+  transition:.15s;
+}
+#costs .cost-summary-card span{
+  display:block;
+  color:#71899a!important;
+  font-size:11px;
+  margin-bottom:8px;
+}
+#costs .cost-summary-card b{
+  display:block;
+  color:#17384f!important;
+  font-size:22px;
+}
+#costs .cost-summary-card.active,
+#costs .other-breakdown-item.active{
+  border-color:#238ee8!important;
+  background:#f0f8ff!important;
+  box-shadow:0 8px 20px rgba(35,142,232,.14)!important;
+}
+#costs .cost-total-card{
+  min-height:112px;
+  background:linear-gradient(135deg,#123f60,#1d6c9e)!important;
+  color:#fff!important;
+}
+#costs .cost-total-card span,
+#costs .cost-total-card b{
+  color:#fff!important;
+}
+#costs .cost-total-card b{
+  font-size:31px;
+}
+#costs .cost-total-card.active{
+  border-color:#66b9f5!important;
+  background:linear-gradient(135deg,#123f60,#1d6c9e)!important;
+}
+#costs .cost-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+#costs .other-breakdown-card{
+  margin-top:10px!important;
+  padding:14px 14px 14px 22px!important;
+  border-left:4px solid #a9c7dd!important;
+  background:#f8fbfd!important;
+  box-shadow:none!important;
+}
+#costs .other-breakdown-head{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:10px;
+}
+#costs .other-breakdown-head>span{
+  color:#7da4bf;
+  font-size:20px;
+  font-weight:900;
+}
+#costs .other-breakdown-head div{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+#costs .other-breakdown-head b{
+  color:#365a70;
+  font-size:12px;
+}
+#costs .other-breakdown-head small{
+  color:#8aa0af;
+  font-size:9px;
+}
+#costs .other-breakdown-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+#costs .other-breakdown-item{
+  min-width:0;
+  min-height:66px;
+  padding:9px 10px!important;
+  border:1px solid #d9e7ef!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:#365a70!important;
+  text-align:left;
+}
+#costs .other-breakdown-item span{
+  display:block;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#71899a;
+  font-size:9px;
+  margin-bottom:5px;
+}
+#costs .other-breakdown-item b{
+  display:block;
+  color:#294e65;
+  font-size:13px;
+}
+#costs .cost-month-label{
+  margin-top:32px;
+  padding-top:24px;
+  border-top:1px solid #dce8ef;
+}
+#costs .cost-chart-card{
+  margin-top:28px!important;
+}
+#costs .cost-chart-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
+}
+#costs .cost-chart-head h3{
+  margin:3px 0 0;
+  color:#173d58;
+  font-size:15px;
+}
+#costs .cost-chart-head small{
+  color:#8497a6;
+  font-size:9px;
+}
+#costs .cost-chart-scroll{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+#costs .cost-bars{
+  min-width:100%;
+}
+#costs .cost-bars.daily-bars{
+  min-width:930px;
+}
+#costs .cost-bars .barcol{
+  min-width:0;
+}
+#costs .cost-bars.daily-bars .barcol{
+  min-width:24px;
+}
+#costs .cost-bars .barcol>span{
+  display:block;
+  margin-top:5px;
+  color:#73899a;
+  font-size:9px;
+  white-space:nowrap;
+}
+
+@media(max-width:899px){
+  #costs .cost-section-title{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:3px;
+  }
+  #costs .cost-section-title>small{text-align:left}
+  #costs .cost-summary-grid{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+  #costs .cost-summary-card{
+    min-height:78px;
+  }
+  #costs .cost-summary-card b{font-size:20px}
+  #costs .cost-total-card{min-height:102px}
+  #costs .cost-total-card b{font-size:28px}
+  #costs .other-breakdown-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  #costs .other-breakdown-card{
+    padding-left:16px!important;
+  }
+}
