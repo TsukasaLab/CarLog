@@ -1772,3 +1772,7 @@ body[data-screen] .pc-sidebar button.active{
 
 /* CarLog Ver.0.88
    Home monthly totals now always recalculate from the latest saved records. */
+
+
+/* CarLog Ver.0.89
+   Restored monthDrive so Home rendering no longer stops before monthly-cost cards. */

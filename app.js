@@ -237,10 +237,37 @@ function costs(y,m){
  const f=sum(fuels()),mt=sum(maints()),e=sum(expenses());
  return{fuel:f,maint:mt,other:e,total:f+mt+e};
 }
+function monthDrive(y,m){
+ const rs=fuels()
+  .filter(r=>{
+    const [ry,rm]=recordDateParts(r?.date);
+    return ry===+y&&rm===+m;
+  })
+  .slice()
+  .sort((a,b)=>stamp(a).localeCompare(stamp(b)));
+
+ const liters=rs.reduce((s,r)=>s+(Number(r.liters)||0),0);
+ const amount=rs.reduce((s,r)=>s+(Number(r.amount)||0),0);
+ const distance=rs.reduce((s,r)=>s+(Number(r.distance)>0?Number(r.distance):0),0);
+ const ecos=rs.filter(r=>Number(r.fuelEconomy)>0).map(r=>Number(r.fuelEconomy));
+
+ return{
+   distance,
+   liters,
+   count:rs.length,
+   economy:ecos.length?ecos.reduce((a,b)=>a+b,0)/ecos.length:0,
+   price:liters?amount/liters:0,
+   fuelkm:distance?amount/distance:0
+ };
+}
 function recomputeFuel(){let rs=fuels().sort((a,b)=>+a.odometer-+b.odometer||stamp(a).localeCompare(stamp(b)));rs.forEach((r,i)=>{let p=rs[i-1];r.distance=p?+r.odometer-+p.odometer:null;r.fuelEconomy=p&&r.fullTank&&p.fullTank&&r.distance>0?r.distance/+r.liters:null;r.pricePerLiter=+r.liters?+r.amount/+r.liters:null});save(KEY.fuel,fuelRecords)}
 async function renderHome(){
 reloadRecordState();
 let c=car(),km=currentKm();c.odometer=km;save(KEY.vehicles,vehicles);
+
+// Update the monthly dashboard immediately after loading the latest records.
+renderCorrectDashboard(c);
+
 homeCarName.textContent=c.name;homeMaker.textContent=c.maker||"";homeCarMeta.textContent=[c.model,c.year,COLOR_LABELS[c.color]||c.color].filter(Boolean).join(" / ");
 homeKm.textContent=nf(km)+" km";
 let oilInfo=latestOilChange(c),homeOil=document.getElementById("homeOilKm");
@@ -250,7 +277,7 @@ let [y,m]=today().split("-").map(Number),mc=costs(y,m);monthFuel.textContent=nf(
 let yc=costs(y),elapsed=m;yearTotal.textContent=nf(yc.total)+" 円";yearAvg.textContent=nf(Math.round(yc.total/elapsed))+" 円";let yd=Array.from({length:12},(_,i)=>monthDrive(y,i+1).distance).reduce((a,b)=>a+b,0);yearKm.textContent=nf(Math.round(yd))+" km";perKm.textContent=yd?(yc.total/yd).toFixed(1)+" 円/km":"---";
 if(c.inspectionDate){inspection.textContent=c.inspectionDate.replaceAll("-","/");let days=Math.ceil((new Date(c.inspectionDate+"T00:00:00")-new Date(today()+"T00:00:00"))/86400000);inspectionLeft.textContent=days>=0?"あと "+nf(days)+" 日":"期限切れ"}else{inspection.textContent="未設定";inspectionLeft.textContent=""}
 let oil=latestOilChange(c);if(c.oilInterval){let baseKm=oil.odometer!==null&&Number.isFinite(+oil.odometer)?+oil.odometer:km;let target=baseKm+(+c.oilInterval);oilTarget.textContent=nf(target)+" km";let left=target-km;oilLeft.textContent=left>=0?"あと "+nf(left)+" km":nf(Math.abs(left))+" km超過"}else{oilTarget.textContent="未設定";oilLeft.textContent=""}
-let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderRecentStable();renderCorrectDashboard(c);renderHomeRenewals(c)}
+let all=allRecords().slice(0,5);recent.innerHTML=all.length?all.map(historyHtml).join(""):'<p class="help">まだ記録がありません。中央の＋から追加できます。</p>';renderHomeMemos(c);renderRecentStable();renderHomeRenewals(c)}
 async function renderCarThumb(c){
  const useCustom=c.imageMode==="custom"&&c.photoId;
  if(!useCustom&&heroScenePath(c)){homeCarThumb.innerHTML="";return}
