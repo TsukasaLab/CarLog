@@ -2,6 +2,7 @@
    It is inserted only when there are no fuel/maintenance/expense records. */
 (function seedShowcaseData(){
  try{
+  if(localStorage.getItem("carlog_debug_fresh_reset")==="1") return;
   const parse=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
   const existing=[...parse("fuelRecords"),...parse("carlog_maintenance"),...parse("carlog_expenses")];
   if(existing.length) return;
@@ -315,6 +316,56 @@ function openSettings(){show("settings")}function openHelp(){show("help")}
 function openQuick(){quickBackdrop.classList.remove("hidden")}function closeQuick(e){if(e&&e.target!==quickBackdrop)return;quickBackdrop.classList.add("hidden")}
 
 function idb(){return new Promise((res,rej)=>{let q=indexedDB.open("CarLogDB",1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains("images"))q.result.createObjectStore("images",{keyPath:"id"})};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+
+async function clearAllCarLogImages(){
+ try{
+  const db=await idb();
+  await new Promise((res,rej)=>{
+   const tx=db.transaction("images","readwrite");
+   tx.objectStore("images").clear();
+   tx.oncomplete=()=>{try{db.close()}catch{}res()};
+   tx.onerror=()=>rej(tx.error);
+   tx.onabort=()=>rej(tx.error);
+  });
+ }catch(err){
+  console.warn("CarLog image clear skipped",err);
+ }
+}
+
+async function debugResetCarLog(){
+ const ok=confirm(
+  "CarLogを初期化します。\n\n"+
+  "車両・給油・整備・その他支出・更新期限・画像がすべて削除され、初回セットアップ画面へ戻ります。\n"+
+  "この操作は元に戻せません。\n\n続けますか？"
+ );
+ if(!ok)return;
+
+ try{
+  await clearAllCarLogImages();
+
+  // GitHub PagesではlocalStorageが同一ドメイン内で共有されるため、
+  // 全消去はせず、CarLogが使用するキーだけを削除する。
+  [
+   "carlog_vehicles",
+   "carlog_active_vehicle",
+   "carlog_vehicle",
+   "fuelRecords",
+   "carlog_maintenance",
+   "carlog_expenses",
+   "carlog_showcase_v050"
+  ].forEach(k=>localStorage.removeItem(k));
+
+  // 旧ショーケースデータが初期化直後に再生成されるのを止める。
+  localStorage.setItem("carlog_debug_fresh_reset","1");
+
+  alert("CarLogを初期化しました。初回セットアップ画面へ戻ります。");
+  location.reload();
+ }catch(err){
+  console.error(err);
+  alert("初期化中にエラーが発生しました。");
+ }
+}
+
 async function imagePut(id,blob,meta={}){let db=await idb();return new Promise((res,rej)=>{let tx=db.transaction("images","readwrite");tx.objectStore("images").put({id,blob,...meta,createdAt:new Date().toISOString()});tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
 async function imageGet(id){if(!id)return null;let db=await idb();return new Promise((res,rej)=>{let q=db.transaction("images").objectStore("images").get(id);q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)})}
 async function imageDelete(id){if(!id)return;let db=await idb();return new Promise((res,rej)=>{let tx=db.transaction("images","readwrite");tx.objectStore("images").delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}

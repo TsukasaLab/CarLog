@@ -1690,3 +1690,35 @@ body[data-screen] .pc-sidebar button.active{
     padding:9px 12px!important;
   }
 }
+
+
+/* =========================================================
+   CarLog Ver.0.85
+   Debug reset control in Settings
+   ========================================================= */
+.debug-reset-card{
+  border:1px solid #f0d0d0!important;
+  background:#fffafa!important;
+}
+.debug-reset-card h3{
+  color:#8f3030!important;
+}
+.debug-reset-btn{
+  width:100%!important;
+  min-height:48px!important;
+  margin-top:8px!important;
+  background:#b83a3a!important;
+  border-color:#b83a3a!important;
+  color:#fff!important;
+  font-weight:900!important;
+}
+.debug-reset-btn:hover{
+  background:#a63232!important;
+}
+.debug-reset-note{
+  display:block!important;
+  margin-top:10px!important;
+  color:#8b6969!important;
+  font-size:11px!important;
+  line-height:1.6!important;
+}
