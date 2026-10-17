@@ -1722,3 +1722,49 @@ body[data-screen] .pc-sidebar button.active{
   font-size:11px!important;
   line-height:1.6!important;
 }
+
+
+/* CarLog Ver.0.86
+   Category consistency and current-month cost display fix */
+
+
+/* =========================================================
+   CarLog Ver.0.87
+   Oil change distance/date + hero oil mileage
+   ========================================================= */
+.correct-mileage{
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:5px!important;
+}
+.correct-mileage .mileage-row,
+.correct-mileage .oil-mileage-row{
+  display:flex!important;
+  align-items:baseline!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  white-space:nowrap!important;
+}
+.correct-mileage .oil-mileage-row{
+  padding-top:5px!important;
+  border-top:1px solid rgba(255,255,255,.22)!important;
+}
+.correct-mileage .oil-mileage-row span{
+  font-size:10px!important;
+  opacity:.88!important;
+}
+.correct-mileage .oil-mileage-row strong{
+  font-size:14px!important;
+  font-weight:800!important;
+  color:#fff!important;
+}
+@media(max-width:899px){
+  .correct-mileage{
+    min-width:155px!important;
+    padding:7px 10px!important;
+  }
+  .correct-mileage .mileage-row{gap:5px!important}
+  .correct-mileage .oil-mileage-row{gap:5px!important}
+  .correct-mileage .oil-mileage-row span{font-size:8px!important}
+  .correct-mileage .oil-mileage-row strong{font-size:11px!important}
+}
