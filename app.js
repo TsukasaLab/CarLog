@@ -109,10 +109,17 @@ function migrate(){
  persistRecords();
 }
 function persistRecords(){save(KEY.fuel,fuelRecords);save(KEY.maint,maintenanceRecords);save(KEY.expense,expenseRecords)}
+function reloadRecordState(){
+ fuelRecords=load(KEY.fuel,[]);
+ maintenanceRecords=load(KEY.maint,[]);
+ expenseRecords=load(KEY.expense,[]);
+}
 const car=()=>vehicles.find(v=>String(v.id)===String(activeId))||null;
 function belongsToActiveVehicle(r){
  if(!r)return false;
- if(r.vehicleId==null||r.vehicleId==="")return vehicles.length===1;
+ // 1台運用では、旧版で保存されたvehicleIdの不整合があっても現在の車両へ集計する。
+ if(vehicles.length===1)return true;
+ if(r.vehicleId==null||r.vehicleId==="")return false;
  return String(r.vehicleId)===String(activeId);
 }
 const fuels=()=>fuelRecords.filter(belongsToActiveVehicle),
@@ -216,9 +223,23 @@ function createVehicleFromSetup(){
  vehicles.push(v);activeId=v.id;save(KEY.vehicles,vehicles);localStorage.setItem(KEY.active,activeId);goHome()
 }
 function goHome(){edit.fuel=edit.maintenance=edit.expense=null;if(!car())return show("setup");show("home");renderHome()}
-function costs(y,m){let same=r=>{let d=(r.date||"").split("-").map(Number);return d[0]===y&&(!m||d[1]===m)},f=fuels().filter(same).reduce((s,r)=>s+(+r.amount||0),0),mt=maints().filter(same).reduce((s,r)=>s+(+r.amount||0),0),e=expenses().filter(same).reduce((s,r)=>s+(+r.amount||0),0);return{fuel:f,maint:mt,other:e,total:f+mt+e}}
+function recordDateParts(value){
+ const s=String(value||"").trim();
+ const m=s.match(/^(\d{4})[-\/]?(\d{1,2})/);
+ return m?[+m[1],+m[2]]:[0,0];
+}
+function costs(y,m){
+ const same=r=>{
+   const [ry,rm]=recordDateParts(r?.date);
+   return ry===+y&&(!m||rm===+m);
+ };
+ const sum=arr=>arr.filter(same).reduce((s,r)=>s+(Number(r.amount)||0),0);
+ const f=sum(fuels()),mt=sum(maints()),e=sum(expenses());
+ return{fuel:f,maint:mt,other:e,total:f+mt+e};
+}
 function recomputeFuel(){let rs=fuels().sort((a,b)=>+a.odometer-+b.odometer||stamp(a).localeCompare(stamp(b)));rs.forEach((r,i)=>{let p=rs[i-1];r.distance=p?+r.odometer-+p.odometer:null;r.fuelEconomy=p&&r.fullTank&&p.fullTank&&r.distance>0?r.distance/+r.liters:null;r.pricePerLiter=+r.liters?+r.amount/+r.liters:null});save(KEY.fuel,fuelRecords)}
 async function renderHome(){
+reloadRecordState();
 let c=car(),km=currentKm();c.odometer=km;save(KEY.vehicles,vehicles);
 homeCarName.textContent=c.name;homeMaker.textContent=c.maker||"";homeCarMeta.textContent=[c.model,c.year,COLOR_LABELS[c.color]||c.color].filter(Boolean).join(" / ");
 homeKm.textContent=nf(km)+" km";
@@ -244,11 +265,11 @@ function populateStoreSelect(p,current=""){let el=document.getElementById(p+"Sto
 function chooseStore(p){let s=document.getElementById(p+"StoreSelect"),i=document.getElementById(p+"Store");if(s.value==="__new__"){i.value="";i.focus()}else i.value=s.value}
 
 function openFuel(id=null){edit.fuel=id;let r=id?fuelRecords.find(x=>x.id===id):null;fuelTitle.textContent=r?"給油記録を編集":"給油を記録";fuelSave.textContent=r?"変更を保存":"登録";fuelDelete.classList.toggle("hidden",!r);fuelDate.value=r?.date||today();fuelCount.removeAttribute("placeholder");fuelCount.value=r?.count??"";fuelKm.value=r?.odometer??currentKm();fuelLiters.value=r?.liters??"";populateStoreSelect("fuel",r?.store||"");fuelAmount.value=r?.amount??"";fuelFull.checked=r?.fullTank??true;show("fuel");showSameDay("fuel")}
-function saveFuel(){let r={vehicleId:activeId,date:fuelDate.value,count:fuelCount.value?+fuelCount.value:null,odometer:+fuelKm.value,liters:+fuelLiters.value,store:fuelStore.value.trim(),amount:+fuelAmount.value,fullTank:fuelFull.checked};if(!r.date||r.odometer<0||r.liters<=0||r.amount<=0)return alert("入力内容を確認してください。");if(edit.fuel){let i=fuelRecords.findIndex(x=>x.id===edit.fuel);fuelRecords[i]={...fuelRecords[i],...r}}else fuelRecords.push({id:uid("fuel"),...r,createdAt:new Date().toISOString()});persistRecords();recomputeFuel();refreshStoreNames();goHome()}
+function saveFuel(){let r={vehicleId:activeId,date:fuelDate.value,count:fuelCount.value?+fuelCount.value:null,odometer:+fuelKm.value,liters:+fuelLiters.value,store:fuelStore.value.trim(),amount:+fuelAmount.value,fullTank:fuelFull.checked};if(!r.date||r.odometer<0||r.liters<=0||r.amount<=0)return alert("入力内容を確認してください。");if(edit.fuel){let i=fuelRecords.findIndex(x=>x.id===edit.fuel);fuelRecords[i]={...fuelRecords[i],...r}}else fuelRecords.push({id:uid("fuel"),...r,createdAt:new Date().toISOString()});persistRecords();recomputeFuel();reloadRecordState();refreshStoreNames();goHome()}
 function openMaintenance(id=null){edit.maintenance=id;let r=id?maintenanceRecords.find(x=>x.id===id):null;maintTitle.textContent=r?"整備・修理を編集":"整備・修理を記録";maintSave.textContent=r?"変更を保存":"登録";maintDelete.classList.toggle("hidden",!r);maintDate.value=r?.date||today();maintCount.removeAttribute("placeholder");maintCount.value=r?.count??"";maintType.value=r?.type||"オイル交換";maintKm.value=r?.odometer??"";maintAmount.value=r?.amount??"";populateStoreSelect("maint",r?.store||"");maintMemo.value=r?.memo||"";show("maintenance");showSameDay("maintenance")}
-function saveMaintenance(){let km=maintKm.value===""?null:+maintKm.value;let r={vehicleId:activeId,date:maintDate.value,count:maintCount.value?+maintCount.value:null,type:maintType.value,odometer:km,amount:+maintAmount.value||0,store:maintStore.value.trim(),memo:maintMemo.value.trim()};if(!r.date||(km!==null&&km<0)||r.amount<0)return alert("入力内容を確認してください。");if(edit.maintenance){let i=maintenanceRecords.findIndex(x=>x.id===edit.maintenance);maintenanceRecords[i]={...maintenanceRecords[i],...r}}else maintenanceRecords.push({id:uid("maintenance"),...r,createdAt:new Date().toISOString()});persistRecords();refreshStoreNames();goHome()}
+function saveMaintenance(){let km=maintKm.value===""?null:+maintKm.value;let r={vehicleId:activeId,date:maintDate.value,count:maintCount.value?+maintCount.value:null,type:maintType.value,odometer:km,amount:+maintAmount.value||0,store:maintStore.value.trim(),memo:maintMemo.value.trim()};if(!r.date||(km!==null&&km<0)||r.amount<0)return alert("入力内容を確認してください。");if(edit.maintenance){let i=maintenanceRecords.findIndex(x=>x.id===edit.maintenance);maintenanceRecords[i]={...maintenanceRecords[i],...r}}else maintenanceRecords.push({id:uid("maintenance"),...r,createdAt:new Date().toISOString()});persistRecords();reloadRecordState();refreshStoreNames();goHome()}
 function openExpense(id=null){edit.expense=id;let r=id?expenseRecords.find(x=>x.id===id):null;expenseTitle.textContent=r?"その他支出を編集":"その他支出を記録";expenseSave.textContent=r?"変更を保存":"登録";expenseDelete.classList.toggle("hidden",!r);expenseDate.value=r?.date||today();expenseCount.removeAttribute("placeholder");expenseCount.value=r?.count??"";expenseCategory.value=r?.category||"自動車税";expenseAmount.value=r?.amount??"";populateStoreSelect("expense",r?.store||"");expenseMemo.value=r?.memo||"";show("expense");showSameDay("expense")}
-function saveExpense(){let r={vehicleId:activeId,date:expenseDate.value,count:expenseCount.value?+expenseCount.value:null,category:expenseCategory.value,amount:+expenseAmount.value,store:expenseStore.value.trim(),memo:expenseMemo.value.trim()};if(!r.date||r.amount<=0)return alert("日付と金額を入力してください。");if(edit.expense){let i=expenseRecords.findIndex(x=>x.id===edit.expense);expenseRecords[i]={...expenseRecords[i],...r}}else expenseRecords.push({id:uid("expense"),...r,createdAt:new Date().toISOString()});persistRecords();refreshStoreNames();goHome()}
+function saveExpense(){let r={vehicleId:activeId,date:expenseDate.value,count:expenseCount.value?+expenseCount.value:null,category:expenseCategory.value,amount:+expenseAmount.value,store:expenseStore.value.trim(),memo:expenseMemo.value.trim()};if(!r.date||r.amount<=0)return alert("日付と金額を入力してください。");if(edit.expense){let i=expenseRecords.findIndex(x=>x.id===edit.expense);expenseRecords[i]={...expenseRecords[i],...r}}else expenseRecords.push({id:uid("expense"),...r,createdAt:new Date().toISOString()});persistRecords();reloadRecordState();refreshStoreNames();goHome()}
 function deleteCurrent(kind){let id=edit[kind];if(!id||!confirm("この記録を削除しますか？"))return;if(kind==="fuel")fuelRecords=fuelRecords.filter(x=>x.id!==id);if(kind==="maintenance")maintenanceRecords=maintenanceRecords.filter(x=>x.id!==id);if(kind==="expense")expenseRecords=expenseRecords.filter(x=>x.id!==id);persistRecords();if(kind==="fuel")recomputeFuel();refreshStoreNames();goHome()}
 function showSameDay(kind){let date=kind==="fuel"?fuelDate.value:kind==="maintenance"?maintDate.value:expenseDate.value,box=kind==="fuel"?fuelSameDay:kind==="maintenance"?maintSameDay:expenseSameDay,arr=kind==="fuel"?fuels():kind==="maintenance"?maints():expenses(),rs=arr.filter(r=>r.date===date).sort((a,b)=>Number(a.count||0)-Number(b.count||0)||stamp(a).localeCompare(stamp(b)));if(!rs.length){box.innerHTML="";return}box.innerHTML=`<div class="samebox"><small>この日の登録済み記録 ${rs.length}件</small>${rs.map(r=>`<div class="same-item"><div><b>${kind==="fuel"?esc((r.liters||0)+" L / "+nf(r.amount)+"円"):kind==="maintenance"?esc(r.type+" / "+nf(r.amount)+"円"):esc(r.category+" / "+nf(r.amount)+"円")}</b></div><button type="button" onclick="${kind==="fuel"?"openFuel":kind==="maintenance"?"openMaintenance":"openExpense"}('${r.id}')">編集</button></div>`).join("")}</div>`}
 
@@ -256,7 +277,7 @@ function openHistory(){show("history");renderHistory("all")}function renderHisto
 
 const MAINTENANCE_CATEGORIES=["オイル交換","フィルター交換","洗車","タイヤ交換","バッテリー交換","車検","点検","修理","その他"];
 const OTHER_EXPENSE_CATEGORIES=["自動車税","任意保険","駐車場","高速・有料道路","用品","その他"];
-function openCosts(mode){if(mode)costChartMode=mode;show("costs");renderCosts()}
+function openCosts(mode){reloadRecordState();if(mode)costChartMode=mode;show("costs");renderCosts()}
 function changeYear(n){costYear+=n;renderCosts()}
 function setCostChart(m){costChartMode=m;renderCosts()}
 function categoryCost(kind,category,y,m){

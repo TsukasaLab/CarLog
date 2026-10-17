@@ -1768,3 +1768,7 @@ body[data-screen] .pc-sidebar button.active{
   .correct-mileage .oil-mileage-row span{font-size:8px!important}
   .correct-mileage .oil-mileage-row strong{font-size:11px!important}
 }
+
+
+/* CarLog Ver.0.88
+   Home monthly totals now always recalculate from the latest saved records. */
